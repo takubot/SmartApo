@@ -5,7 +5,10 @@
       "Bash(npm run:*)",
       "Bash(grep:*)",
       "Bash(python:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(wc -l /mnt/c/Users/zekus/Desktop/repogitry/Civic-Radar/python/domain/based-template-svc/src/models/tables/*.py)",
+      "Bash(ls /mnt/c/Users/zekus/Desktop/repogitry/Civic-Radar/python/domain/based-template-svc/src/routers/*.py 2>/dev/null | head -5)",
+      "Bash(git -C /mnt/c/Users/zekus/Desktop/repogitry/Civic-Radar show HEAD:python/domain/based-template-svc/src/app.py 2>/dev/null | head -100)"
     ],
     "deny": []
   }
