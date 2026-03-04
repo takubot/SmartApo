@@ -1,0 +1,29 @@
+{
+  "extends": "@repo/typescript-config/nextjs.json",
+  "compilerOptions": {
+    // ← ここに追加
+    "baseUrl": ".",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@app-alias/fetchclient": ["../../packages/core/src/lib/fetchclient.ts"],
+      "@app-alias/externalFetchclient": ["./src/lib/externalFetchclient.ts"],
+      "@repo/core/*": ["../../packages/core/src/*"],
+      "@lib/*": ["../../packages/core/src/lib/*"],
+      "@common/*": ["../../packages/core/src/common/*"]
+    }
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    "next.config.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": ["node_modules"]
+}

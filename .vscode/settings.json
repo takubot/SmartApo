@@ -1,0 +1,15 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "Google Cloud Spanner Driver",
+      "database": "mitra-datascience-tf2db_prod",
+      "instance": "doppel-instance",
+      "project": "doppel-local",
+      "name": "Spanner Emulator Local",
+      "connectToEmulator": true
+    }
+  ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}

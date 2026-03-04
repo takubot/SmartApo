@@ -1,0 +1,325 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+} */
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Line clamp utilities */
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+/* チャットエンベッド用レスポンシブスタイル */
+@layer components {
+  /* スマホでのタッチ操作最適化 */
+  @media (max-width: 768px) {
+    .chat-embed-container {
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      /* スマホでのみ画面全体を使用 */
+      width: 100vw !important;
+      height: 100vh !important;
+      max-width: 100vw !important;
+      max-height: 100vh !important;
+      border-radius: 0 !important;
+      top: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      bottom: 0 !important;
+    }
+
+    /* タッチターゲットの最小サイズ確保 */
+    .chat-embed-button {
+      min-width: 44px;
+      min-height: 44px;
+    }
+
+    /* テキスト選択の改善 */
+    .chat-embed-text {
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+
+    /* スマホでのヘッダー最適化 */
+    .chat-embed-header {
+      min-height: 40px !important;
+      padding: 8px 12px !important;
+    }
+
+    /* スマホでの入力エリア最適化 */
+    .chat-embed-input {
+      min-height: 50px !important;
+      padding: 8px 12px !important;
+    }
+  }
+
+  /* 超小画面対応 */
+  @media (max-width: 480px) {
+    .chat-embed-container {
+      font-size: 14px;
+    }
+
+    .chat-embed-button {
+      min-width: 40px;
+      min-height: 40px;
+    }
+
+    /* 超小画面でのヘッダー最適化 */
+    .chat-embed-header {
+      min-height: 36px !important;
+      padding: 6px 10px !important;
+    }
+
+    /* 超小画面での入力エリア最適化 */
+    .chat-embed-input {
+      min-height: 45px !important;
+      padding: 6px 10px !important;
+    }
+  }
+
+  /* 横画面対応（スマホのみ） */
+  @media (max-width: 768px) and (max-height: 500px) and (orientation: landscape) {
+    .chat-embed-container {
+      height: 100vh;
+    }
+
+    .chat-embed-header {
+      min-height: 36px !important;
+      padding: 6px 10px !important;
+    }
+
+    .chat-embed-input {
+      min-height: 45px !important;
+      padding: 6px 10px !important;
+    }
+  }
+
+  /* スマホでのメッセージ最適化 */
+  @media (max-width: 768px) {
+    .chat-embed-container .prose {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .chat-embed-container .prose p {
+      margin: 0.25rem 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
+    }
+
+    .chat-embed-container .prose ul,
+    .chat-embed-container .prose ol {
+      margin: 0.25rem 0;
+      padding-left: 1rem;
+    }
+
+    .chat-embed-container .prose li {
+      margin: 0.125rem 0;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+
+    .chat-embed-container .prose code {
+      font-size: 12px;
+      padding: 0.125rem 0.25rem;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .chat-embed-container .prose pre {
+      font-size: 12px;
+      padding: 0.5rem;
+      margin: 0.25rem 0;
+      word-break: break-all;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+    }
+  }
+
+  /* メッセージの折り返し改善（全画面サイズ） */
+  .chat-embed-container .prose {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .chat-embed-container .prose p {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .chat-embed-container .prose code {
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  .chat-embed-container .prose pre {
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
+  }
+
+  .chat-embed-container .prose a {
+    word-break: break-all;
+  }
+
+  /* 長いURLやテキストの折り返し */
+  .chat-embed-container .break-all {
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+
+  .chat-embed-container .break-words {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* チャットウィジェット内の関連ファイル表示改善 */
+  .chat-embed-container .chat-reference-list {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 8px 8px 0;
+    margin: 8px 0;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .chat-embed-container .chat-reference-item {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin: 4px 0;
+    transition: all 0.2s ease;
+  }
+
+  .chat-embed-container .chat-reference-item:hover {
+    border-color: #3b82f6;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+  }
+
+  .chat-embed-container .chat-reference-link {
+    color: #3b82f6;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+  }
+
+  .chat-embed-container .chat-reference-link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
+
+  .chat-embed-container .chat-reference-pages {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  /* メッセージ内のテキスト表示改善 */
+  .chat-embed-container .message-text {
+    line-height: 1.5;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* アバター表示改善 */
+  .chat-embed-container .message-avatar {
+    border: 2px solid #e2e8f0;
+    transition: border-color 0.2s ease;
+  }
+
+  .chat-embed-container .message-avatar:hover {
+    border-color: #3b82f6;
+  }
+
+  /* ボタンのホバー効果改善 */
+  .chat-embed-container .chat-button {
+    transition: all 0.2s ease;
+  }
+
+  .chat-embed-container .chat-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* スクロールバーの改善 */
+  .chat-embed-container .message-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+  }
+
+  .chat-embed-container .message-list::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .chat-embed-container .message-list::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .chat-embed-container .message-list::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+  }
+
+  .chat-embed-container .message-list::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Webkitベースのブラウザ用 */
+::-webkit-scrollbar {
+  width: 4px; /* スクロールバーの幅を設定 */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.5); /* スクロールバーの色 */
+  border-radius: 10px; /* 丸みを帯びたスクロールバー */
+}
+
+/* Firefox用 */
+* {
+  scrollbar-width: thin; /* スクロールバーを細く */
+  scrollbar-color: rgba(0, 0, 0, 0.5) transparent; /* スクロールバーの色 */
+}

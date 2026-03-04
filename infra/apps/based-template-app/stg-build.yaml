@@ -1,0 +1,88 @@
+# infra/apps/based-template-app/cloudbuild/stg-build.yaml
+# stg build + deploy to Cloud Deploy (stg target)
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _REGION: asia-northeast1
+  _PIPELINE: doppel-based-template-app-pipeline
+  _PROJECT_CD: mitra-shared-cicd
+  _TARGET: doppel-based-template-app-stg
+  _RUNTIME_PROJECT: doppel-stg
+steps:
+  # Build (Skaffold - stg profile)
+  - id: skaffold-build
+    name: gcr.io/k8s-skaffold/skaffold
+    entrypoint: skaffold
+    dir: infra
+    args:
+      - build
+      - -f
+      - apps/based-template-app/skaffold.yaml
+      - --file-output=/workspace/artifacts.json
+      - --default-repo=${_REGION}-docker.pkg.dev/${_PROJECT_CD}/doppel
+      - --profile=stg
+  # Create Cloud Deploy release (stg target)
+  - id: cloud-deploy-release
+    name: gcr.io/cloud-builders/gcloud
+    dir: infra
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        if [[ -n "$${SHORT_SHA:-}" ]]; then
+          SHORT="$${SHORT_SHA}"
+        elif [[ -n "$${COMMIT_SHA:-}" ]]; then
+          SHORT="$${COMMIT_SHA:0:8}"
+        elif [[ -n "$${REVISION_ID:-}" ]]; then
+          SHORT="$${REVISION_ID:0:8}"
+        else
+          SHORT="$$(echo "$${BUILD_ID:-$$(date +%s)}" | head -c 8)"
+        fi
+        echo "### Generated SHORT = $${SHORT}"
+        RELEASE_ID="stg-$${SHORT}"
+        echo "### Generated RELEASE_ID = $${RELEASE_ID}"
+        gcloud deploy releases create "$${RELEASE_ID}" \
+          --delivery-pipeline="${_PIPELINE}" \
+          --region="${_REGION}" \
+          --project="${_PROJECT_CD}" \
+          --skaffold-file=apps/based-template-app/skaffold.yaml \
+          --build-artifacts=/workspace/artifacts.json \
+          --to-target="${_TARGET}" \
+          --verbosity=debug
+  # --- Cloud Run を公開 (IAM: allUsers に Invoker) ※ロールアウト待ちは「サービス存在ポーリング」で代替 ---
+  - id: make-public-iam
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        SVC="based-template-app"
+        PROJECT="${_RUNTIME_PROJECT}"
+        REGION="${_REGION}"
+        echo "### Waiting for Cloud Run service $${SVC} to exist..."
+        for i in {1..90}; do
+          if gcloud run services describe "$${SVC}" \
+               --project="$${PROJECT}" \
+               --region="$${REGION}" \
+               --format="value(metadata.name)" >/dev/null 2>&1; then
+            echo "Service $${SVC} is available."
+            break
+          fi
+          echo "Retry $${i}/90: service not ready, sleeping 10s..."
+          sleep 10
+        done
+        # 最終確認（存在しなければ異常終了）
+        gcloud run services describe "$${SVC}" \
+          --project="$${PROJECT}" \
+          --region="$${REGION}" \
+          --format="value(metadata.name)" >/dev/null
+        # IAM で公開（冪等）
+        gcloud run services add-iam-policy-binding "$${SVC}" \
+          --member="allUsers" \
+          --role="roles/run.invoker" \
+          --project="$${PROJECT}" \
+          --region="$${REGION}"
+        echo "### Granted roles/run.invoker to allUsers on service $${SVC}"
+timeout: 1200s

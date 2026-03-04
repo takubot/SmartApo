@@ -1,0 +1,41 @@
+# infra/{{ type }}/{{ service_name }}/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: {{ service_name }}
+
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+{% for env in envs %}
+  - name: {{ env.name }}
+    build:
+      artifacts:
+        - image: {{ service_name }}
+          context: ..
+          docker:
+            dockerfile: {{ dockerfile }}
+            {% if env.build_args %}
+            buildArgs:
+              {%- for key, val in env.build_args.items() %}
+              {{ key }}: "{{ val }}"
+              {%- endfor %}
+            {% endif %}
+        {% if opa_image %}
+        # ────────────────────────────────
+        # OPA サイドカー
+        # ────────────────────────────────
+        - image: {{ opa_image }}
+          context: ..
+          docker:
+            dockerfile: {{ opa_dockerfile }}
+          {% endif %}
+    manifests:
+      rawYaml:
+        - {{ env.name }}-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: {% raw %}"{{ .ENV.PROJECT_ID }}"{% endraw %}
+        region:    {% raw %}"{{ .ENV.REGION }}"{% endraw %}
+{% endfor %}

@@ -1,0 +1,46 @@
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _REGION: {{ region }}
+  _PROJECT_CD: {{ project_cd }}
+  _RUNTIME_PROJECT: {{ runtime_project[env] }}
+  _REPO_NAME: {{ repo_name }}
+  _IMAGE_NAME: {{ image_name }}
+
+steps:
+  - id: build-image
+    name: gcr.io/cloud-builders/docker
+    args:
+      - "build"
+      - "-f"
+      - "{{ dockerfile_path }}"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${_PROJECT_CD}/${_REPO_NAME}/${_IMAGE_NAME}:{{ short_sha }}"
+      - "-t"
+      - "${_REGION}-docker.pkg.dev/${_PROJECT_CD}/${_REPO_NAME}/${_IMAGE_NAME}:latest"
+      - "{{ build_context }}"
+
+  - id: push-image-sha
+    name: gcr.io/cloud-builders/docker
+    args:
+      - "push"
+      - "${_REGION}-docker.pkg.dev/${_PROJECT_CD}/${_REPO_NAME}/${_IMAGE_NAME}:{{ short_sha }}"
+
+  - id: push-image-latest
+    name: gcr.io/cloud-builders/docker
+    args:
+      - "push"
+      - "${_REGION}-docker.pkg.dev/${_PROJECT_CD}/${_REPO_NAME}/${_IMAGE_NAME}:latest"
+
+  - id: deploy-cloud-run-job
+    name: gcr.io/cloud-builders/gcloud
+    args:
+      - "run"
+      - "jobs"
+      - "replace"
+      - "infra/jobs/{{ job_dir }}/{{ env }}-run-job.yaml"
+      - "--region=${_REGION}"
+      - "--project=${_RUNTIME_PROJECT}"
+
+timeout: {{ cb_timeout | default("600s") }}

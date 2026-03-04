@@ -1,0 +1,51 @@
+# infra/services/vertex-e-svc/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: vertex-e-svc
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: vertex-e-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/vertex-e-svc/dockerfile
+    manifests:
+      rawYaml:
+        - dev-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: stg
+    build:
+      artifacts:
+        - image: vertex-e-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/vertex-e-svc/dockerfile
+    manifests:
+      rawYaml:
+        - stg-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: prod
+    build:
+      artifacts:
+        - image: vertex-e-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/vertex-e-svc/dockerfile
+    manifests:
+      rawYaml:
+        - prod-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"

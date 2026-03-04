@@ -1,0 +1,192 @@
+[
+  {
+    "type": "apps",
+
+    "service_name": "based-template-app",
+
+    "dockerfile": "apps/based-template-app/dockerfile",
+
+    "envs": {
+      "dev": {
+        "runtime_project": "doppel-dev-461016",
+
+        "build_args": {
+          "NEXT_PUBLIC_TENANT_ID": "based-template-vbf6m",
+
+          "NEXT_PUBLIC_API_URL": "https://based-template-svc-1090554569112.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_SITE_URL": "https://based-template-app-1090554569112.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyB26jmyy9GqgOtkC8NLxfaMir9bFgZXvnw",
+
+          "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "doppel-dev-461016.firebaseapp.com",
+          "NEXT_PUBLIC_FIRESTORE_DATABASE_ID": "doppel-dev-firestore-db",
+
+          "NEXT_PUBLIC_OG_IMAGE_PATH": "doppel-og.png"
+        },
+
+        "exec_account": "cd-exec@doppel-dev-461016.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "all-traffic",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-dev-tokyo-doppel-frontend\"}]"
+        }
+      },
+
+      "stg": {
+        "build_args": {
+          "NEXT_PUBLIC_TENANT_ID": "based-template-7gkxo",
+
+          "NEXT_PUBLIC_API_URL": "https://based-template-svc-638194985906.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_SITE_URL": "https://based-template-app-638194985906.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyA2TcKRSZaU9rQAsLs0c-CLDVz4O9y7xps",
+
+          "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "doppel-stg.firebaseapp.com",
+          "NEXT_PUBLIC_FIRESTORE_DATABASE_ID": "doppel-stg-firestore-db",
+
+          "NEXT_PUBLIC_OG_IMAGE_PATH": "doppel-og.png"
+        },
+
+        "exec_account": "cd-exec@doppel-stg.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "all-traffic",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-stg-tokyo-doppel-frontend\"}]"
+        }
+      },
+
+      "prod": {
+        "build_args": {
+          "NEXT_PUBLIC_TENANT_ID": "based-template-23luz",
+
+          "NEXT_PUBLIC_API_URL": "https://based-template-svc-646682719623.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_SITE_URL": "https://based-template-app-646682719623.asia-northeast1.run.app",
+
+          "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyAeC7Rfg1CoKY63rB0fT3HL7wAXyAIItUA",
+
+          "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "doppel-prod.firebaseapp.com",
+          "NEXT_PUBLIC_FIRESTORE_DATABASE_ID": "doppel-prod-firestore-db",
+
+          "NEXT_PUBLIC_OG_IMAGE_PATH": "doppel-og.png"
+        },
+
+        "exec_account": "cd-exec@doppel-prod.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "all-traffic",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-prod-tokyo-doppel-frontend\"}]"
+        }
+      }
+    }
+  },
+
+  {
+    "type": "services",
+
+    "service_name": "based-template-svc",
+
+    "dockerfile": "python/domain/based-template-svc/dockerfile",
+
+    "envs": {
+      "dev": {
+        "runtime_project": "doppel-dev-461016",
+
+        "cloud_sql_instance": "doppel-dev-461016:asia-northeast1:doppel-dev-mysql-primary",
+
+        "exec_account": "cd-exec@doppel-dev-461016.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "private-ranges-only",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-dev-tokyo-doppel-domain\"}]"
+        },
+
+        "env_vars": {
+          "ENV": "dev",
+
+          "TENANT_ID": "based-template-vbf6m",
+
+          "TENANT_NAME": "based-template",
+
+          "ALLOW_ORIGINS": [
+            "https://based-template-app-1090554569112.asia-northeast1.run.app"
+          ]
+        }
+      },
+
+      "stg": {
+        "runtime_project": "doppel-stg",
+
+        "cloud_sql_instance": "doppel-stg:asia-northeast1:doppel-stg-mysql-primary",
+
+        "exec_account": "cd-exec@doppel-stg.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "private-ranges-only",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-stg-tokyo-doppel-domain\"}]"
+        },
+
+        "env_vars": {
+          "ENV": "stg",
+
+          "TENANT_ID": "based-template-vbf6m",
+
+          "TENANT_NAME": "based-template",
+
+          "ALLOW_ORIGINS": [
+            "https://based-template-app-638194985906.asia-northeast1.run.app"
+          ]
+        }
+      },
+
+      "prod": {
+        "runtime_project": "doppel-prod",
+
+        "cloud_sql_instance": "doppel-prod:asia-northeast1:doppel-prod-mysql-primary",
+
+        "exec_account": "cd-exec@doppel-prod.iam.gserviceaccount.com",
+
+        "network": {
+          "vpc_access_egress": "private-ranges-only",
+
+          "network_interfaces": "[{\"network\":\"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared\",\"subnetwork\":\"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-prod-tokyo-doppel-domain\"}]"
+        },
+
+        "specs": {
+          "min_scale": "0",
+
+          "max_scale": "20",
+
+          "cpu_target": "75",
+
+          "concurrency": "80",
+
+          "timeout": 600,
+
+          "cpu": "2000m",
+
+          "memory": "2Gi"
+        },
+
+        "env_vars": {
+          "ENV": "prod",
+
+          "TENANT_ID": "based-template-vbf6m",
+
+          "TENANT_NAME": "based-template",
+
+          "ALLOW_ORIGINS": [
+            "https://based-template-app-646682719623.asia-northeast1.run.app"
+          ]
+        }
+      }
+    }
+  }
+]

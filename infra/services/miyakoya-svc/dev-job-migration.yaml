@@ -1,0 +1,36 @@
+# infra/services/miyakoya-svc/dev-job-migration.yaml
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: miyakoya-svc-migrate-dev
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: "doppel-dev-461016:asia-northeast1:doppel-dev-mysql-primary"
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-dev-tokyo-doppel-domain"}]'
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: cd-exec@doppel-dev-461016.iam.gserviceaccount.com
+          timeoutSeconds: 300
+          maxRetries: 1
+          containers:
+            - name: miyakoya-svc
+              image: miyakoya-svc
+              command: ["uv"]
+              args: ["run", "alembic", "upgrade", "head"]
+              resources:
+                limits:
+                  memory: "2Gi"
+              env:
+                - name: ENV
+                  value: "dev"
+                - name: TENANT_ID
+                  value: "miyakoya-rzte1"
+                - name: TENANT_NAME
+                  value: "miyakoya"
+                - name: ALLOW_ORIGINS
+                  value: '["https://miyakoya-app-1090554569112.asia-northeast1.run.app"]'

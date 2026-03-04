@@ -1,0 +1,32 @@
+# infra/apps/based-template-app/dev-cloudrun.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: based-template-app
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/target: "75"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/vpc-access-egress: all-traffic
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-dev-tokyo-doppel-frontend"}]'
+    spec:
+      serviceAccountName: cd-exec@doppel-dev-461016.iam.gserviceaccount.com
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: based-template-app
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+  traffic:
+    - percent: 100

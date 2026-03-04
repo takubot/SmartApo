@@ -1,0 +1,51 @@
+# infra/services/based-template-svc/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: based-template-svc
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: based-template-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/based-template-svc/dockerfile
+    manifests:
+      rawYaml:
+        - dev-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: stg
+    build:
+      artifacts:
+        - image: based-template-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/based-template-svc/dockerfile
+    manifests:
+      rawYaml:
+        - stg-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: prod
+    build:
+      artifacts:
+        - image: based-template-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/based-template-svc/dockerfile
+    manifests:
+      rawYaml:
+        - prod-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"

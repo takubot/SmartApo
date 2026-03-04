@@ -1,0 +1,85 @@
+# infra/{{ type }}/{{ service_name }}/{{ env }}-cloudrun.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: {{ service_name }}
+  annotations:
+    {% if ingress %}
+    run.googleapis.com/ingress: {{ ingress }}
+    {% elif type == "services" %}
+    run.googleapis.com/ingress: internal
+    {% else %}
+    run.googleapis.com/ingress: all
+    {% endif %}
+    {% if opa_image %}
+    # ★ main コンテナ "{{ service_name }}" が "opa" の起動完了を待つ
+    run.googleapis.com/container-dependencies: '{"{{ service_name }}": "opa"}'
+    {% endif %}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "{{ specs.min_scale }}"
+        autoscaling.knative.dev/maxScale: "{{ specs.max_scale }}"
+        autoscaling.knative.dev/target: "{{ specs.cpu_target }}"
+        run.googleapis.com/startup-cpu-boost: "true"
+        {% if public_access and (public_access | string | lower in ['true','1']) %}
+        run.googleapis.com/invoker-iam-disabled: "true"
+        {% endif %}
+        {% if cloud_sql_instance %}
+        run.googleapis.com/cloudsql-instances: "{{ cloud_sql_instance }}"
+        {% endif %}
+        {% if network %}
+        run.googleapis.com/vpc-access-egress: {{ network.get('vpc_access_egress', 'all-traffic') }}
+        {% if network.network_interfaces %}
+        run.googleapis.com/network-interfaces: '{{ network.network_interfaces }}'
+        {% endif %}
+        {% endif %}
+    spec:
+      {% if exec_account %}
+      serviceAccountName: {{ exec_account }}
+      {% endif %}
+      containerConcurrency: {{ specs.concurrency }}
+      timeoutSeconds: {{ specs.timeout }}
+      containers:
+        - image: {{ service_name }}
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: "{{ specs.cpu }}"
+              memory: "{{ specs.memory }}"
+          {% if env_vars %}
+          env:
+            {%- for key, val in env_vars.items() %}
+            - name: {{ key }}
+              {%- if val is mapping and val.secretName is defined %}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ val.secretName }}
+                  key: {{ val.secretKey }}
+              {%- elif val is mapping or (val is sequence and (val is not string)) %}
+              value: '{{ val | tojson }}'
+              {%- else %}
+              value: {{ val | tojson }}
+              {%- endif %}
+            {%- endfor %}
+          {% endif %}
+        {% if opa_image %}
+        - name: opa
+          image: {{ opa_image }}
+          args: ["run", "--server", "--addr=0.0.0.0:8181", "--set=decision_logs.console=true", "/policies"]
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8181
+            periodSeconds: 5
+            failureThreshold: 12
+        {% endif %}
+  traffic:
+    - percent: 100

@@ -1,0 +1,54 @@
+name: ✨ 新機能 / 開発タスク
+description: 新しい機能の実装や、開発作業のチケットを作成します
+title: "[Feat] "
+labels: ["enhancement"]
+type: Feature
+projects: MitraDataScience/10
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### 開発タスク作成
+        実装する機能の概要と、要件を定義してください。
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要・目的
+      description: 何を、なぜ実装するのか？背景やビジネス価値を書いてください。
+      placeholder: ユーザーが〇〇できるようにするため、××機能を追加する。
+    validations:
+      required: true
+
+  - type: textarea
+    id: criteria
+    attributes:
+      label: 受け入れ条件 (Acceptance Criteria)
+      description: 「どうなったらこの機能は完成か？」を箇条書きで記述してください。
+      value: |
+        - [ ] 正常系：〇〇ができること
+        - [ ] 異常系：〇〇のエラーが出ること
+        - [ ] デザイン通りに表示されていること
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical_notes
+    attributes:
+      label: 技術的なメモ・実装方針
+      description: 使用するAPI、DBの変更点、懸念点などがあれば。
+      placeholder: |
+        - APIエンドポイント: POST /api/v1/users
+        - テーブル変更: usersテーブルに deleted_at カラムを追加
+
+  - type: checkboxes
+    id: dod
+    attributes:
+      label: 完了定義 (Definition of Done)
+      description: 作業完了とするための必須チェックリスト
+      options:
+        - label: ローカルで動作確認済み
+          required: true
+        - label: テストコードを作成・通過している
+        - label: コードレビュー承認済み
+        - label: ドキュメント（仕様書/API定義）を更新した

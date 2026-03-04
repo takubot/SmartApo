@@ -1,0 +1,51 @@
+name: ♻️ 仕様変更 / リファクタリング
+description: 既存機能の修正、コードの改善、仕様変更はこちら
+title: "[Refactor] "
+type: Refactor
+projects: MitraDataScience/10
+body:
+  - type: input
+    id: target
+    attributes:
+      label: 対象機能・画面
+      placeholder: 例：会員登録画面、決済処理ロジックなど
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reason
+    attributes:
+      label: 変更理由
+      options:
+        - 仕様変更（ビジネス要件）
+        - パフォーマンス改善
+        - コードの可読性向上（リファクタリング）
+        - 技術的負債の返済
+        - ライブラリのアップデート
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: 現状 (As-Is)
+      description: 現在はどうなっているか？何が問題か？
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: あるべき姿 (To-Be)
+      description: どのように変更したいか？
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: 影響範囲の確認
+      options:
+        - label: データベースのスキーマ変更を含む
+        - label: APIのインターフェース変更を含む
+        - label: 既存データへの影響（マイグレーション必要）あり

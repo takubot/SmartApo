@@ -1,0 +1,74 @@
+name: 🐛 バグ報告フォーム
+description: 不具合を見つけた場合はこちら（入力フォームが開きます）
+title: "[Bug] "
+labels: ["bug"]
+type: Bug
+projects: MitraDataScience/10
+body:
+  - type: markdown
+    attributes:
+      value: |
+        バグ報告ありがとうございます！
+        以下の項目を埋めることで、修正がスムーズになります。
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 発生環境 / OS
+      description: 発生しているOSを選択してください。
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS
+        - Linux
+        - iOS
+        - Android
+        - その他
+    validations:
+      required: true
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: 発生環境 / ブラウザ
+      description: 発生しているブラウザを選択してください。
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Safari
+        - Brave
+        - その他
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: どうすればそのバグが発生しますか？
+      placeholder: |
+        1. ログイン画面を開く
+        2. パスワードを空欄にする
+        3. ログインボタンを押す
+        4. エラー画面が表示される
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 緊急度
+      options:
+        - 🔥 緊急 (システムダウン / 致命的)
+        - ⚠️ 高 (主要機能が動かない)
+        - ☁️ 中 (回避策あり)
+        - 🍃 低 (軽微な表示崩れなど)
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: エラーログ / スクリーンショット
+      description: エラーメッセージやログがあれば貼り付けてください。

@@ -1,0 +1,51 @@
+# infra/services/goda-kanko-shoji-svc/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: goda-kanko-shoji-svc
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: goda-kanko-shoji-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/goda-kanko-shoji-svc/dockerfile
+    manifests:
+      rawYaml:
+        - dev-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: stg
+    build:
+      artifacts:
+        - image: goda-kanko-shoji-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/goda-kanko-shoji-svc/dockerfile
+    manifests:
+      rawYaml:
+        - stg-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: prod
+    build:
+      artifacts:
+        - image: goda-kanko-shoji-svc
+          context: ..
+          docker:
+            dockerfile: python/domain/goda-kanko-shoji-svc/dockerfile
+    manifests:
+      rawYaml:
+        - prod-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"

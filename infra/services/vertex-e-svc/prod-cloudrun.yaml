@@ -1,0 +1,42 @@
+# infra/services/vertex-e-svc/prod-cloudrun.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: vertex-e-svc
+  annotations:
+    run.googleapis.com/ingress: internal
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "20"
+        autoscaling.knative.dev/target: "75"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/cloudsql-instances: "doppel-prod:asia-northeast1:doppel-prod-mysql-primary"
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-prod-tokyo-doppel-domain"}]'
+    spec:
+      serviceAccountName: cd-exec@doppel-prod.iam.gserviceaccount.com
+      containerConcurrency: 80
+      timeoutSeconds: 600
+      containers:
+        - image: vertex-e-svc
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+          env:
+            - name: ENV
+              value: "prod"
+            - name: TENANT_ID
+              value: "vertex-e-aw0e9"
+            - name: TENANT_NAME
+              value: "vertex-e"
+            - name: ALLOW_ORIGINS
+              value: '["https://vertex-e-app-646682719623.asia-northeast1.run.app"]'
+  traffic:
+    - percent: 100

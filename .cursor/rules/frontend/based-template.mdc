@@ -1,0 +1,27 @@
+---
+alwaysApply: true
+---
+
+# Based Template フロントエンドルール
+
+## 対象ディレクトリ
+
+- `apps/based-template-app`
+- `packages/api-contracts`（生成物の確認・再生成のみ、手動編集は不可）
+
+## 命名とスタイル
+
+- TypeScript/TSXはcamelCaseを徹底（定数のみUPPER_SNAKE_CASE）
+- ロジックは可能な限りカスタムフックやサービス層に分離し、UIコンポーネントは表示に専念させる
+
+## API契約の利用
+
+- 型は `@repo/api-contracts/based_template/zschema` からimportする
+- fetch系関数は `@repo/api-contracts/based_template/service` から利用し、独自fetchや重複APIクライアントは作らない
+- バックエンド更新後は `npm run gen:openapi:all` を必ず実行し、生成された `src/zod/based_template.ts` と `src/services/based_template.ts` を参照する
+
+## レビュー観点
+
+- 共通処理を抽出して重複を減らす（ユーティリティやカスタムフックを活用）
+- 型安全性（明示的な型、nullチェック、型ガード）とエラーハンドリング（一貫した通知・ログ）を確認
+- 副作用は限定的にし、依存配列やキャッシュ戦略を明示する

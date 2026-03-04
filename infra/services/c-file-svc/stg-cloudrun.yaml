@@ -1,0 +1,36 @@
+# infra/services/c-file-svc/stg-cloudrun.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: c-file-svc
+  annotations:
+    run.googleapis.com/ingress: internal
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/target: "75"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/cloudsql-instances: "doppel-stg:asia-northeast1:doppel-stg-mysql-primary"
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-stg-tokyo-doppel-domain"}]'
+    spec:
+      serviceAccountName: cd-exec@doppel-stg.iam.gserviceaccount.com
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: c-file-svc
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          env:
+            - name: ENV
+              value: "stg"
+  traffic:
+    - percent: 100

@@ -1,0 +1,71 @@
+[project]
+name = "based-template-svc"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    # Web Framework & Server
+    "fastapi==0.115.11",
+    "uvicorn[standard]==0.34.0",
+    "python-multipart==0.0.20",
+    # Database & Migration
+    "sqlalchemy==2.0.39",
+    "alembic==1.16.1",
+    "pymysql==1.1.1",
+    # Google Cloud & Firebase
+    "firebase-admin==6.7.0",
+    "google-cloud-aiplatform==1.85.0",
+    "google-cloud-firestore==2.20.1",
+    "google-cloud-secret-manager==2.23.2",
+    "google-cloud-storage==2.19.0",
+    "google-cloud-vision==3.10.1",
+    "google-api-python-client>=2.162.0",
+    "google-auth>=2.38.0",
+    "msal>=1.31.1",
+    # External APIs & SDKs
+    "line-bot-sdk==3.16.2",
+    "openai==1.68.0",
+    "anthropic>=0.34.0",
+    "google-genai>=1.0.0",
+    "google-generativeai>=0.8.0", #後で絶対に消す
+    "pandas==2.2.3",
+    "numpy==2.2.4",
+    "openpyxl==3.1.5",
+    "opencv-python==4.11.0.86",
+    # PDF & Document Processing
+    "beautifulsoup4==4.13.3", # bs4は実質これ
+    "pdf2image==1.17.0",
+    "pdfplumber==0.11.5",
+    "pypdf==5.4.0",
+    "pypdf2==3.0.1", # from PyPDF2 import PdfReader に対応
+    "pycryptodome==3.21.0", # AES暗号化PDFの復号に必要
+    "python-docx==1.1.2",
+    "python-pptx==1.0.2", # from pptx import Presentation に対応
+    "pypandoc==1.15", # chardetはこれの依存
+    # Authentication & Security
+    "bcrypt==4.3.0",
+    "passlib==1.7.4",
+    "python-jose==3.4.0",
+    "pyjwt==2.10.1",
+    # Utilities
+    "pydantic-settings==2.8.1",
+    "python-dotenv==1.0.1", # dotenvはこれの依存
+    "redis==5.2.1",
+    "pydub==0.25.1", # from pydub import AudioSegment に対応
+    "aenum==3.1.15", # 汎用Enumライブラリ
+    "chardet==5.2.0",
+    "aiomysql>=0.2.0",
+    "google-cloud-spanner>=3.47.0",
+    "sqlalchemy-spanner>=1.0.0",
+    "google-cloud-run>=0.11.0",
+    # Agentic RAG
+    "langgraph>=0.2.60",
+    "langchain>=0.3.14",
+    "langchain-openai>=0.3.1",
+    "pydantic-ai>=0.0.55",
+    "google-auth-oauthlib>=1.2.2",
+    "pywebpush>=2.3.0",
+]
+
+

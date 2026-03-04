@@ -1,0 +1,42 @@
+# infra/services/tp-prime-members-svc/dev-cloudrun.yaml
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: tp-prime-members-svc
+  annotations:
+    run.googleapis.com/ingress: internal
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/target: "75"
+        run.googleapis.com/startup-cpu-boost: "true"
+        run.googleapis.com/cloudsql-instances: "doppel-dev-461016:asia-northeast1:doppel-dev-mysql-primary"
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-dev-tokyo-doppel-domain"}]'
+    spec:
+      serviceAccountName: cd-exec@doppel-dev-461016.iam.gserviceaccount.com
+      containerConcurrency: 80
+      timeoutSeconds: 300
+      containers:
+        - image: tp-prime-members-svc
+          ports:
+            - containerPort: 8080
+              name: http1
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "2Gi"
+          env:
+            - name: ENV
+              value: "dev"
+            - name: TENANT_ID
+              value: "tp-prime-members-krhgp"
+            - name: TENANT_NAME
+              value: "tp-prime-members"
+            - name: ALLOW_ORIGINS
+              value: '["https://tp-prime-members-app-1090554569112.asia-northeast1.run.app"]'
+  traffic:
+    - percent: 100

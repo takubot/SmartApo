@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+---
+
+# Based Template 全体ルール
+
+## 作用範囲
+
+- 触ってよいのは `packages/api-contracts`,`packages\core`, `python/domain/based-template-svc`, `apps/based-template-app`と、必要に応じて、package.jsonや、.mdファイルのみ
+- モノレポだがbased-templateテナント以外は変更しない
+
+## スキーマ駆動フロー
+
+1. バックエンド（based-template-svc）でスキーマ/エンドポイントを更新
+2. `npm run gen:openapi:all` を実行し、`packages/api-contracts` 内の型定義とサービスを再生成
+3. 生成物
+   - 型: `packages/api-contracts/src/zod/based_template.ts`
+   - fetch関数: `packages/api-contracts/src/services/based_template.ts`
+4. フロントエンドは生成物をimportして実装し、バックエンドと互換性を維持
+
+## モデル定義の所在
+
+- `python/domain/based-template-svc/src/models/tables/model_defs.py`
+- `python/domain/based-template-svc/src/models/tables/enum.py`
+- `python/domain/based-template-svc/src/models/tables/declarative_base.py`
+
+## 命名規則要約
+
+- フロントエンド（TS/TSX）: camelCase（定数のみUPPER_SNAKE_CASE）
+- バックエンド（Python）: snake_case（クラスはPascalCase）。`base_schema.py` で camelCase へ変換
+
+## 自動生成物の扱い
+
+- `packages/api-contracts/src/{services,zod,types,yaml}` は手動編集禁止
+- 変更が必要な場合は必ずバックエンド→生成コマンドの順で対応
+
+## コードレビュー観点（簡潔版）
+
+- 責務分離・共通化・依存性制御で拡張性を高める
+- 型安全性・エラーハンドリング・副作用管理でバグリスクを下げる
+- すべてのAPI型定義と呼び出しは `@repo/api-contracts/based_template` から利用する

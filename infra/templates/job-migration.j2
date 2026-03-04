@@ -1,0 +1,51 @@
+# infra/{{ type }}/{{ service_name }}/{{ env }}-job-migration.yaml
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: {{ service_name }}-migrate-{{ env }}
+spec:
+  template:
+    metadata:
+      annotations:
+        {% if cloud_sql_instance %}
+        run.googleapis.com/cloudsql-instances: "{{ cloud_sql_instance }}"
+        {% endif %}
+        {% if network %}
+        run.googleapis.com/vpc-access-egress: {{ network.get('vpc_access_egress', 'all-traffic') }}
+        {% if network.network_interfaces %}
+        run.googleapis.com/network-interfaces: '{{ network.network_interfaces }}'
+        {% endif %}
+        {% endif %}
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          {% if exec_account %}
+          serviceAccountName: {{ exec_account }}
+          {% endif %}
+          timeoutSeconds: 300
+          maxRetries: 1
+          containers:
+            - name: {{ service_name }}
+              image: {{ service_name }}
+              command: ["uv"]
+              args: ["run", "alembic", "upgrade", "head"]
+              resources:
+                limits:
+                  memory: "2Gi"
+              {% if env_vars %}
+              env:
+                {%- for key, val in env_vars.items() %}
+                - name: {{ key }}
+                  {%- if val is mapping and val.secretName is defined %}
+                  valueFrom:
+                    secretKeyRef:
+                      name: {{ val.secretName }}
+                      key: {{ val.secretKey }}
+                  {%- elif val is mapping or (val is sequence and (val is not string)) %}
+                  value: '{{ val | tojson }}'
+                  {%- else %}
+                  value: {{ val | tojson }}
+                  {%- endif %}
+                {%- endfor %}
+              {% endif %}

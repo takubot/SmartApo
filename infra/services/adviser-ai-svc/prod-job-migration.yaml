@@ -1,0 +1,36 @@
+# infra/services/adviser-ai-svc/prod-job-migration.yaml
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: adviser-ai-svc-migrate-prod
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/cloudsql-instances: "doppel-prod:asia-northeast1:doppel-prod-mysql-primary"
+        run.googleapis.com/vpc-access-egress: private-ranges-only
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-prod-tokyo-doppel-domain"}]'
+    spec:
+      taskCount: 1
+      template:
+        spec:
+          serviceAccountName: cd-exec@doppel-prod.iam.gserviceaccount.com
+          timeoutSeconds: 300
+          maxRetries: 1
+          containers:
+            - name: adviser-ai-svc
+              image: adviser-ai-svc
+              command: ["uv"]
+              args: ["run", "alembic", "upgrade", "head"]
+              resources:
+                limits:
+                  memory: "2Gi"
+              env:
+                - name: ENV
+                  value: "prod"
+                - name: TENANT_ID
+                  value: "adviser-ai-swxzs"
+                - name: TENANT_NAME
+                  value: "adviser-ai"
+                - name: ALLOW_ORIGINS
+                  value: '["https://adviser-ai-app-646682719623.asia-northeast1.run.app"]'

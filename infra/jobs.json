@@ -1,0 +1,168 @@
+{
+  "app_name": "doppel",
+
+  "region": "asia-northeast1",
+  "project_cd": "mitra-shared-cicd",
+  "repo_name": "doppel",
+
+  "runtime_project": {
+    "dev": "doppel-dev-461016",
+    "stg": "doppel-stg",
+    "prod": "doppel-prod"
+  },
+
+  "service_account": {
+    "dev": "cd-exec@doppel-dev-461016.iam.gserviceaccount.com",
+    "stg": "cd-exec@doppel-stg.iam.gserviceaccount.com",
+    "prod": "cd-exec@doppel-prod.iam.gserviceaccount.com"
+  },
+  "vpc_connector": {
+    "dev": "",
+    "stg": "",
+    "prod": ""
+  },
+
+  "env_vars": {
+    "dev": {
+      "ENV": "dev",
+      "LOG_LEVEL": "INFO"
+    },
+    "stg": {
+      "ENV": "stg",
+      "LOG_LEVEL": "INFO"
+    },
+    "prod": {
+      "ENV": "prod",
+      "LOG_LEVEL": "INFO"
+    }
+  },
+
+  "defaults": {
+    "retries": 3,
+    "timeout_seconds": 900,
+    "task_count": 1,
+    "parallelism": 1,
+    "cpu": "1",
+    "memory": "1Gi",
+    "cb_timeout": "600s",
+    "image_tag": "latest",
+    "short_sha": "$SHORT_SHA"
+  },
+
+  "jobs": [
+    {
+      "job_name": "chunk-audio",
+      "job_dir": "chunk-audio-job",
+      "image_name": "chunk-audio-job",
+      "dockerfile_path": "python/job/chunk_audio/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "chunk-document",
+      "job_dir": "chunk-document-job",
+      "image_name": "chunk-document-job",
+      "dockerfile_path": "python/job/chunk_document/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "chunk-faq",
+      "job_dir": "chunk-faq-job",
+      "image_name": "chunk-faq-job",
+      "dockerfile_path": "python/job/chunk_faq/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "chunk-slide",
+      "job_dir": "chunk-slide-job",
+      "image_name": "chunk-slide-job",
+      "dockerfile_path": "python/job/chunk_slide/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "chunk-table",
+      "job_dir": "chunk-table-job",
+      "image_name": "chunk-table-job",
+      "dockerfile_path": "python/job/chunk_table/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "chunk-txt",
+      "job_dir": "chunk-txt-job",
+      "image_name": "chunk-txt-job",
+      "dockerfile_path": "python/job/chunk_txt/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "dispatch-to-service",
+      "job_dir": "dispatch-to-service-job",
+      "image_name": "dispatch-to-service-job",
+      "dockerfile_path": "python/job/dispatch_to_service/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"]
+    },
+    {
+      "job_name": "generate-chunk-embedding",
+      "job_dir": "generate-chunk-embedding-job",
+      "image_name": "generate-chunk-embedding-job",
+      "dockerfile_path": "python/job/generate_chunk_embedding/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "generate-chunk-metadata",
+      "job_dir": "generate-chunk-metadata-job",
+      "image_name": "generate-chunk-metadata-job",
+      "dockerfile_path": "python/job/generate_chunk_metadata/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"],
+      "timeout_seconds": 10800,
+      "cpu": "2",
+      "memory": "8Gi"
+    },
+    {
+      "job_name": "recognize-chunk-type",
+      "job_dir": "recognize-chunk-type-job",
+      "image_name": "recognize-chunk-type-job",
+      "dockerfile_path": "python/job/recognize_chunk_type/dockerfile",
+      "build_context": ".",
+      "command": ["python"],
+      "args": ["-m", "src.main"]
+    }
+  ]
+}

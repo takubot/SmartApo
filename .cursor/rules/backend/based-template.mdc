@@ -1,0 +1,39 @@
+---
+alwaysApply: true
+---
+
+# Based Template バックエンドルール
+
+## 対象ディレクトリ
+
+- `python/domain/based-template-svc` 配下のみを変更する
+- 他テナントサービスや共有サービスには触れない
+
+## 命名とスキーマ
+
+- Pythonコードは snake_case、クラス名のみPascalCase
+- `python/domain/based-template-svc/src/common/schemas/base_schema.py` が camelCase 変換を担うため、バックエンドは必ず snake_case で定義する
+
+## モデル管理
+
+- テーブル: `src/models/tables/model_defs.py`
+- Enum: `src/models/tables/enum.py`
+- Declarative Base: `src/models/tables/declarative_base.py`
+- テーブル構造を変更したらこれらのファイルを更新し、Alembicでマイグレーションを作成する
+
+## マイグレーション運用
+
+- Alembicマイグレーションの作成・適用は指示があった場合のみ実施する（独断で実行しない）
+- 既存マイグレーションを変更する際は必ずチームと合意を取る
+
+## スキーマ変更の手順
+
+1. バックエンドのエンドポイント・モデルを更新
+2. `npm run gen:openapi:all` を実行して契約を再生成
+3. 生成物（`packages/api-contracts/src/zod|services/based_template.ts`）で型互換性を確認
+
+## レビューで見るポイント
+
+- ビジネスロジックをサービス層に集約し責務を分離する
+- 依存関係を明示しDIや抽象化でテスト容易性を確保
+- 例外と副作用を一貫した方法で扱い、構造化ログとリトライ戦略を用意する

@@ -1,0 +1,34 @@
+apiVersion: run.googleapis.com/v1
+kind: Job
+metadata:
+  name: {{ job_name }}-{{ env }}
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/vpc-access-egress: all-traffic
+        run.googleapis.com/network-interfaces: '[{"network":"projects/mitra-shared-network/global/networks/mitra-vpc-main-shared","subnetwork":"projects/mitra-shared-network/regions/asia-northeast1/subnetworks/mitra-subnet-{{ env }}-tokyo-doppel-frontend"}]'
+    spec:
+      taskCount: {{ task_count | default(1) }}
+      parallelism: {{ parallelism | default(1) }}
+      template:
+        spec:
+          serviceAccountName: {{ service_account[env] }}
+          timeoutSeconds: {{ timeout_seconds | default(1800) }}
+          containers:
+            - image: "{{ region }}-docker.pkg.dev/{{ project_cd }}/{{ repo_name }}/{{ image_name }}:{{ image_tag | default('latest') }}"
+              {%- if command is defined and command %}
+              command: {{ command }}
+              {%- endif %}
+              {%- if args is defined and args %}
+              args: {{ args }}
+              {%- endif %}
+              env:
+              {%- for k, v in env_vars[env].items() %}
+                - name: {{ k }}
+                  value: "{{ v }}"
+              {%- endfor %}
+              resources:
+                limits:
+                  cpu: "{{ cpu | default('1') }}"
+                  memory: "{{ memory | default('512Mi') }}"

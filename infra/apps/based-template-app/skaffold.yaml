@@ -1,0 +1,78 @@
+# infra/apps/based-template-app/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: based-template-app
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: based-template-app
+          context: ..
+          docker:
+            dockerfile: apps/based-template-app/dockerfile
+            buildArgs:
+              NEXT_PUBLIC_TENANT_ID: "based-template-vbf6m"
+              NEXT_PUBLIC_API_URL: "https://based-template-svc-1090554569112.asia-northeast1.run.app"
+              NEXT_PUBLIC_SITE_URL: "https://based-template-app-1090554569112.asia-northeast1.run.app"
+              NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyB26jmyy9GqgOtkC8NLxfaMir9bFgZXvnw"
+              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "doppel-dev-461016.firebaseapp.com"
+              NEXT_PUBLIC_META_TITLE: "DOPPEL｜自社データ学習型AIチャットボットで業務を自動化"
+              NEXT_PUBLIC_META_DESCRIPTION: "DOPPEL（ドッペル）は、マニュアルやFAQなどの自社データを学習し、高精度な回答を実現するAIチャットボットです。24時間365日の自動応答で、カスタマーサポートの工数削減や社内のナレッジ共有を効率化。組織の生産性を最大化します。"
+              NEXT_PUBLIC_OG_IMAGE_PATH: "doppel-og.png"
+    manifests:
+      rawYaml:
+        - dev-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region: "{{ .ENV.REGION }}"
+  - name: stg
+    build:
+      artifacts:
+        - image: based-template-app
+          context: ..
+          docker:
+            dockerfile: apps/based-template-app/dockerfile
+            buildArgs:
+              NEXT_PUBLIC_TENANT_ID: "based-template-7gkxo"
+              NEXT_PUBLIC_API_URL: "https://based-template-svc-638194985906.asia-northeast1.run.app"
+              NEXT_PUBLIC_SITE_URL: "https://based-template-app-638194985906.asia-northeast1.run.app"
+              NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyA2TcKRSZaU9rQAsLs0c-CLDVz4O9y7xps"
+              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "doppel-stg.firebaseapp.com"
+              NEXT_PUBLIC_META_TITLE: "DOPPEL｜自社データ学習型AIチャットボットで業務を自動化"
+              NEXT_PUBLIC_META_DESCRIPTION: "DOPPEL（ドッペル）は、マニュアルやFAQなどの自社データを学習し、高精度な回答を実現するAIチャットボットです。24時間365日の自動応答で、カスタマーサポートの工数削減や社内のナレッジ共有を効率化。組織の生産性を最大化します。"
+              NEXT_PUBLIC_OG_IMAGE_PATH: "doppel-og.png"
+    manifests:
+      rawYaml:
+        - stg-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region: "{{ .ENV.REGION }}"
+  - name: prod
+    build:
+      artifacts:
+        - image: based-template-app
+          context: ..
+          docker:
+            dockerfile: apps/based-template-app/dockerfile
+            buildArgs:
+              NEXT_PUBLIC_TENANT_ID: "based-template-23luz"
+              NEXT_PUBLIC_API_URL: "https://based-template-svc-646682719623.asia-northeast1.run.app"
+              NEXT_PUBLIC_SITE_URL: "https://based-template-app-646682719623.asia-northeast1.run.app"
+              NEXT_PUBLIC_FIREBASE_API_KEY: "AIzaSyAeC7Rfg1CoKY63rB0fT3HL7wAXyAIItUA"
+              NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: "doppel-prod.firebaseapp.com"
+              NEXT_PUBLIC_META_TITLE: "DOPPEL｜自社データ学習型AIチャットボットで業務を自動化"
+              NEXT_PUBLIC_META_DESCRIPTION: "DOPPEL（ドッペル）は、マニュアルやFAQなどの自社データを学習し、高精度な回答を実現するAIチャットボットです。24時間365日の自動応答で、カスタマーサポートの工数削減や社内のナレッジ共有を効率化。組織の生産性を最大化します。"
+              NEXT_PUBLIC_OG_IMAGE_PATH: "doppel-og.png"
+    manifests:
+      rawYaml:
+        - prod-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region: "{{ .ENV.REGION }}"

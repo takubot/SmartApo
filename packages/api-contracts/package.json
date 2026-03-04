@@ -1,0 +1,52 @@
+{
+  "name": "@repo/api-contracts",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "src",
+    "lib"
+  ],
+  "dependencies": {
+    "firebase": "^11.4.0",
+    "firebase-admin": "^13.2.0"
+  },
+  "devDependencies": {
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "eslint": "^9.26.0",
+    "typescript": "5.8.2"
+  },
+  "exports": {
+    "./based_template/type": {
+      "types": "./src/types/based_template.d.ts",
+      "default": "./src/types/based_template.d.ts"
+    },
+    "./based_template/zschema": {
+      "import": "./src/zod/based_template.ts",
+      "require": "./src/zod/based_template.ts",
+      "types": "./src/zod/based_template.ts",
+      "default": "./src/zod/based_template.ts"
+    },
+    "./based_template/service": {
+      "import": "./src/services/based_template.ts",
+      "require": "./src/services/based_template.ts",
+      "types": "./src/services/based_template.ts",
+      "default": "./src/services/based_template.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "based_template/type": [
+        "src/types/based_template.d.ts"
+      ],
+      "based_template/zschema": [
+        "src/zod/based_template.ts"
+      ],
+      "based_template/service": [
+        "src/services/based_template.ts"
+      ]
+    }
+  }
+}

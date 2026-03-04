@@ -1,0 +1,51 @@
+# infra/services/c-file-cloudrun-job/skaffold.yaml
+apiVersion: skaffold/v4beta7
+kind: Config
+metadata:
+  name: c-file-cloudrun-job
+# ────────────────────────────────────────────────────────────
+# Profiles
+# ────────────────────────────────────────────────────────────
+profiles:
+  - name: dev
+    build:
+      artifacts:
+        - image: c-file-cloudrun-job
+          context: ..
+          docker:
+            dockerfile: python/core/c_file_cloudrun_job/dockerfile
+    manifests:
+      rawYaml:
+        - dev-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: stg
+    build:
+      artifacts:
+        - image: c-file-cloudrun-job
+          context: ..
+          docker:
+            dockerfile: python/core/c_file_cloudrun_job/dockerfile
+    manifests:
+      rawYaml:
+        - stg-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"
+  - name: prod
+    build:
+      artifacts:
+        - image: c-file-cloudrun-job
+          context: ..
+          docker:
+            dockerfile: python/core/c_file_cloudrun_job/dockerfile
+    manifests:
+      rawYaml:
+        - prod-cloudrun.yaml
+    deploy:
+      cloudrun:
+        projectid: "{{ .ENV.PROJECT_ID }}"
+        region:    "{{ .ENV.REGION }}"

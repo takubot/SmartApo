@@ -1,0 +1,23 @@
+# ────────── VCS / IDE
+.git
+.github/
+.vscode/
+# ────────── ruff キャッシュ
+.ruff_cache/
+# ────────── Turborepo キャッシュ
+.turbo/
+# ────────── node_modules (deps ステージで再取得する)
+**/node_modules
+# ────────── Next.js build artefacts
+**/.next
+# ────────── 不要ファイル
+**/*.log
+**/*.test.*
+**/*.spec.*
+**/__tests__/
+# ────────── Python, Terraform など他言語資産（サイズ削減）
+docs/
+global_docs/
+global_utils/
+infra/
+scripts/
