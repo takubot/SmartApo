@@ -1,0 +1,4728 @@
+openapi: 3.1.0
+info:
+  title: doppel
+  version: 0.1.0
+servers:
+- url: http://localhost:8080
+  description: Local
+- url: https://based-template-svc-1090554569112.asia-northeast1.run.app
+  description: dev
+- url: https://based-template-svc-638194985906.asia-northeast1.run.app
+  description: stg
+- url: https://based-template-svc-646682719623.asia-northeast1.run.app
+  description: prod
+paths:
+  /v2/dialer/contacts:
+    get:
+      tags:
+      - Dialer Contacts
+      summary: List Contacts
+      description: 連絡先一覧取得
+      operationId: list_contacts_v2_dialer_contacts__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Page Size
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: search
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Search
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Contacts
+      summary: Create Contact
+      description: 連絡先作成
+      operationId: create_contact_v2_dialer_contacts__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/contacts/{contact_id}:
+    get:
+      tags:
+      - Dialer Contacts
+      summary: Get Contact
+      description: 連絡先詳細取得
+      operationId: get_contact_v2_dialer_contacts__contact_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Contacts
+      summary: Update Contact
+      description: 連絡先更新
+      operationId: update_contact_v2_dialer_contacts__contact_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Contacts
+      summary: Delete Contact
+      description: 連絡先論理削除
+      operationId: delete_contact_v2_dialer_contacts__contact_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/contacts/import/csv:
+    post:
+      tags:
+      - Dialer Contacts
+      summary: Import Csv
+      description: CSVファイルから連絡先をインポート
+      operationId: import_csv_v2_dialer_contacts_import_csv_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_import_csv_v2_dialer_contacts_import_csv_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/contacts/search:
+    post:
+      tags:
+      - Dialer Contacts
+      summary: Search Contacts
+      description: 連絡先を高度検索
+      operationId: search_contacts_v2_dialer_contacts_search_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Page Size
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactSearchSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns:
+    get:
+      tags:
+      - Dialer Campaigns
+      summary: List Campaigns
+      description: キャンペーン一覧
+      operationId: list_campaigns_v2_dialer_campaigns__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Page Size
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Create Campaign
+      description: キャンペーン作成
+      operationId: create_campaign_v2_dialer_campaigns__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}:
+    get:
+      tags:
+      - Dialer Campaigns
+      summary: Get Campaign
+      description: キャンペーン詳細
+      operationId: get_campaign_v2_dialer_campaigns__campaign_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Campaigns
+      summary: Update Campaign
+      description: キャンペーン更新
+      operationId: update_campaign_v2_dialer_campaigns__campaign_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Campaigns
+      summary: Delete Campaign
+      description: キャンペーン論理削除
+      operationId: delete_campaign_v2_dialer_campaigns__campaign_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/start:
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Start Campaign
+      description: キャンペーン開始
+      operationId: start_campaign_v2_dialer_campaigns__campaign_id__start_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/pause:
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Pause Campaign
+      description: キャンペーン一時停止
+      operationId: pause_campaign_v2_dialer_campaigns__campaign_id__pause_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/stop:
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Stop Campaign
+      description: キャンペーン停止
+      operationId: stop_campaign_v2_dialer_campaigns__campaign_id__stop_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/stats:
+    get:
+      tags:
+      - Dialer Campaigns
+      summary: Campaign Stats
+      description: キャンペーン統計
+      operationId: campaign_stats_v2_dialer_campaigns__campaign_id__stats_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignStatsSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/contacts:
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Add Contacts To Campaign
+      description: キャンペーンに連絡先を追加
+      operationId: add_contacts_to_campaign_v2_dialer_campaigns__campaign_id__contacts_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignContactAddSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - Dialer Campaigns
+      summary: List Campaign Contacts
+      description: キャンペーン内連絡先一覧
+      operationId: list_campaign_contacts_v2_dialer_campaigns__campaign_id__contacts_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Page Size
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/contacts/{contact_id}:
+    delete:
+      tags:
+      - Dialer Campaigns
+      summary: Remove Contact From Campaign
+      description: キャンペーンから連絡先を除外
+      operationId: remove_contact_from_campaign_v2_dialer_campaigns__campaign_id__contacts__contact_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/agents:
+    post:
+      tags:
+      - Dialer Campaigns
+      summary: Assign Agents
+      description: オペレーターをキャンペーンに割当
+      operationId: assign_agents_v2_dialer_campaigns__campaign_id__agents_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+              title: Agent Ids
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/campaigns/{campaign_id}/agents/{agent_id}:
+    delete:
+      tags:
+      - Dialer Campaigns
+      summary: Unassign Agent
+      description: オペレーター割当解除
+      operationId: unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: campaign_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Campaign Id
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/agents:
+    get:
+      tags:
+      - Dialer Agents
+      summary: List Agents
+      description: オペレーター一覧
+      operationId: list_agents_v2_dialer_agents__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentResponseSchema'
+                title: Response List Agents V2 Dialer Agents  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Agents
+      summary: Create Agent
+      description: オペレーター登録
+      operationId: create_agent_v2_dialer_agents__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/agents/status-board:
+    get:
+      tags:
+      - Dialer Agents
+      summary: Status Board
+      description: リアルタイムステータスボード
+      operationId: status_board_v2_dialer_agents_status_board_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentResponseSchema'
+                title: Response Status Board V2 Dialer Agents Status Board Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/agents/available:
+    get:
+      tags:
+      - Dialer Agents
+      summary: Available Agents
+      description: 利用可能なオペレーター一覧
+      operationId: available_agents_v2_dialer_agents_available_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentResponseSchema'
+                title: Response Available Agents V2 Dialer Agents Available Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/agents/{agent_id}:
+    get:
+      tags:
+      - Dialer Agents
+      summary: Get Agent
+      description: オペレーター詳細
+      operationId: get_agent_v2_dialer_agents__agent_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Agents
+      summary: Update Agent
+      description: オペレーター更新
+      operationId: update_agent_v2_dialer_agents__agent_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/agents/{agent_id}/status:
+    put:
+      tags:
+      - Dialer Agents
+      summary: Update Agent Status
+      description: ステータス変更
+      operationId: update_agent_status_v2_dialer_agents__agent_id__status_put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentStatusUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/initiate:
+    post:
+      tags:
+      - Dialer Calls
+      summary: Initiate Call
+      description: 手動発信
+      operationId: initiate_call_v2_dialer_calls_initiate_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: contact_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: phone_number
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Phone Number
+      - name: caller_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Caller Id
+      - name: campaign_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Campaign Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallLogResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/{call_sid}/hold:
+    post:
+      tags:
+      - Dialer Calls
+      summary: Hold Call
+      description: 保留
+      operationId: hold_call_v2_dialer_calls__call_sid__hold_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_sid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Sid
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/{call_sid}/resume:
+    post:
+      tags:
+      - Dialer Calls
+      summary: Resume Call
+      description: 保留解除
+      operationId: resume_call_v2_dialer_calls__call_sid__resume_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_sid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Sid
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/{call_sid}/transfer:
+    post:
+      tags:
+      - Dialer Calls
+      summary: Transfer Call
+      description: 転送
+      operationId: transfer_call_v2_dialer_calls__call_sid__transfer_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_sid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Sid
+      - name: target
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Target
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/{call_sid}/end:
+    post:
+      tags:
+      - Dialer Calls
+      summary: End Call
+      description: 通話終了
+      operationId: end_call_v2_dialer_calls__call_sid__end_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_sid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Sid
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/{call_sid}/disposition:
+    post:
+      tags:
+      - Dialer Calls
+      summary: Set Disposition
+      description: 処理結果登録
+      operationId: set_disposition_v2_dialer_calls__call_sid__disposition_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_sid
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Sid
+      - name: disposition_id
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Disposition Id
+      - name: notes
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/calls/active:
+    get:
+      tags:
+      - Dialer Calls
+      summary: Active Calls
+      description: アクティブ通話一覧
+      operationId: active_calls_v2_dialer_calls_active_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CallLogResponseSchema'
+                title: Response Active Calls V2 Dialer Calls Active Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-logs:
+    get:
+      tags:
+      - Dialer Call Logs
+      summary: List Call Logs
+      description: 通話ログ一覧
+      operationId: list_call_logs_v2_dialer_call_logs__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+          title: Page
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Page Size
+      - name: campaign_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Campaign Id
+      - name: agent_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Id
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-logs/{call_log_id}:
+    get:
+      tags:
+      - Dialer Call Logs
+      summary: Get Call Log
+      description: 通話ログ詳細
+      operationId: get_call_log_v2_dialer_call_logs__call_log_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_log_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Log Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallLogResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-logs/{call_log_id}/recording:
+    get:
+      tags:
+      - Dialer Call Logs
+      summary: Get Recording
+      description: 録音URL取得
+      operationId: get_recording_v2_dialer_call_logs__call_log_id__recording_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_log_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call Log Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-lists:
+    get:
+      tags:
+      - Dialer Call Lists
+      summary: List Call Lists
+      operationId: list_call_lists_v2_dialer_call_lists__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CallListResponseSchema'
+                title: Response List Call Lists V2 Dialer Call Lists  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Call Lists
+      summary: Create Call List
+      operationId: create_call_list_v2_dialer_call_lists__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallListCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallListResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-lists/{call_list_id}:
+    get:
+      tags:
+      - Dialer Call Lists
+      summary: Get Call List
+      operationId: get_call_list_v2_dialer_call_lists__call_list_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call List Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallListResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Call Lists
+      summary: Update Call List
+      operationId: update_call_list_v2_dialer_call_lists__call_list_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call List Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallListUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallListResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Call Lists
+      summary: Delete Call List
+      operationId: delete_call_list_v2_dialer_call_lists__call_list_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call List Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-lists/{call_list_id}/contacts:
+    post:
+      tags:
+      - Dialer Call Lists
+      summary: Add Contacts
+      operationId: add_contacts_v2_dialer_call_lists__call_list_id__contacts_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call List Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallListContactAddSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/call-lists/{call_list_id}/contacts/{contact_id}:
+    delete:
+      tags:
+      - Dialer Call Lists
+      summary: Remove Contact
+      operationId: remove_contact_v2_dialer_call_lists__call_list_id__contacts__contact_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: call_list_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Call List Id
+      - name: contact_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Contact Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/callbacks:
+    get:
+      tags:
+      - Dialer Callbacks
+      summary: List Callbacks
+      operationId: list_callbacks_v2_dialer_callbacks__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CallbackResponseSchema'
+                title: Response List Callbacks V2 Dialer Callbacks  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Callbacks
+      summary: Create Callback
+      operationId: create_callback_v2_dialer_callbacks__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/callbacks/{callback_id}:
+    put:
+      tags:
+      - Dialer Callbacks
+      summary: Update Callback
+      operationId: update_callback_v2_dialer_callbacks__callback_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: callback_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Callback Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CallbackUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CallbackResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Callbacks
+      summary: Delete Callback
+      operationId: delete_callback_v2_dialer_callbacks__callback_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: callback_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Callback Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/callbacks/{callback_id}/complete:
+    post:
+      tags:
+      - Dialer Callbacks
+      summary: Complete Callback
+      operationId: complete_callback_v2_dialer_callbacks__callback_id__complete_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: callback_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Callback Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/callbacks/today:
+    get:
+      tags:
+      - Dialer Callbacks
+      summary: Today Callbacks
+      operationId: today_callbacks_v2_dialer_callbacks_today_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CallbackResponseSchema'
+                title: Response Today Callbacks V2 Dialer Callbacks Today Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dispositions:
+    get:
+      tags:
+      - Dialer Dispositions
+      summary: List Dispositions
+      operationId: list_dispositions_v2_dialer_dispositions__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DispositionResponseSchema'
+                title: Response List Dispositions V2 Dialer Dispositions  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Dispositions
+      summary: Create Disposition
+      operationId: create_disposition_v2_dialer_dispositions__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispositionCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispositionResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dispositions/{disposition_id}:
+    put:
+      tags:
+      - Dialer Dispositions
+      summary: Update Disposition
+      operationId: update_disposition_v2_dialer_dispositions__disposition_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: disposition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Disposition Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DispositionUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DispositionResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Dispositions
+      summary: Delete Disposition
+      operationId: delete_disposition_v2_dialer_dispositions__disposition_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: disposition_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Disposition Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dnc:
+    get:
+      tags:
+      - Dialer DNC
+      summary: List Dnc
+      description: DNCリスト一覧
+      operationId: list_dnc_v2_dialer_dnc__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DncResponseSchema'
+                title: Response List Dnc V2 Dialer Dnc  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer DNC
+      summary: Add Dnc
+      description: DNC追加
+      operationId: add_dnc_v2_dialer_dnc__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DncCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DncResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dnc/bulk:
+    post:
+      tags:
+      - Dialer DNC
+      summary: Bulk Add Dnc
+      description: DNC一括追加
+      operationId: bulk_add_dnc_v2_dialer_dnc_bulk_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DncBulkCreateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkOperationResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dnc/{dnc_id}:
+    delete:
+      tags:
+      - Dialer DNC
+      summary: Delete Dnc
+      description: DNC削除
+      operationId: delete_dnc_v2_dialer_dnc__dnc_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: dnc_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dnc Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dnc/check/{phone_number}:
+    get:
+      tags:
+      - Dialer DNC
+      summary: Check Dnc
+      description: 番号がDNCか確認
+      operationId: check_dnc_v2_dialer_dnc_check__phone_number__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: phone_number
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Phone Number
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DncCheckResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/scripts:
+    get:
+      tags:
+      - Dialer Scripts
+      summary: List Scripts
+      operationId: list_scripts_v2_dialer_scripts__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScriptResponseSchema'
+                title: Response List Scripts V2 Dialer Scripts  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - Dialer Scripts
+      summary: Create Script
+      operationId: create_script_v2_dialer_scripts__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptCreateSchema'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/scripts/{script_id}:
+    get:
+      tags:
+      - Dialer Scripts
+      summary: Get Script
+      operationId: get_script_v2_dialer_scripts__script_id__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: script_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Script Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Scripts
+      summary: Update Script
+      operationId: update_script_v2_dialer_scripts__script_id__put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: script_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Script Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScriptUpdateSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScriptResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Dialer Scripts
+      summary: Delete Script
+      operationId: delete_script_v2_dialer_scripts__script_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: script_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Script Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dashboard/overview:
+    get:
+      tags:
+      - Dialer Dashboard
+      summary: Dashboard Overview
+      description: ダッシュボード概要
+      operationId: dashboard_overview_v2_dialer_dashboard_overview_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardOverviewSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dashboard/agents/performance:
+    get:
+      tags:
+      - Dialer Dashboard
+      summary: Agents Performance
+      description: オペレーター実績
+      operationId: agents_performance_v2_dialer_dashboard_agents_performance_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AgentPerformanceSchema'
+                title: Response Agents Performance V2 Dialer Dashboard Agents Performance
+                  Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/dashboard/hourly-stats:
+    get:
+      tags:
+      - Dialer Dashboard
+      summary: Hourly Stats
+      description: 時間帯別統計
+      operationId: hourly_stats_v2_dialer_dashboard_hourly_stats_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HourlyStatSchema'
+                title: Response Hourly Stats V2 Dialer Dashboard Hourly Stats Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/google/auth-url/{integration_type}:
+    get:
+      tags:
+      - Dialer Google
+      summary: Get Auth Url
+      description: OAuth認証URL取得
+      operationId: get_auth_url_v2_dialer_google_auth_url__integration_type__get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: integration_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Integration Type
+      - name: redirect_uri
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Redirect Uri
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleAuthUrlResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/google/callback:
+    post:
+      tags:
+      - Dialer Google
+      summary: Oauth Callback
+      description: OAuthコールバック処理
+      operationId: oauth_callback_v2_dialer_google_callback_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleCallbackSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/google/status:
+    get:
+      tags:
+      - Dialer Google
+      summary: Integration Status
+      description: 連携状態一覧
+      operationId: integration_status_v2_dialer_google_status_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GoogleIntegrationStatusSchema'
+                title: Response Integration Status V2 Dialer Google Status Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/google/sync/{integration_type}:
+    post:
+      tags:
+      - Dialer Google
+      summary: Manual Sync
+      description: 手動同期実行
+      operationId: manual_sync_v2_dialer_google_sync__integration_type__post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: integration_type
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Integration Type
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/google/{integration_id}:
+    delete:
+      tags:
+      - Dialer Google
+      summary: Disconnect
+      description: 連携解除
+      operationId: disconnect_v2_dialer_google__integration_id__delete
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: integration_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Integration Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/settings/twilio:
+    get:
+      tags:
+      - Dialer Settings
+      summary: Get Twilio Config
+      description: Twilio設定取得
+      operationId: get_twilio_config_v2_dialer_settings_twilio_get
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                - $ref: '#/components/schemas/TwilioConfigResponseSchema'
+                - type: 'null'
+                title: Response Get Twilio Config V2 Dialer Settings Twilio Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+      - Dialer Settings
+      summary: Update Twilio Config
+      description: Twilio設定更新
+      operationId: update_twilio_config_v2_dialer_settings_twilio_put
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwilioConfigSchema'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwilioConfigResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/settings/twilio/test:
+    post:
+      tags:
+      - Dialer Settings
+      summary: Test Twilio
+      description: Twilio接続テスト
+      operationId: test_twilio_v2_dialer_settings_twilio_test_post
+      security:
+      - BearerAuth: []
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwilioTestResponseSchema'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v2/dialer/webhooks/twilio/voice:
+    post:
+      tags:
+      - Dialer Webhooks
+      summary: Voice Webhook
+      description: 着信/発信時のTwiML応答
+      operationId: voice_webhook_v2_dialer_webhooks_twilio_voice_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - BearerAuth: []
+  /v2/dialer/webhooks/twilio/status:
+    post:
+      tags:
+      - Dialer Webhooks
+      summary: Status Webhook
+      description: 通話ステータスコールバック
+      operationId: status_webhook_v2_dialer_webhooks_twilio_status_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_status_webhook_v2_dialer_webhooks_twilio_status_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/dialer/webhooks/twilio/recording:
+    post:
+      tags:
+      - Dialer Webhooks
+      summary: Recording Webhook
+      description: 録音完了コールバック
+      operationId: recording_webhook_v2_dialer_webhooks_twilio_recording_post
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/dialer/webhooks/twilio/fallback:
+    post:
+      tags:
+      - Dialer Webhooks
+      summary: Fallback Webhook
+      description: エラーフォールバック
+      operationId: fallback_webhook_v2_dialer_webhooks_twilio_fallback_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - BearerAuth: []
+  /redoc:
+    get:
+      summary: Redoc Html
+      operationId: redoc_html_redoc_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+      security:
+      - BearerAuth: []
+      - HTTPBasic: []
+  /health:
+    get:
+      summary: Health Check
+      operationId: health_check_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '404':
+          description: Not Found
+      security:
+      - BearerAuth: []
+  /settings:
+    get:
+      tags:
+      - Settings
+      summary: Show Settings
+      description: "現在のアプリケーション設定を返します。\n\n- `ENV` 環境変数に基づいて、読み込まれる設定ソースが動的に変わります。\n\
+        - `SecretStr` で保護されたフィールド（例: パスワード）は、\n  セキュリティのため `**********` としてマスクされます。"
+      operationId: show_settings_settings_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties: true
+                type: object
+                title: Response Show Settings Settings Get
+        '401':
+          description: Unauthorized
+      security:
+      - BearerAuth: []
+components:
+  schemas:
+    AgentCreateSchema:
+      properties:
+        displayName:
+          type: string
+          title: Displayname
+        userId:
+          type: string
+          title: Userid
+        extension:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extension
+        skills:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Skills
+        maxConcurrentCalls:
+          type: integer
+          title: Maxconcurrentcalls
+          default: 1
+      additionalProperties: false
+      type: object
+      required:
+      - displayName
+      - userId
+      title: AgentCreateSchema
+    AgentPerformanceSchema:
+      properties:
+        agentId:
+          type: string
+          title: Agentid
+        displayName:
+          type: string
+          title: Displayname
+        totalCalls:
+          type: integer
+          title: Totalcalls
+        totalAnswered:
+          type: integer
+          title: Totalanswered
+        answerRate:
+          type: number
+          title: Answerrate
+        avgCallDurationSeconds:
+          type: number
+          title: Avgcalldurationseconds
+        totalTalkTimeSeconds:
+          type: integer
+          title: Totaltalktimeseconds
+      additionalProperties: false
+      type: object
+      required:
+      - agentId
+      - displayName
+      - totalCalls
+      - totalAnswered
+      - answerRate
+      - avgCallDurationSeconds
+      - totalTalkTimeSeconds
+      title: AgentPerformanceSchema
+      description: オペレーター実績
+    AgentResponseSchema:
+      properties:
+        agentId:
+          type: string
+          title: Agentid
+        userId:
+          type: string
+          title: Userid
+        displayName:
+          type: string
+          title: Displayname
+        extension:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extension
+        status:
+          type: string
+          title: Status
+        statusChangedAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Statuschangedat
+        currentCallId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Currentcallid
+        skills:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Skills
+        maxConcurrentCalls:
+          type: integer
+          title: Maxconcurrentcalls
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+      additionalProperties: false
+      type: object
+      required:
+      - agentId
+      - userId
+      - displayName
+      - status
+      - maxConcurrentCalls
+      - createdAt
+      - updatedAt
+      title: AgentResponseSchema
+    AgentStatusUpdateSchema:
+      properties:
+        status:
+          type: string
+          title: Status
+      additionalProperties: false
+      type: object
+      required:
+      - status
+      title: AgentStatusUpdateSchema
+    AgentUpdateSchema:
+      properties:
+        displayName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Displayname
+        extension:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Extension
+        skills:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Skills
+        maxConcurrentCalls:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Maxconcurrentcalls
+      additionalProperties: false
+      type: object
+      title: AgentUpdateSchema
+    Body_import_csv_v2_dialer_contacts_import_csv_post:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+      type: object
+      required:
+      - file
+      title: Body_import_csv_v2_dialer_contacts_import_csv_post
+    Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post:
+      properties:
+        CallSid:
+          type: string
+          title: Callsid
+          default: ''
+        RecordingSid:
+          type: string
+          title: Recordingsid
+          default: ''
+        RecordingUrl:
+          type: string
+          title: Recordingurl
+          default: ''
+        RecordingDuration:
+          type: string
+          title: Recordingduration
+          default: '0'
+      type: object
+      title: Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post
+    Body_status_webhook_v2_dialer_webhooks_twilio_status_post:
+      properties:
+        CallSid:
+          type: string
+          title: Callsid
+          default: ''
+        CallStatus:
+          type: string
+          title: Callstatus
+          default: ''
+        CallDuration:
+          type: string
+          title: Callduration
+          default: '0'
+        Timestamp:
+          type: string
+          title: Timestamp
+          default: ''
+      type: object
+      title: Body_status_webhook_v2_dialer_webhooks_twilio_status_post
+    BulkOperationResult:
+      properties:
+        successCount:
+          type: integer
+          title: Successcount
+        errorCount:
+          type: integer
+          title: Errorcount
+        errors:
+          items:
+            type: string
+          type: array
+          title: Errors
+          default: []
+      additionalProperties: false
+      type: object
+      required:
+      - successCount
+      - errorCount
+      title: BulkOperationResult
+      description: 一括操作結果
+    CallListContactAddSchema:
+      properties:
+        contactIds:
+          items:
+            type: string
+          type: array
+          title: Contactids
+      additionalProperties: false
+      type: object
+      required:
+      - contactIds
+      title: CallListContactAddSchema
+    CallListCreateSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CallListCreateSchema
+    CallListResponseSchema:
+      properties:
+        callListId:
+          type: string
+          title: Calllistid
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        contactCount:
+          type: integer
+          title: Contactcount
+        source:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+      additionalProperties: false
+      type: object
+      required:
+      - callListId
+      - name
+      - contactCount
+      - createdAt
+      - updatedAt
+      title: CallListResponseSchema
+    CallListUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+      additionalProperties: false
+      type: object
+      title: CallListUpdateSchema
+    CallLogResponseSchema:
+      properties:
+        callLogId:
+          type: string
+          title: Calllogid
+        campaignId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Campaignid
+        contactId:
+          type: string
+          title: Contactid
+        agentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agentid
+        dispositionId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dispositionid
+        twilioCallSid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Twiliocallsid
+        phoneNumberDialed:
+          type: string
+          title: Phonenumberdialed
+        callerIdUsed:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Calleridused
+        callStatus:
+          type: string
+          title: Callstatus
+        initiatedAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Initiatedat
+        answeredAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Answeredat
+        endedAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Endedat
+        durationSeconds:
+          type: integer
+          title: Durationseconds
+          default: 0
+        ringDurationSeconds:
+          type: integer
+          title: Ringdurationseconds
+          default: 0
+        recordingUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Recordingurl
+        recordingDurationSeconds:
+          type: integer
+          title: Recordingdurationseconds
+          default: 0
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        isAbandoned:
+          type: boolean
+          title: Isabandoned
+          default: false
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+      additionalProperties: false
+      type: object
+      required:
+      - callLogId
+      - contactId
+      - phoneNumberDialed
+      - callStatus
+      - createdAt
+      title: CallLogResponseSchema
+    CallbackCreateSchema:
+      properties:
+        contactId:
+          type: string
+          title: Contactid
+        campaignId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Campaignid
+        assignedAgentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assignedagentid
+        scheduledAt:
+          type: string
+          format: date-time
+          title: Scheduledat
+        priority:
+          type: string
+          title: Priority
+          default: medium
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      additionalProperties: false
+      type: object
+      required:
+      - contactId
+      - scheduledAt
+      title: CallbackCreateSchema
+    CallbackResponseSchema:
+      properties:
+        callbackId:
+          type: string
+          title: Callbackid
+        contactId:
+          type: string
+          title: Contactid
+        campaignId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Campaignid
+        assignedAgentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assignedagentid
+        scheduledAt:
+          type: string
+          format: date-time
+          title: Scheduledat
+        priority:
+          type: string
+          title: Priority
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        isCompleted:
+          type: boolean
+          title: Iscompleted
+        completedAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Completedat
+        googleCalendarEventId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Googlecalendareventid
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+      additionalProperties: false
+      type: object
+      required:
+      - callbackId
+      - contactId
+      - scheduledAt
+      - priority
+      - isCompleted
+      - createdAt
+      title: CallbackResponseSchema
+    CallbackUpdateSchema:
+      properties:
+        assignedAgentId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Assignedagentid
+        scheduledAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Scheduledat
+        priority:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Priority
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+      additionalProperties: false
+      type: object
+      title: CallbackUpdateSchema
+    CampaignContactAddSchema:
+      properties:
+        contactIds:
+          items:
+            type: string
+          type: array
+          title: Contactids
+        priority:
+          type: integer
+          title: Priority
+          default: 0
+      additionalProperties: false
+      type: object
+      required:
+      - contactIds
+      title: CampaignContactAddSchema
+      description: キャンペーンに連絡先追加
+    CampaignCreateSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        startDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Startdate
+        endDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Enddate
+        dailyStartTime:
+          type: string
+          format: time
+          title: Dailystarttime
+          default: 09:00:00
+        dailyEndTime:
+          type: string
+          format: time
+          title: Dailyendtime
+          default: '18:00:00'
+        activeDays:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Activedays
+        predictiveRatio:
+          anyOf:
+          - type: number
+          - type: string
+          title: Predictiveratio
+          default: '1.20'
+        maxConcurrentCalls:
+          type: integer
+          title: Maxconcurrentcalls
+          default: 10
+        maxAbandonRate:
+          anyOf:
+          - type: number
+          - type: string
+          title: Maxabandonrate
+          default: '3.00'
+        maxAttemptsPerContact:
+          type: integer
+          title: Maxattemptspercontact
+          default: 3
+        retryIntervalMinutes:
+          type: integer
+          title: Retryintervalminutes
+          default: 30
+        ringTimeoutSeconds:
+          type: integer
+          title: Ringtimeoutseconds
+          default: 30
+        wrapUpSeconds:
+          type: integer
+          title: Wrapupseconds
+          default: 30
+        callListId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Calllistid
+        scriptId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Scriptid
+        callerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Callerid
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: CampaignCreateSchema
+      description: キャンペーン作成
+    CampaignResponseSchema:
+      properties:
+        campaignId:
+          type: string
+          title: Campaignid
+        name:
+          type: string
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        status:
+          type: string
+          title: Status
+        startDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Startdate
+        endDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Enddate
+        dailyStartTime:
+          type: string
+          format: time
+          title: Dailystarttime
+        dailyEndTime:
+          type: string
+          format: time
+          title: Dailyendtime
+        activeDays:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Activedays
+        predictiveRatio:
+          type: string
+          title: Predictiveratio
+        maxConcurrentCalls:
+          type: integer
+          title: Maxconcurrentcalls
+        maxAbandonRate:
+          type: string
+          title: Maxabandonrate
+        maxAttemptsPerContact:
+          type: integer
+          title: Maxattemptspercontact
+        retryIntervalMinutes:
+          type: integer
+          title: Retryintervalminutes
+        ringTimeoutSeconds:
+          type: integer
+          title: Ringtimeoutseconds
+        wrapUpSeconds:
+          type: integer
+          title: Wrapupseconds
+        callListId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Calllistid
+        scriptId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Scriptid
+        callerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Callerid
+        totalContacts:
+          type: integer
+          title: Totalcontacts
+          default: 0
+        completedContacts:
+          type: integer
+          title: Completedcontacts
+          default: 0
+        totalCalls:
+          type: integer
+          title: Totalcalls
+          default: 0
+        totalAnswered:
+          type: integer
+          title: Totalanswered
+          default: 0
+        totalAbandoned:
+          type: integer
+          title: Totalabandoned
+          default: 0
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+      additionalProperties: false
+      type: object
+      required:
+      - campaignId
+      - name
+      - status
+      - dailyStartTime
+      - dailyEndTime
+      - predictiveRatio
+      - maxConcurrentCalls
+      - maxAbandonRate
+      - maxAttemptsPerContact
+      - retryIntervalMinutes
+      - ringTimeoutSeconds
+      - wrapUpSeconds
+      - createdAt
+      - updatedAt
+      title: CampaignResponseSchema
+      description: キャンペーンレスポンス
+    CampaignStatsSchema:
+      properties:
+        campaignId:
+          type: string
+          title: Campaignid
+        totalContacts:
+          type: integer
+          title: Totalcontacts
+        completedContacts:
+          type: integer
+          title: Completedcontacts
+        totalCalls:
+          type: integer
+          title: Totalcalls
+        totalAnswered:
+          type: integer
+          title: Totalanswered
+        totalAbandoned:
+          type: integer
+          title: Totalabandoned
+        answerRate:
+          type: number
+          title: Answerrate
+        abandonRate:
+          type: number
+          title: Abandonrate
+        activeAgents:
+          type: integer
+          title: Activeagents
+        activeCalls:
+          type: integer
+          title: Activecalls
+        predictiveRatio:
+          type: string
+          title: Predictiveratio
+      additionalProperties: false
+      type: object
+      required:
+      - campaignId
+      - totalContacts
+      - completedContacts
+      - totalCalls
+      - totalAnswered
+      - totalAbandoned
+      - answerRate
+      - abandonRate
+      - activeAgents
+      - activeCalls
+      - predictiveRatio
+      title: CampaignStatsSchema
+      description: キャンペーン統計
+    CampaignUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        startDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Startdate
+        endDate:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Enddate
+        dailyStartTime:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Dailystarttime
+        dailyEndTime:
+          anyOf:
+          - type: string
+            format: time
+          - type: 'null'
+          title: Dailyendtime
+        activeDays:
+          anyOf:
+          - items:
+              type: integer
+            type: array
+          - type: 'null'
+          title: Activedays
+        predictiveRatio:
+          anyOf:
+          - type: number
+          - type: string
+          - type: 'null'
+          title: Predictiveratio
+        maxConcurrentCalls:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Maxconcurrentcalls
+        maxAbandonRate:
+          anyOf:
+          - type: number
+          - type: string
+          - type: 'null'
+          title: Maxabandonrate
+        maxAttemptsPerContact:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Maxattemptspercontact
+        retryIntervalMinutes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Retryintervalminutes
+        ringTimeoutSeconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Ringtimeoutseconds
+        wrapUpSeconds:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Wrapupseconds
+        callListId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Calllistid
+        scriptId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Scriptid
+        callerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Callerid
+      additionalProperties: false
+      type: object
+      title: CampaignUpdateSchema
+      description: キャンペーン更新
+    ContactCreateSchema:
+      properties:
+        lastName:
+          type: string
+          title: Lastname
+        firstName:
+          type: string
+          title: Firstname
+        lastNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lastnamekana
+        firstNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Firstnamekana
+        companyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Companyname
+        department:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Department
+        position:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Position
+        phonePrimary:
+          type: string
+          title: Phoneprimary
+        phoneSecondary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonesecondary
+        phoneMobile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonemobile
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        postalCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postalcode
+        prefecture:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefecture
+        city:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City
+        addressLine:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Addressline
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+      additionalProperties: false
+      type: object
+      required:
+      - lastName
+      - firstName
+      - phonePrimary
+      title: ContactCreateSchema
+      description: 連絡先作成
+    ContactResponseSchema:
+      properties:
+        contactId:
+          type: string
+          title: Contactid
+        lastName:
+          type: string
+          title: Lastname
+        firstName:
+          type: string
+          title: Firstname
+        lastNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lastnamekana
+        firstNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Firstnamekana
+        companyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Companyname
+        department:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Department
+        position:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Position
+        phonePrimary:
+          type: string
+          title: Phoneprimary
+        phoneSecondary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonesecondary
+        phoneMobile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonemobile
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        postalCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postalcode
+        prefecture:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefecture
+        city:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City
+        addressLine:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Addressline
+        status:
+          type: string
+          title: Status
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        totalCalls:
+          type: integer
+          title: Totalcalls
+          default: 0
+        lastCalledAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Lastcalledat
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+      additionalProperties: false
+      type: object
+      required:
+      - contactId
+      - lastName
+      - firstName
+      - phonePrimary
+      - status
+      - createdAt
+      - updatedAt
+      title: ContactResponseSchema
+      description: 連絡先レスポンス
+    ContactSearchSchema:
+      properties:
+        keyword:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Keyword
+        companyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Companyname
+        phone:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phone
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+      additionalProperties: false
+      type: object
+      title: ContactSearchSchema
+      description: 連絡先検索
+    ContactUpdateSchema:
+      properties:
+        lastName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lastname
+        firstName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Firstname
+        lastNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Lastnamekana
+        firstNameKana:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Firstnamekana
+        companyName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Companyname
+        department:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Department
+        position:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Position
+        phonePrimary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phoneprimary
+        phoneSecondary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonesecondary
+        phoneMobile:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Phonemobile
+        email:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Email
+        postalCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Postalcode
+        prefecture:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Prefecture
+        city:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: City
+        addressLine:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Addressline
+        notes:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Notes
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        status:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Status
+      additionalProperties: false
+      type: object
+      title: ContactUpdateSchema
+      description: 連絡先更新
+    DashboardOverviewSchema:
+      properties:
+        totalCallsToday:
+          type: integer
+          title: Totalcallstoday
+        totalAnsweredToday:
+          type: integer
+          title: Totalansweredtoday
+        answerRateToday:
+          type: number
+          title: Answerratetoday
+        avgCallDurationSeconds:
+          type: number
+          title: Avgcalldurationseconds
+        activeCampaigns:
+          type: integer
+          title: Activecampaigns
+        activeAgents:
+          type: integer
+          title: Activeagents
+        totalCallbacksToday:
+          type: integer
+          title: Totalcallbackstoday
+        totalContacts:
+          type: integer
+          title: Totalcontacts
+      additionalProperties: false
+      type: object
+      required:
+      - totalCallsToday
+      - totalAnsweredToday
+      - answerRateToday
+      - avgCallDurationSeconds
+      - activeCampaigns
+      - activeAgents
+      - totalCallbacksToday
+      - totalContacts
+      title: DashboardOverviewSchema
+      description: ダッシュボード概要
+    DispositionCreateSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        dispositionType:
+          type: string
+          title: Dispositiontype
+        requiresCallback:
+          type: boolean
+          title: Requirescallback
+          default: false
+        isFinal:
+          type: boolean
+          title: Isfinal
+          default: false
+        displayOrder:
+          type: integer
+          title: Displayorder
+          default: 0
+        colorCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Colorcode
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      - dispositionType
+      title: DispositionCreateSchema
+    DispositionResponseSchema:
+      properties:
+        dispositionId:
+          type: string
+          title: Dispositionid
+        name:
+          type: string
+          title: Name
+        dispositionType:
+          type: string
+          title: Dispositiontype
+        requiresCallback:
+          type: boolean
+          title: Requirescallback
+        isFinal:
+          type: boolean
+          title: Isfinal
+        displayOrder:
+          type: integer
+          title: Displayorder
+        colorCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Colorcode
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+      additionalProperties: false
+      type: object
+      required:
+      - dispositionId
+      - name
+      - dispositionType
+      - requiresCallback
+      - isFinal
+      - displayOrder
+      - createdAt
+      title: DispositionResponseSchema
+    DispositionUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        dispositionType:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Dispositiontype
+        requiresCallback:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Requirescallback
+        isFinal:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isfinal
+        displayOrder:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Displayorder
+        colorCode:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Colorcode
+      additionalProperties: false
+      type: object
+      title: DispositionUpdateSchema
+    DncBulkCreateSchema:
+      properties:
+        phoneNumbers:
+          items:
+            type: string
+          type: array
+          title: Phonenumbers
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+      additionalProperties: false
+      type: object
+      required:
+      - phoneNumbers
+      title: DncBulkCreateSchema
+    DncCheckResponseSchema:
+      properties:
+        phoneNumber:
+          type: string
+          title: Phonenumber
+        isDnc:
+          type: boolean
+          title: Isdnc
+      additionalProperties: false
+      type: object
+      required:
+      - phoneNumber
+      - isDnc
+      title: DncCheckResponseSchema
+    DncCreateSchema:
+      properties:
+        phoneNumber:
+          type: string
+          title: Phonenumber
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        expiresAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expiresat
+      additionalProperties: false
+      type: object
+      required:
+      - phoneNumber
+      title: DncCreateSchema
+    DncResponseSchema:
+      properties:
+        dncId:
+          type: string
+          title: Dncid
+        phoneNumber:
+          type: string
+          title: Phonenumber
+        reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reason
+        addedBy:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Addedby
+        expiresAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expiresat
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+      additionalProperties: false
+      type: object
+      required:
+      - dncId
+      - phoneNumber
+      - createdAt
+      title: DncResponseSchema
+    GoogleAuthUrlResponseSchema:
+      properties:
+        authUrl:
+          type: string
+          title: Authurl
+      additionalProperties: false
+      type: object
+      required:
+      - authUrl
+      title: GoogleAuthUrlResponseSchema
+    GoogleCallbackSchema:
+      properties:
+        code:
+          type: string
+          title: Code
+        state:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: State
+        integrationType:
+          type: string
+          title: Integrationtype
+      additionalProperties: false
+      type: object
+      required:
+      - code
+      - integrationType
+      title: GoogleCallbackSchema
+    GoogleIntegrationStatusSchema:
+      properties:
+        integrationId:
+          type: string
+          title: Integrationid
+        integrationType:
+          type: string
+          title: Integrationtype
+        status:
+          type: string
+          title: Status
+        lastSyncedAt:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Lastsyncedat
+      additionalProperties: false
+      type: object
+      required:
+      - integrationId
+      - integrationType
+      - status
+      title: GoogleIntegrationStatusSchema
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    HourlyStatSchema:
+      properties:
+        hour:
+          type: integer
+          title: Hour
+        totalCalls:
+          type: integer
+          title: Totalcalls
+        totalAnswered:
+          type: integer
+          title: Totalanswered
+        answerRate:
+          type: number
+          title: Answerrate
+      additionalProperties: false
+      type: object
+      required:
+      - hour
+      - totalCalls
+      - totalAnswered
+      - answerRate
+      title: HourlyStatSchema
+      description: 時間帯別統計
+    MessageResponse:
+      properties:
+        message:
+          type: string
+          title: Message
+      additionalProperties: false
+      type: object
+      required:
+      - message
+      title: MessageResponse
+      description: 汎用メッセージレスポンス
+    PaginatedResponse:
+      properties:
+        items:
+          items: {}
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        page:
+          type: integer
+          title: Page
+        pageSize:
+          type: integer
+          title: Pagesize
+        totalPages:
+          type: integer
+          title: Totalpages
+      type: object
+      required:
+      - items
+      - total
+      - page
+      - pageSize
+      - totalPages
+      title: PaginatedResponse
+      description: ページネーション付きレスポンス
+    ScriptCreateSchema:
+      properties:
+        name:
+          type: string
+          title: Name
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        isDefault:
+          type: boolean
+          title: Isdefault
+          default: false
+      additionalProperties: false
+      type: object
+      required:
+      - name
+      title: ScriptCreateSchema
+    ScriptResponseSchema:
+      properties:
+        scriptId:
+          type: string
+          title: Scriptid
+        name:
+          type: string
+          title: Name
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        version:
+          type: integer
+          title: Version
+        isDefault:
+          type: boolean
+          title: Isdefault
+        createdAt:
+          type: string
+          format: date-time
+          title: Createdat
+        updatedAt:
+          type: string
+          format: date-time
+          title: Updatedat
+      additionalProperties: false
+      type: object
+      required:
+      - scriptId
+      - name
+      - version
+      - isDefault
+      - createdAt
+      - updatedAt
+      title: ScriptResponseSchema
+    ScriptUpdateSchema:
+      properties:
+        name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+        content:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Content
+        isDefault:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Isdefault
+      additionalProperties: false
+      type: object
+      title: ScriptUpdateSchema
+    TwilioConfigResponseSchema:
+      properties:
+        configId:
+          type: string
+          title: Configid
+        accountSid:
+          type: string
+          title: Accountsid
+        twimlAppSid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Twimlappsid
+        phoneNumbers:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Phonenumbers
+        defaultCallerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Defaultcallerid
+        webhookUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Webhookurl
+        recordingEnabled:
+          type: boolean
+          title: Recordingenabled
+      additionalProperties: false
+      type: object
+      required:
+      - configId
+      - accountSid
+      - recordingEnabled
+      title: TwilioConfigResponseSchema
+    TwilioConfigSchema:
+      properties:
+        accountSid:
+          type: string
+          title: Accountsid
+        authToken:
+          type: string
+          title: Authtoken
+        twimlAppSid:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Twimlappsid
+        phoneNumbers:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Phonenumbers
+        defaultCallerId:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Defaultcallerid
+        webhookUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Webhookurl
+        statusCallbackUrl:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Statuscallbackurl
+        recordingEnabled:
+          type: boolean
+          title: Recordingenabled
+          default: true
+      additionalProperties: false
+      type: object
+      required:
+      - accountSid
+      - authToken
+      title: TwilioConfigSchema
+    TwilioTestResponseSchema:
+      properties:
+        success:
+          type: boolean
+          title: Success
+        message:
+          type: string
+          title: Message
+        accountName:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Accountname
+      additionalProperties: false
+      type: object
+      required:
+      - success
+      - message
+      title: TwilioTestResponseSchema
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+    HTTPBasic:
+      type: http
+      scheme: basic

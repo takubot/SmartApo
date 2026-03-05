@@ -48,3 +48,40 @@ def get_calendar_service(provider: CalendarProviderEnum = CalendarProviderEnum.G
     
     # デフォルトはGOOGLE
     return GoogleCalendarService()
+
+
+# ── ダイヤラー用 ──────────────────────────────────────────────
+
+
+def get_telephony_service():
+    """Twilio テレフォニーサービスを返す"""
+    from ...services.implementations.p_twilio_service import PTwilioService
+
+    return PTwilioService()
+
+
+def get_contact_sync_service():
+    """Google Contacts 同期サービスを返す"""
+    from ...services.implementations.p_google_contacts_service import (
+        PGoogleContactsService,
+    )
+
+    return PGoogleContactsService()
+
+
+def get_sheets_service():
+    """Google Sheets サービスを返す"""
+    from ...services.implementations.p_google_sheets_service import (
+        PGoogleSheetsService,
+    )
+
+    return PGoogleSheetsService()
+
+
+def get_predictive_dialer_service():
+    """予測ダイヤラーサービスを返す"""
+    from ...services.implementations.p_predictive_dialer_service import (
+        PPredictiveDialerService,
+    )
+
+    return PPredictiveDialerService()

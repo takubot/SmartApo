@@ -60,35 +60,39 @@ def _setup_middleware(app: FastAPI, settings: Settings) -> None:
 # ルーター登録（既存の install_routers を使用）
 # ─────────────────────────────────────────────────────────────
 def _register_routers(app: FastAPI) -> None:
-    routers_to_register = [
-        (bot_router, "/v2/bot", ["Bot"]),
-        (category_router, "/v2/category", ["Category"]),
-        (chat_log_router, "/v2/chat_log", ["Chat Log"]),
-        (chat_space_router, "/v2/chat_space", ["chat_space"]),
-        (file_router, "/v2/file", ["File"]),
-        (user_router, "/v2/user", ["User"]),
-        (group_router, "/v2/group", ["Group"]),
-        (mail_router, "/v2/mail", ["Mail"]),
-        (user_to_group_router, "/v2/user_to_group", ["User/To/Group"]),
-        (chunk_data_router, "/v2/chunk_data", ["Chunk Data"]),
-        (chunk_table_router, "/v2/chunk_table", ["Chunk Table"]),
-        (chat_entry_router, "/v2/chat_entry", ["Chat Entry"]),
-        (chat_router, "/v2/chat", ["Chat"]),
-        (external_router, "/v2/chat/external", ["External"]),
-        (line_router, "/v2/chat/line", ["LINE"]),
-        (ai_platform_router, "/v2/chat/ai_platform", ["AI Platform"]),
+    from .routers.dialer.dialer_agents_router import router as dialer_agents_router
+    from .routers.dialer.dialer_call_lists_router import router as dialer_call_lists_router
+    from .routers.dialer.dialer_call_logs_router import router as dialer_call_logs_router
+    from .routers.dialer.dialer_callbacks_router import router as dialer_callbacks_router
+    from .routers.dialer.dialer_calls_router import router as dialer_calls_router
+    from .routers.dialer.dialer_campaigns_router import router as dialer_campaigns_router
+    from .routers.dialer.dialer_contacts_router import router as dialer_contacts_router
+    from .routers.dialer.dialer_dashboard_router import router as dialer_dashboard_router
+    from .routers.dialer.dialer_dispositions_router import router as dialer_dispositions_router
+    from .routers.dialer.dialer_dnc_router import router as dialer_dnc_router
+    from .routers.dialer.dialer_google_router import router as dialer_google_router
+    from .routers.dialer.dialer_scripts_router import router as dialer_scripts_router
+    from .routers.dialer.dialer_settings_router import router as dialer_settings_router
+    from .routers.dialer.dialer_twilio_webhooks_router import (
+        router as dialer_twilio_webhooks_router,
+    )
 
-        (dashboard_router, "/v2/dashboard", ["Dashboard"]),
-        (reference_link_router, "/v2/reference_link", ["ReferenceLink"]),
-        (chat_history_router, "/v2/chat_history", ["Chat History"]),
-        (suggest_router, "/v2/suggest", ["Suggest"]),
-        (tenant_config_router, "/v2/tenant_config", ["Tenant Config"]),
-        (user_manage_router, "/v2/user_manage", ["UserManage"]),
-        (notification_router, "/v2/notification", ["Notification"]),
-        (custom_form_router, "/v2/custom_form", ["Custom Form"]),
-        (booking_router, "/v2/booking", ["Booking"]),
-        (booking_external_router, "/v2/booking/external", ["External Booking"]),
-        (mock_router, "/v2/mock", ["Mock"]),
+    routers_to_register = [
+        # ── Dialer ──
+        (dialer_contacts_router, "/v2/dialer/contacts", ["Dialer Contacts"]),
+        (dialer_campaigns_router, "/v2/dialer/campaigns", ["Dialer Campaigns"]),
+        (dialer_agents_router, "/v2/dialer/agents", ["Dialer Agents"]),
+        (dialer_calls_router, "/v2/dialer/calls", ["Dialer Calls"]),
+        (dialer_call_logs_router, "/v2/dialer/call-logs", ["Dialer Call Logs"]),
+        (dialer_call_lists_router, "/v2/dialer/call-lists", ["Dialer Call Lists"]),
+        (dialer_callbacks_router, "/v2/dialer/callbacks", ["Dialer Callbacks"]),
+        (dialer_dispositions_router, "/v2/dialer/dispositions", ["Dialer Dispositions"]),
+        (dialer_dnc_router, "/v2/dialer/dnc", ["Dialer DNC"]),
+        (dialer_scripts_router, "/v2/dialer/scripts", ["Dialer Scripts"]),
+        (dialer_dashboard_router, "/v2/dialer/dashboard", ["Dialer Dashboard"]),
+        (dialer_google_router, "/v2/dialer/google", ["Dialer Google"]),
+        (dialer_settings_router, "/v2/dialer/settings", ["Dialer Settings"]),
+        (dialer_twilio_webhooks_router, "/v2/dialer/webhooks/twilio", ["Dialer Webhooks"]),
     ]
 
     for router, prefix, tags in routers_to_register:

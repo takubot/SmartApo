@@ -66,6 +66,8 @@ dependencies = [
     "pydantic-ai>=0.0.55",
     "google-auth-oauthlib>=1.2.2",
     "pywebpush>=2.3.0",
+    # Telephony
+    "twilio>=9.0.0",
 ]
 
 

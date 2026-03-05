@@ -69,12 +69,13 @@ if __name__ == "__main__":
     settings: Settings = get_settings()
 
     host = "localhost" if settings.is_local else "0.0.0.0"
+    backend_port = 8081
     log_level = "DEBUG" if settings.is_local else "INFO"
-    print(f"Starting server at http://{host}:8080 with log level {log_level}")
+    print(f"Starting server at http://{host}:{backend_port} with log level {log_level}")
     print(f"Environment: {settings.env}")
     uvicorn.run(
         "python.domain.based-template-svc.src.main:app",
-        host="0.0.0.0",
-        port=8080,
+        host=host,
+        port=backend_port,
         reload=True,
     )

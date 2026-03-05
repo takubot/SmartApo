@@ -120,7 +120,14 @@ class GoogleSecretManagerSingleSource(PydanticBaseSettingsSource):
             return self._cache
 
         print(f"Secret '{self.secret_name}' をSecret Managerから読み込みます。")
-        client = secretmanager.SecretManagerServiceClient()
+
+        try:
+            client = secretmanager.SecretManagerServiceClient()
+        except Exception as e:
+            print(f"[WARN] Secret Managerクライアントの作成に失敗しました: {e}")
+            self._cache = {}
+            return self._cache
+
         name = f"projects/{self.project_id}/secrets/{self.secret_name}/versions/latest"
 
         print(f"アクセス先のSecret: {name}")
@@ -211,6 +218,21 @@ class Settings(BaseSettings):
     AZURE_OPENAI_API_KEY: str = Field(default="", alias="AZURE_OPENAI_API_KEY")
     AZURE_OPENAI_ENDPOINT: str = Field(default="", alias="AZURE_OPENAI_ENDPOINT")
     AZURE_OPENAI_DEPLOYMENT: str = Field(default="", alias="AZURE_OPENAI_DEPLOYMENT")
+
+    # Twilio
+    TWILIO_ACCOUNT_SID: str = Field(default="", alias="TWILIO_ACCOUNT_SID")
+    TWILIO_AUTH_TOKEN: str = Field(default="", alias="TWILIO_AUTH_TOKEN")
+    TWILIO_TWIML_APP_SID: str = Field(default="", alias="TWILIO_TWIML_APP_SID")
+    TWILIO_DEFAULT_CALLER_ID: str = Field(default="", alias="TWILIO_DEFAULT_CALLER_ID")
+    TWILIO_WEBHOOK_BASE_URL: str = Field(default="", alias="TWILIO_WEBHOOK_BASE_URL")
+
+    # Google Contacts API
+    GOOGLE_CONTACTS_CLIENT_ID: str = Field(default="", alias="GOOGLE_CONTACTS_CLIENT_ID")
+    GOOGLE_CONTACTS_CLIENT_SECRET: str = Field(default="", alias="GOOGLE_CONTACTS_CLIENT_SECRET")
+
+    # Google Sheets API
+    GOOGLE_SHEETS_CLIENT_ID: str = Field(default="", alias="GOOGLE_SHEETS_CLIENT_ID")
+    GOOGLE_SHEETS_CLIENT_SECRET: str = Field(default="", alias="GOOGLE_SHEETS_CLIENT_SECRET")
 
     # 現在の設定（Google Workspace - 問題の可能性あり）
     GMAIL_SENDER_EMAIL: str = Field(default="", alias="GMAIL_SENDER_EMAIL")
