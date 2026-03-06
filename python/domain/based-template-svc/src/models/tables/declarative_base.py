@@ -2,7 +2,6 @@ from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import Boolean, DateTime
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.sql import expression
 
 # from ...auth.dependency import require_current_account, require_current_membership, require_current_tenant
 
@@ -44,7 +43,6 @@ class DeleteMixin:
         Boolean,
         nullable=False,
         default=False,
-        server_default=expression.false(),
         comment="論理削除フラグ",
     )
     deleted_at: Mapped[datetime | None] = mapped_column(

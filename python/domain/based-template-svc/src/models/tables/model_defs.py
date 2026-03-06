@@ -15,14 +15,13 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
+    JSON,
     Numeric,
     String,
     Text,
     Time,
 )
-from sqlalchemy.dialects.mysql import JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.sql import expression
 
 from .declarative_base import Base, DeleteMixin, TimestampMixin
 from .enum import (
@@ -693,7 +692,6 @@ class DialerCallLogModel(Base, TimestampMixin):
         Boolean,
         nullable=False,
         default=False,
-        server_default=expression.false(),
         comment="放棄通話フラグ",
     )
 

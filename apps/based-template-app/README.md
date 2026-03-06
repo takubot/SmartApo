@@ -116,7 +116,7 @@ TWILIO_WEBHOOK_BASE_URL=https://your-backend-domain.com
 | `TWILIO_DEFAULT_CALLER_ID` | デフォルトの発信元番号（購入した番号） | `+81312345678` |
 | `TWILIO_WEBHOOK_BASE_URL` | バックエンドの公開URL | `https://api.example.com` |
 
-> **本番環境**: Google Secret Manager に設定値を格納してください。Secret名は `doppel-shared-core-{env}` です。
+> **本番環境**: Google Secret Manager に設定値を格納してください。Secret名は `smartapo-config-{env}` です。
 
 ---
 

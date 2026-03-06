@@ -1,57 +1,43 @@
 #!/usr/bin/env python3
-"""テーブル構造を確認するスクリプト"""
+"""BigQuery テーブル構造確認スクリプト"""
 
-import pymysql
+import sys
+from pathlib import Path
+
+project_root = Path(__file__).parent
+sys.path.insert(0, str(project_root))
+
+from google.cloud import bigquery
 
 
 def check_table_structure():
-    """user_chat_logテーブルの構造を確認"""
-    try:
-        # データベースに接続
-        connection = pymysql.connect(
-            host="localhost",
-            user="root",
-            password="rootpass",
-            database="based-template-vbf6m_prod_fix_db",
-            charset="utf8mb4",
-        )
+    """BigQuery上のテーブル構造を確認"""
+    project_id = "smartapo"
+    client = bigquery.Client(project=project_id)
 
-        with connection.cursor() as cursor:
-            # テーブル構造を確認
-            cursor.execute("DESCRIBE user_chat_log")
-            columns = cursor.fetchall()
+    # データセット一覧を取得
+    print("=== BigQuery データセット一覧 ===")
+    datasets = list(client.list_datasets())
+    if not datasets:
+        print("データセットがありません。")
+        print("セットアップを実行してください:")
+        print("  uv run python scripts/setup_bigquery.py")
+        return
 
-            print("=== user_chat_log テーブル構造 ===")
-            for column in columns:
-                print(
-                    f"Field: {column[0]}, Type: {column[1]}, Null: {column[2]}, Key: {column[3]}, Default: {column[4]}, Extra: {column[5]}"
-                )
+    for dataset in datasets:
+        dataset_id = dataset.dataset_id
+        print(f"\n--- データセット: {dataset_id} ---")
 
-            # file_infoとform_infoカラムが存在するかチェック
-            column_names = [col[0] for col in columns]
-            print("\n=== カラム存在チェック ===")
-            print(f"file_info exists: {'file_info' in column_names}")
-            print(f"form_info exists: {'form_info' in column_names}")
+        tables = list(client.list_tables(dataset_id))
+        if not tables:
+            print("  テーブルなし")
+            continue
 
-            # 存在する場合は削除
-            if "file_info" in column_names:
-                print("file_infoカラムを削除します...")
-                cursor.execute("ALTER TABLE user_chat_log DROP COLUMN file_info")
-                print("file_infoカラムを削除しました")
-
-            if "form_info" in column_names:
-                print("form_infoカラムを削除します...")
-                cursor.execute("ALTER TABLE user_chat_log DROP COLUMN form_info")
-                print("form_infoカラムを削除しました")
-
-            # 変更をコミット
-            connection.commit()
-
-    except Exception as e:
-        print(f"エラーが発生しました: {e}")
-    finally:
-        if "connection" in locals():
-            connection.close()
+        for table_ref in tables:
+            table = client.get_table(table_ref)
+            print(f"\n  テーブル: {table.table_id} ({table.num_rows} rows)")
+            for field in table.schema:
+                print(f"    {field.name}: {field.field_type} {'NULLABLE' if field.mode == 'NULLABLE' else 'REQUIRED'}")
 
 
 if __name__ == "__main__":

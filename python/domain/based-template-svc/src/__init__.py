@@ -1,2 +1,2 @@
-"""d_doppel_svc package"""
+"""based-template-svc package"""
 # 

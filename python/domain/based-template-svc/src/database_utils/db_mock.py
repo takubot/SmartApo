@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Mock data creation script for based-template-svc
+Mock data creation script for based-template-svc (BigQuery)
 
 実行方法:
 1. DOPPELディレクトリから実行:
@@ -8,14 +8,13 @@ Mock data creation script for based-template-svc
 
 2. 直接実行したい場合:
    cd python/domain/based-template-svc
-   uv run python src/db_mock.py --group-id YOUR_GROUP_ID
+   uv run python src/database_utils/db_mock.py --group-id YOUR_GROUP_ID
 """
 
 import sys
 import argparse
 from pathlib import Path
 
-# プロジェクトルートをPythonパスに追加
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 

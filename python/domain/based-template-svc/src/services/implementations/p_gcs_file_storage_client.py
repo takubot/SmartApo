@@ -68,7 +68,7 @@ class PGCSFileStoragClient(IFileStorageClient):
     ファイルに関する様々な操作を提供する。
     """
 
-    def __init__(self, bucket_name: str | None = f"doppel-{env}-bucket"):
+    def __init__(self, bucket_name: str | None = f"smartapo-{env}-bucket"):
         # 本番環境ではデフォルトの認証を使用（IAMロール）
         self.client = storage.Client()
 

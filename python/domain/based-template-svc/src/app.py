@@ -157,13 +157,10 @@ def create_app() -> FastAPI:
     settings: Settings = get_settings()
 
     app = FastAPI(
-        title="doppel",
+        title="smartapo",
         version="0.1.0",
         servers=[
             {"url": "http://localhost:8080", "description": "Local"},
-            {"url": "https://based-template-svc-1090554569112.asia-northeast1.run.app", "description": "dev"},
-            {"url": "https://based-template-svc-638194985906.asia-northeast1.run.app", "description": "stg"},
-            {"url": "https://based-template-svc-646682719623.asia-northeast1.run.app", "description": "prod"},
         ],
         docs_url=None,  # 元コード踏襲（必要に応じて settings で制御）
         redoc_url=None,

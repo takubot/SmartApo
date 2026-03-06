@@ -54,3 +54,7 @@ auth.json
 
 # ngrok configuration (may contain authtoken)
 ngrok.yml
+
+
+# secret
+sample_secret.json
