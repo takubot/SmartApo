@@ -110,7 +110,9 @@ export function useDashboardOverview() {
 }
 
 export function useDashboardHourly() {
-  return useDialerDetail<{ stats: HourlyStatSchemaType[] }>("/dashboard/hourly");
+  return useDialerDetail<{ stats: HourlyStatSchemaType[] }>(
+    "/dashboard/hourly",
+  );
 }
 
 export function useDashboardAgentPerformance() {
@@ -159,10 +161,10 @@ export function useContact(id: string | null) {
 // ────────────────────────────────────────────
 // Agents
 // ────────────────────────────────────────────
-export function useAgents(page = 1, size = 50) {
-  return useDialerList<AgentResponseSchemaType>(
-    `/agents?page=${page}&size=${size}`,
-  );
+export function useAgents() {
+  return useSWR<AgentResponseSchemaType[]>("/agents", swrFetcher, {
+    revalidateOnFocus: false,
+  });
 }
 
 export function useAgentStatusBoard() {
@@ -204,13 +206,48 @@ export function useCallList(id: string | null) {
   );
 }
 
+export function useCallListContacts(
+  callListId: string | null,
+  page = 1,
+  size = 20,
+) {
+  return useDialerList<{
+    contactId: string;
+    lastName: string;
+    firstName: string;
+    phonePrimary: string;
+    phoneSecondary?: string | null;
+    phoneMobile?: string | null;
+    email?: string | null;
+    companyName?: string | null;
+    teleStatus: string;
+    teleNote?: string | null;
+    totalCalls: number;
+    lastCalledAt?: string | null;
+  }>(
+    callListId
+      ? `/call-lists/${callListId}/contacts?page=${page}&page_size=${size}`
+      : null,
+  );
+}
+
+export function useSheetsConnectionStatus() {
+  const { data, isLoading } = useGoogleIntegrations();
+  const googleIntegration = data?.integrations?.find(
+    (i) => i.integrationType === "google",
+  );
+  return {
+    isConnected: googleIntegration?.status === "connected",
+    isLoading,
+    integration: googleIntegration,
+  };
+}
+
 // ────────────────────────────────────────────
 // DNC
 // ────────────────────────────────────────────
 export function useDncList(page = 1, size = 20) {
-  return useDialerList<DncResponseSchemaType>(
-    `/dnc?page=${page}&size=${size}`,
-  );
+  return useDialerList<DncResponseSchemaType>(`/dnc?page=${page}&size=${size}`);
 }
 
 // ────────────────────────────────────────────

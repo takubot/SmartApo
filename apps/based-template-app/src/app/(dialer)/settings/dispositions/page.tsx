@@ -153,7 +153,9 @@ export default function DispositionsSettingsPage() {
                       <div>
                         <p className="text-sm font-medium">{d.name}</p>
                         <p className="text-xs text-gray-400">
-                          {DISPOSITION_TYPES.find((t) => t.value === d.dispositionType)?.label ?? d.dispositionType}
+                          {DISPOSITION_TYPES.find(
+                            (t) => t.value === d.dispositionType,
+                          )?.label ?? d.dispositionType}
                           {d.requiresCallback && " | 折返し必須"}
                           {d.isFinal && " | 最終結果"}
                         </p>
@@ -222,9 +224,7 @@ export default function DispositionsSettingsPage() {
                 </Switch>
                 <Switch
                   isSelected={form.isFinal}
-                  onValueChange={(v) =>
-                    setForm((p) => ({ ...p, isFinal: v }))
-                  }
+                  onValueChange={(v) => setForm((p) => ({ ...p, isFinal: v }))}
                 >
                   最終結果
                 </Switch>
@@ -249,11 +249,7 @@ export default function DispositionsSettingsPage() {
                 <Button variant="flat" onPress={onClose}>
                   キャンセル
                 </Button>
-                <Button
-                  color="primary"
-                  isLoading={saving}
-                  onPress={handleSave}
-                >
+                <Button color="primary" isLoading={saving} onPress={handleSave}>
                   保存
                 </Button>
               </ModalFooter>

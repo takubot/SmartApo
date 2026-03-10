@@ -107,7 +107,9 @@ export default function SetupPage() {
             <div className="flex items-center gap-2">
               <Phone size={16} />
               <span>Twilio設定</span>
-              {status.twilioAccount && status.twilioPhoneNumber && status.twilioWebhook ? (
+              {status.twilioAccount &&
+              status.twilioPhoneNumber &&
+              status.twilioWebhook ? (
                 <span className="w-2 h-2 rounded-full bg-green-500" />
               ) : (
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
@@ -136,7 +138,10 @@ export default function SetupPage() {
             </div>
           }
         >
-          <AgentSetupSection done={status.agentRegistered} onDone={handleAgentDone} />
+          <AgentSetupSection
+            done={status.agentRegistered}
+            onDone={handleAgentDone}
+          />
         </Tab>
 
         {/* ==================== Contacts Tab ==================== */}
@@ -154,7 +159,10 @@ export default function SetupPage() {
             </div>
           }
         >
-          <ContactSetupSection done={status.contactImported} onDone={handleContactDone} />
+          <ContactSetupSection
+            done={status.contactImported}
+            onDone={handleContactDone}
+          />
         </Tab>
 
         {/* ==================== Campaign Tab ==================== */}
@@ -172,7 +180,10 @@ export default function SetupPage() {
             </div>
           }
         >
-          <CampaignSetupSection done={status.campaignCreated} onDone={handleCampaignDone} />
+          <CampaignSetupSection
+            done={status.campaignCreated}
+            onDone={handleCampaignDone}
+          />
         </Tab>
       </Tabs>
 
@@ -182,7 +193,13 @@ export default function SetupPage() {
           variant="flat"
           startContent={<ArrowLeft size={16} />}
           onPress={() => {
-            const tabs: TabKey[] = ["overview", "twilio", "agents", "contacts", "campaign"];
+            const tabs: TabKey[] = [
+              "overview",
+              "twilio",
+              "agents",
+              "contacts",
+              "campaign",
+            ];
             const currentIdx = tabs.indexOf(activeTab);
             if (currentIdx > 0) setActiveTab(tabs[currentIdx - 1]);
           }}
@@ -194,9 +211,16 @@ export default function SetupPage() {
           color="primary"
           endContent={<ArrowRight size={16} />}
           onPress={() => {
-            const tabs: TabKey[] = ["overview", "twilio", "agents", "contacts", "campaign"];
+            const tabs: TabKey[] = [
+              "overview",
+              "twilio",
+              "agents",
+              "contacts",
+              "campaign",
+            ];
             const currentIdx = tabs.indexOf(activeTab);
-            if (currentIdx < tabs.length - 1) setActiveTab(tabs[currentIdx + 1]);
+            if (currentIdx < tabs.length - 1)
+              setActiveTab(tabs[currentIdx + 1]);
             else router.push("/dashboard");
           }}
         >
@@ -210,22 +234,33 @@ export default function SetupPage() {
 // ────────────────────────────────────────────
 // Agent Setup Section
 // ────────────────────────────────────────────
-function AgentSetupSection({ done, onDone }: { done: boolean; onDone: () => void }) {
+function AgentSetupSection({
+  done,
+  onDone,
+}: {
+  done: boolean;
+  onDone: () => void;
+}) {
   const router = useRouter();
 
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 rounded-xl p-6 space-y-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}>
-            <Headphones size={22} className={done ? "text-green-600" : "text-blue-600"} />
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}
+          >
+            <Headphones
+              size={22}
+              className={done ? "text-green-600" : "text-blue-600"}
+            />
           </div>
           <div>
             <h3 className="text-base font-bold text-gray-800">
-              オペレーター（エージェント）の登録
+              エージェントの登録
             </h3>
             <p className="text-sm text-gray-500">
-              架電を行うオペレーターを登録してください
+              架電を行うエージェントを登録してください
             </p>
           </div>
         </div>
@@ -234,16 +269,29 @@ function AgentSetupSection({ done, onDone }: { done: boolean; onDone: () => void
           <p className="text-sm text-gray-700 font-medium">必要な情報:</p>
           <ul className="text-sm text-gray-600 space-y-2">
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-              <span><strong>表示名</strong> - オペレーターの名前（ステータスボードに表示）</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                1
+              </span>
+              <span>
+                <strong>表示名</strong> -
+                エージェントの名前（ステータスボードに表示）
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-              <span><strong>内線番号</strong> - 内部での識別用番号（任意）</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                2
+              </span>
+              <span>
+                <strong>内線番号</strong> - 内部での識別用番号（任意）
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-              <span><strong>スキル</strong> - 対応可能な業務の種類（任意）</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                3
+              </span>
+              <span>
+                <strong>スキル</strong> - 対応可能な業務の種類（任意）
+              </span>
             </li>
           </ul>
         </div>
@@ -270,15 +318,26 @@ function AgentSetupSection({ done, onDone }: { done: boolean; onDone: () => void
 // ────────────────────────────────────────────
 // Contact Setup Section
 // ────────────────────────────────────────────
-function ContactSetupSection({ done, onDone }: { done: boolean; onDone: () => void }) {
+function ContactSetupSection({
+  done,
+  onDone,
+}: {
+  done: boolean;
+  onDone: () => void;
+}) {
   const router = useRouter();
 
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 rounded-xl p-6 space-y-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}>
-            <Users size={22} className={done ? "text-green-600" : "text-blue-600"} />
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}
+          >
+            <Users
+              size={22}
+              className={done ? "text-green-600" : "text-blue-600"}
+            />
           </div>
           <div>
             <h3 className="text-base font-bold text-gray-800">
@@ -291,7 +350,9 @@ function ContactSetupSection({ done, onDone }: { done: boolean; onDone: () => vo
         </div>
 
         <div className="bg-white rounded-lg p-4 space-y-3">
-          <p className="text-sm text-gray-700 font-medium">3つの方法で追加できます:</p>
+          <p className="text-sm text-gray-700 font-medium">
+            3つの方法で追加できます:
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <button
               className="text-left p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all"
@@ -305,23 +366,29 @@ function ContactSetupSection({ done, onDone }: { done: boolean; onDone: () => vo
               onClick={() => router.push("/contacts/import")}
             >
               <p className="text-sm font-medium text-gray-800">CSVインポート</p>
-              <p className="text-xs text-gray-500 mt-1">CSVファイルから一括取り込み</p>
+              <p className="text-xs text-gray-500 mt-1">
+                CSVファイルから一括取り込み
+              </p>
             </button>
             <button
               className="text-left p-3 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 transition-all"
               onClick={() => router.push("/settings/google")}
             >
               <p className="text-sm font-medium text-gray-800">Google連携</p>
-              <p className="text-xs text-gray-500 mt-1">Google ContactsやSheetsから同期</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Google ContactsやSheetsから同期
+              </p>
             </button>
           </div>
         </div>
 
         <div className="bg-white rounded-lg p-4 space-y-2">
-          <p className="text-sm text-gray-700 font-medium">CSVファイルのフォーマット例:</p>
+          <p className="text-sm text-gray-700 font-medium">
+            CSVファイルのフォーマット例:
+          </p>
           <div className="bg-gray-900 rounded-lg p-3 overflow-x-auto">
             <pre className="text-xs text-green-400 font-mono whitespace-pre">
-{`last_name,first_name,company,phone_number1,email
+              {`last_name,first_name,company,phone_number1,email
 田中,太郎,株式会社ABC,090-1234-5678,tanaka@example.com
 佐藤,花子,XYZ商事,03-1234-5678,sato@example.com`}
             </pre>
@@ -350,15 +417,26 @@ function ContactSetupSection({ done, onDone }: { done: boolean; onDone: () => vo
 // ────────────────────────────────────────────
 // Campaign Setup Section
 // ────────────────────────────────────────────
-function CampaignSetupSection({ done, onDone }: { done: boolean; onDone: () => void }) {
+function CampaignSetupSection({
+  done,
+  onDone,
+}: {
+  done: boolean;
+  onDone: () => void;
+}) {
   const router = useRouter();
 
   return (
     <div className="space-y-4">
       <div className="bg-blue-50 rounded-xl p-6 space-y-4">
         <div className="flex items-center gap-3">
-          <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}>
-            <Megaphone size={22} className={done ? "text-green-600" : "text-blue-600"} />
+          <div
+            className={`w-10 h-10 rounded-lg flex items-center justify-center ${done ? "bg-green-100" : "bg-blue-100"}`}
+          >
+            <Megaphone
+              size={22}
+              className={done ? "text-green-600" : "text-blue-600"}
+            />
           </div>
           <div>
             <h3 className="text-base font-bold text-gray-800">
@@ -371,27 +449,50 @@ function CampaignSetupSection({ done, onDone }: { done: boolean; onDone: () => v
         </div>
 
         <div className="bg-white rounded-lg p-4 space-y-3">
-          <p className="text-sm text-gray-700 font-medium">キャンペーン設定項目:</p>
+          <p className="text-sm text-gray-700 font-medium">
+            キャンペーン設定項目:
+          </p>
           <ul className="text-sm text-gray-600 space-y-2">
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
-              <span><strong>キャンペーン名</strong> - 識別用の名称</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                1
+              </span>
+              <span>
+                <strong>キャンペーン名</strong> - 識別用の名称
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
-              <span><strong>架電モード</strong> - プレディクティブ / プログレッシブ / プレビュー</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                2
+              </span>
+              <span>
+                <strong>架電モード</strong> - プレディクティブ / プログレッシブ
+                / プレビュー
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
-              <span><strong>営業時間</strong> - 架電を行う時間帯と曜日</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                3
+              </span>
+              <span>
+                <strong>営業時間</strong> - 架電を行う時間帯と曜日
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">4</span>
-              <span><strong>コールリスト</strong> - 架電先コンタクトの選択</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                4
+              </span>
+              <span>
+                <strong>コールリスト</strong> - 架電先コンタクトの選択
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">5</span>
-              <span><strong>エージェント割当</strong> - 参加するオペレーターの選択</span>
+              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
+                5
+              </span>
+              <span>
+                <strong>エージェント割当</strong> - 参加するエージェントの選択
+              </span>
             </li>
           </ul>
         </div>

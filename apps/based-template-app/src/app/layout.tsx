@@ -6,7 +6,8 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: process.env.NEXT_PUBLIC_META_TITLE || "Dialer",
-  description: process.env.NEXT_PUBLIC_META_DESCRIPTION || "Predictive Dialer SaaS",
+  description:
+    process.env.NEXT_PUBLIC_META_DESCRIPTION || "Predictive Dialer SaaS",
 };
 
 export default function RootLayout({

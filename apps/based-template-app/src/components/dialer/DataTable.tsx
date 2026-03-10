@@ -77,23 +77,24 @@ export default function DataTable<T extends { id?: string }>({
       >
         <TableHeader>
           {columns.map((col) => (
-            <TableColumn
-              key={col.key}
-              align={col.align}
-              width={col.width}
-            >
+            <TableColumn key={col.key} align={col.align} width={col.width}>
               {col.label}
             </TableColumn>
           ))}
         </TableHeader>
         <TableBody>
           {data.map((item, idx) => (
-            <TableRow key={item.id ?? idx} className={onRowClick ? "cursor-pointer" : ""}>
+            <TableRow
+              key={item.id ?? idx}
+              className={onRowClick ? "cursor-pointer" : ""}
+            >
               {columns.map((col) => (
                 <TableCell key={col.key}>
                   {col.render
                     ? col.render(item)
-                    : (item as Record<string, unknown>)[col.key] as React.ReactNode}
+                    : ((item as Record<string, unknown>)[
+                        col.key
+                      ] as React.ReactNode)}
                 </TableCell>
               ))}
             </TableRow>

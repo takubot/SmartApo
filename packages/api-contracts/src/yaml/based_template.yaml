@@ -1,16 +1,10 @@
 openapi: 3.1.0
 info:
-  title: doppel
+  title: smartapo
   version: 0.1.0
 servers:
 - url: http://localhost:8080
   description: Local
-- url: https://based-template-svc-1090554569112.asia-northeast1.run.app
-  description: dev
-- url: https://based-template-svc-638194985906.asia-northeast1.run.app
-  description: stg
-- url: https://based-template-svc-646682719623.asia-northeast1.run.app
-  description: prod
 paths:
   /v2/dialer/contacts:
     get:
@@ -18,7 +12,7 @@ paths:
       - Dialer Contacts
       summary: List Contacts
       description: 連絡先一覧取得
-      operationId: list_contacts_v2_dialer_contacts__get
+      operationId: list_contacts_v2_dialer_contacts_get
       security:
       - BearerAuth: []
       parameters:
@@ -79,7 +73,7 @@ paths:
       - Dialer Contacts
       summary: Create Contact
       description: 連絡先作成
-      operationId: create_contact_v2_dialer_contacts__post
+      operationId: create_contact_v2_dialer_contacts_post
       security:
       - BearerAuth: []
       parameters:
@@ -306,7 +300,7 @@ paths:
       - Dialer Campaigns
       summary: List Campaigns
       description: キャンペーン一覧
-      operationId: list_campaigns_v2_dialer_campaigns__get
+      operationId: list_campaigns_v2_dialer_campaigns_get
       security:
       - BearerAuth: []
       parameters:
@@ -359,7 +353,7 @@ paths:
       - Dialer Campaigns
       summary: Create Campaign
       description: キャンペーン作成
-      operationId: create_campaign_v2_dialer_campaigns__post
+      operationId: create_campaign_v2_dialer_campaigns_post
       security:
       - BearerAuth: []
       parameters:
@@ -767,7 +761,7 @@ paths:
       tags:
       - Dialer Campaigns
       summary: Assign Agents
-      description: オペレーターをキャンペーンに割当
+      description: エージェントをキャンペーンに割当
       operationId: assign_agents_v2_dialer_campaigns__campaign_id__agents_post
       security:
       - BearerAuth: []
@@ -811,7 +805,7 @@ paths:
       tags:
       - Dialer Campaigns
       summary: Unassign Agent
-      description: オペレーター割当解除
+      description: エージェント割当解除
       operationId: unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete
       security:
       - BearerAuth: []
@@ -848,8 +842,8 @@ paths:
       tags:
       - Dialer Agents
       summary: List Agents
-      description: オペレーター一覧
-      operationId: list_agents_v2_dialer_agents__get
+      description: エージェント一覧
+      operationId: list_agents_v2_dialer_agents_get
       security:
       - BearerAuth: []
       parameters:
@@ -868,7 +862,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/AgentResponseSchema'
-                title: Response List Agents V2 Dialer Agents  Get
+                title: Response List Agents V2 Dialer Agents Get
         '422':
           description: Validation Error
           content:
@@ -879,8 +873,8 @@ paths:
       tags:
       - Dialer Agents
       summary: Create Agent
-      description: オペレーター登録
-      operationId: create_agent_v2_dialer_agents__post
+      description: エージェント登録
+      operationId: create_agent_v2_dialer_agents_post
       security:
       - BearerAuth: []
       parameters:
@@ -946,7 +940,7 @@ paths:
       tags:
       - Dialer Agents
       summary: Available Agents
-      description: 利用可能なオペレーター一覧
+      description: 利用可能なエージェント一覧
       operationId: available_agents_v2_dialer_agents_available_get
       security:
       - BearerAuth: []
@@ -978,7 +972,7 @@ paths:
       tags:
       - Dialer Agents
       summary: Get Agent
-      description: オペレーター詳細
+      description: エージェント詳細
       operationId: get_agent_v2_dialer_agents__agent_id__get
       security:
       - BearerAuth: []
@@ -1012,7 +1006,7 @@ paths:
       tags:
       - Dialer Agents
       summary: Update Agent
-      description: オペレーター更新
+      description: エージェント更新
       operationId: update_agent_v2_dialer_agents__agent_id__put
       security:
       - BearerAuth: []
@@ -1377,7 +1371,7 @@ paths:
       - Dialer Call Logs
       summary: List Call Logs
       description: 通話ログ一覧
-      operationId: list_call_logs_v2_dialer_call_logs__get
+      operationId: list_call_logs_v2_dialer_call_logs_get
       security:
       - BearerAuth: []
       parameters:
@@ -1515,7 +1509,7 @@ paths:
       tags:
       - Dialer Call Lists
       summary: List Call Lists
-      operationId: list_call_lists_v2_dialer_call_lists__get
+      operationId: list_call_lists_v2_dialer_call_lists_get
       security:
       - BearerAuth: []
       parameters:
@@ -1534,7 +1528,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CallListResponseSchema'
-                title: Response List Call Lists V2 Dialer Call Lists  Get
+                title: Response List Call Lists V2 Dialer Call Lists Get
         '422':
           description: Validation Error
           content:
@@ -1545,7 +1539,7 @@ paths:
       tags:
       - Dialer Call Lists
       summary: Create Call List
-      operationId: create_call_list_v2_dialer_call_lists__post
+      operationId: create_call_list_v2_dialer_call_lists_post
       security:
       - BearerAuth: []
       parameters:
@@ -1757,7 +1751,7 @@ paths:
       tags:
       - Dialer Callbacks
       summary: List Callbacks
-      operationId: list_callbacks_v2_dialer_callbacks__get
+      operationId: list_callbacks_v2_dialer_callbacks_get
       security:
       - BearerAuth: []
       parameters:
@@ -1776,7 +1770,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/CallbackResponseSchema'
-                title: Response List Callbacks V2 Dialer Callbacks  Get
+                title: Response List Callbacks V2 Dialer Callbacks Get
         '422':
           description: Validation Error
           content:
@@ -1787,7 +1781,7 @@ paths:
       tags:
       - Dialer Callbacks
       summary: Create Callback
-      operationId: create_callback_v2_dialer_callbacks__post
+      operationId: create_callback_v2_dialer_callbacks_post
       security:
       - BearerAuth: []
       parameters:
@@ -1955,7 +1949,7 @@ paths:
       tags:
       - Dialer Dispositions
       summary: List Dispositions
-      operationId: list_dispositions_v2_dialer_dispositions__get
+      operationId: list_dispositions_v2_dialer_dispositions_get
       security:
       - BearerAuth: []
       parameters:
@@ -1974,7 +1968,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DispositionResponseSchema'
-                title: Response List Dispositions V2 Dialer Dispositions  Get
+                title: Response List Dispositions V2 Dialer Dispositions Get
         '422':
           description: Validation Error
           content:
@@ -1985,7 +1979,7 @@ paths:
       tags:
       - Dialer Dispositions
       summary: Create Disposition
-      operationId: create_disposition_v2_dialer_dispositions__post
+      operationId: create_disposition_v2_dialer_dispositions_post
       security:
       - BearerAuth: []
       parameters:
@@ -2089,7 +2083,7 @@ paths:
       - Dialer DNC
       summary: List Dnc
       description: DNCリスト一覧
-      operationId: list_dnc_v2_dialer_dnc__get
+      operationId: list_dnc_v2_dialer_dnc_get
       security:
       - BearerAuth: []
       parameters:
@@ -2108,7 +2102,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/DncResponseSchema'
-                title: Response List Dnc V2 Dialer Dnc  Get
+                title: Response List Dnc V2 Dialer Dnc Get
         '422':
           description: Validation Error
           content:
@@ -2120,7 +2114,7 @@ paths:
       - Dialer DNC
       summary: Add Dnc
       description: DNC追加
-      operationId: add_dnc_v2_dialer_dnc__post
+      operationId: add_dnc_v2_dialer_dnc_post
       security:
       - BearerAuth: []
       parameters:
@@ -2255,7 +2249,7 @@ paths:
       tags:
       - Dialer Scripts
       summary: List Scripts
-      operationId: list_scripts_v2_dialer_scripts__get
+      operationId: list_scripts_v2_dialer_scripts_get
       security:
       - BearerAuth: []
       parameters:
@@ -2274,7 +2268,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ScriptResponseSchema'
-                title: Response List Scripts V2 Dialer Scripts  Get
+                title: Response List Scripts V2 Dialer Scripts Get
         '422':
           description: Validation Error
           content:
@@ -2285,7 +2279,7 @@ paths:
       tags:
       - Dialer Scripts
       summary: Create Script
-      operationId: create_script_v2_dialer_scripts__post
+      operationId: create_script_v2_dialer_scripts_post
       security:
       - BearerAuth: []
       parameters:
@@ -2450,7 +2444,7 @@ paths:
       tags:
       - Dialer Dashboard
       summary: Agents Performance
-      description: オペレーター実績
+      description: エージェント実績
       operationId: agents_performance_v2_dialer_dashboard_agents_performance_get
       security:
       - BearerAuth: []
@@ -2975,7 +2969,7 @@ components:
       - avgCallDurationSeconds
       - totalTalkTimeSeconds
       title: AgentPerformanceSchema
-      description: オペレーター実績
+      description: エージェント実績
     AgentResponseSchema:
       properties:
         agentId:
@@ -4619,11 +4613,6 @@ components:
           - type: string
           - type: 'null'
           title: Defaultcallerid
-        webhookUrl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Webhookurl
         recordingEnabled:
           type: boolean
           title: Recordingenabled
@@ -4659,16 +4648,6 @@ components:
           - type: string
           - type: 'null'
           title: Defaultcallerid
-        webhookUrl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Webhookurl
-        statusCallbackUrl:
-          anyOf:
-          - type: string
-          - type: 'null'
-          title: Statuscallbackurl
         recordingEnabled:
           type: boolean
           title: Recordingenabled

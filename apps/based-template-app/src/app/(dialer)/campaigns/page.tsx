@@ -3,7 +3,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PageHeader, DataTable, StatusBadge, type Column } from "@/components/dialer";
+import {
+  PageHeader,
+  DataTable,
+  StatusBadge,
+  type Column,
+} from "@/components/dialer";
 import { useCampaigns } from "@/hooks/dialer/useDialerSwr";
 import type { CampaignResponseSchemaType } from "@repo/api-contracts/based_template/zschema";
 
@@ -29,15 +34,15 @@ const columns: Column<CampaignRow>[] = [
     key: "answerRate",
     label: "応答率",
     render: (item) => {
-      const rate = item.totalCalls > 0 ? item.totalAnswered / item.totalCalls : 0;
+      const rate =
+        item.totalCalls > 0 ? item.totalAnswered / item.totalCalls : 0;
       return `${(rate * 100).toFixed(1)}%`;
     },
   },
   {
     key: "createdAt",
     label: "作成日",
-    render: (item) =>
-      new Date(item.createdAt).toLocaleDateString("ja-JP"),
+    render: (item) => new Date(item.createdAt).toLocaleDateString("ja-JP"),
   },
 ];
 

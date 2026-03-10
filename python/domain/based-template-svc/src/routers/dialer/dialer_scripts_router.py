@@ -17,7 +17,7 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=list[ScriptResponseSchema])
+@router.get("", response_model=list[ScriptResponseSchema])
 def list_scripts(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -32,7 +32,7 @@ def list_scripts(
     return [ScriptResponseSchema.model_validate(r) for r in rows]
 
 
-@router.post("/", response_model=ScriptResponseSchema, status_code=201)
+@router.post("", response_model=ScriptResponseSchema, status_code=201)
 def create_script(
     body: ScriptCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),

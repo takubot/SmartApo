@@ -21,7 +21,7 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=list[DispositionResponseSchema])
+@router.get("", response_model=list[DispositionResponseSchema])
 def list_dispositions(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -36,7 +36,7 @@ def list_dispositions(
     return [DispositionResponseSchema.model_validate(r) for r in rows]
 
 
-@router.post("/", response_model=DispositionResponseSchema, status_code=201)
+@router.post("", response_model=DispositionResponseSchema, status_code=201)
 def create_disposition(
     body: DispositionCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),

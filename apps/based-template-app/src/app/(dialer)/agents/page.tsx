@@ -1,11 +1,15 @@
 // app/(dialer)/agents/page.tsx
 "use client";
 
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@heroui/react";
 import { Monitor } from "lucide-react";
-import { PageHeader, DataTable, StatusBadge, type Column } from "@/components/dialer";
+import {
+  PageHeader,
+  DataTable,
+  StatusBadge,
+  type Column,
+} from "@/components/dialer";
 import { useAgents } from "@/hooks/dialer/useDialerSwr";
 import type { AgentResponseSchemaType } from "@repo/api-contracts/based_template/zschema";
 
@@ -24,10 +28,9 @@ const columns: Column<AgentRow>[] = [
 
 export default function AgentsPage() {
   const router = useRouter();
-  const [page, setPage] = useState(1);
-  const { data, isLoading } = useAgents(page);
+  const { data, isLoading } = useAgents();
 
-  const rows: AgentRow[] = (data?.items ?? []).map((item) => ({
+  const rows: AgentRow[] = (data ?? []).map((item) => ({
     ...item,
     id: item.agentId,
   }));
@@ -36,8 +39,8 @@ export default function AgentsPage() {
     <div>
       <PageHeader
         title="エージェント"
-        description="架電オペレーターの管理"
-        createHref="/agents"
+        description="エージェントの管理"
+        createHref="/agents/new"
         createLabel="新規エージェント"
         actions={
           <Button
@@ -54,9 +57,6 @@ export default function AgentsPage() {
         columns={columns}
         data={rows}
         isLoading={isLoading}
-        page={page}
-        totalPages={data?.totalPages ?? 1}
-        onPageChange={setPage}
         emptyTitle="エージェントがいません"
         emptyDescription="エージェントを追加してください"
       />

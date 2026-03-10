@@ -24,9 +24,7 @@ export default function EmptyState({
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <div className="text-gray-300 mb-4">
-        {icon || <Inbox size={48} />}
-      </div>
+      <div className="text-gray-300 mb-4">{icon || <Inbox size={48} />}</div>
       <h3 className="text-lg font-semibold text-gray-600">{title}</h3>
       {description && (
         <p className="text-sm text-gray-400 mt-1 max-w-md">{description}</p>

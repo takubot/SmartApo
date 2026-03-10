@@ -34,7 +34,11 @@ export default function ContactDetailPage({
   }
 
   if (!contact) {
-    return <div className="text-center py-20 text-gray-500">コンタクトが見つかりません</div>;
+    return (
+      <div className="text-center py-20 text-gray-500">
+        コンタクトが見つかりません
+      </div>
+    );
   }
 
   return (
@@ -56,7 +60,11 @@ export default function ContactDetailPage({
         <Card shadow="sm">
           <CardHeader className="flex justify-between">
             <h3 className="text-sm font-semibold">連絡先情報</h3>
-            <Chip size="sm" variant="flat" color={contact.status === "active" ? "success" : "default"}>
+            <Chip
+              size="sm"
+              variant="flat"
+              color={contact.status === "active" ? "success" : "default"}
+            >
               {contact.status}
             </Chip>
           </CardHeader>
@@ -68,13 +76,17 @@ export default function ContactDetailPage({
             {contact.phoneSecondary && (
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
-                <span className="text-sm text-gray-600">{contact.phoneSecondary}</span>
+                <span className="text-sm text-gray-600">
+                  {contact.phoneSecondary}
+                </span>
               </div>
             )}
             {contact.phoneMobile && (
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
-                <span className="text-sm text-gray-600">{contact.phoneMobile}</span>
+                <span className="text-sm text-gray-600">
+                  {contact.phoneMobile}
+                </span>
               </div>
             )}
             {contact.email && (

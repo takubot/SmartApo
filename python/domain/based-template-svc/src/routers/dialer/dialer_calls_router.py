@@ -7,9 +7,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...auth.authentication.dependencies import get_current_user
+from ...common.env_config import get_settings
 from ...database_utils.database import get_sync_session
 from ...models.tables.enum import CallStatusEnum
-from ...models.tables.model_defs import DialerCallLogModel
+from ...models.tables.model_defs import DialerCallLogModel, DialerTwilioConfigModel
 from ...services.implementations.di import get_telephony_service
 from .schemas.call_log_schemas import CallLogResponseSchema
 from .schemas.common_schemas import MessageResponse
@@ -21,7 +22,7 @@ router = APIRouter()
 def initiate_call(
     contact_id: str,
     phone_number: str,
-    caller_id: str,
+    caller_id: str | None = None,
     campaign_id: str | None = None,
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -29,13 +30,21 @@ def initiate_call(
     """手動発信"""
     user_id, tenant_id = auth
     svc = get_telephony_service()
-
-    settings_mod = __import__(
-        "python.domain.based-template-svc.src.common.env_config",
-        fromlist=["get_settings"],
-    )
-    settings = settings_mod.get_settings()
+    settings = get_settings()
     base_url = settings.TWILIO_WEBHOOK_BASE_URL
+
+    # caller_id の解決: リクエスト指定 → Twilio設定の default_caller_id
+    if not caller_id:
+        twilio_cfg = db.execute(
+            select(DialerTwilioConfigModel).where(
+                DialerTwilioConfigModel.tenant_id == tenant_id,
+                DialerTwilioConfigModel.is_deleted.is_(False),
+            )
+        ).scalar_one_or_none()
+        if twilio_cfg:
+            caller_id = twilio_cfg.default_caller_id
+        if not caller_id:
+            raise HTTPException(400, "発信者番号が設定されていません。Twilio設定でデフォルト発信者番号を登録してください。")
 
     result = svc.initiate_call(
         to=phone_number,

@@ -468,7 +468,6 @@ export const TwilioConfigResponseSchema = z.object({
   twimlAppSid: z.union([z.string(), z.null()]).optional(),
   phoneNumbers: z.union([z.array(z.string()), z.null()]).optional(),
   defaultCallerId: z.union([z.string(), z.null()]).optional(),
-  webhookUrl: z.union([z.string(), z.null()]).optional(),
   recordingEnabled: z.boolean(),
 });
 export type TwilioConfigResponseSchemaType = z.infer<
@@ -480,8 +479,6 @@ export const TwilioConfigSchema = z.object({
   twimlAppSid: z.union([z.string(), z.null()]).optional(),
   phoneNumbers: z.union([z.array(z.string()), z.null()]).optional(),
   defaultCallerId: z.union([z.string(), z.null()]).optional(),
-  webhookUrl: z.union([z.string(), z.null()]).optional(),
-  statusCallbackUrl: z.union([z.string(), z.null()]).optional(),
   recordingEnabled: z.boolean().optional().default(true),
 });
 export type TwilioConfigSchemaType = z.infer<typeof TwilioConfigSchema>;

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from logging import getLogger
 from typing import Any, Optional
 
@@ -12,6 +13,20 @@ from ..interfaces.i_telephony_service import ITelephonyService
 
 logger = getLogger(__name__)
 settings = get_settings()
+
+
+def _to_e164(phone: str, default_country: str = "81") -> str:
+    """電話番号をE.164形式に変換する。
+
+    既に ``+`` で始まる番号はそのまま返す。
+    日本国内形式 (0始まり) の場合は先頭の0を除いて ``+81`` を付与する。
+    """
+    digits = re.sub(r"[\s\-\(\).]", "", phone)
+    if digits.startswith("+"):
+        return digits
+    if digits.startswith("0"):
+        return f"+{default_country}{digits[1:]}"
+    return f"+{digits}"
 
 
 class PTwilioService(ITelephonyService):
@@ -45,6 +60,8 @@ class PTwilioService(ITelephonyService):
         machine_detection: str = "Enable",
     ) -> dict[str, Any]:
         """発信を開始する"""
+        to = _to_e164(to)
+        from_ = _to_e164(from_)
         call = self.client.calls.create(
             to=to,
             from_=from_,

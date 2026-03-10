@@ -15,11 +15,11 @@ from sqlalchemy import (
     ForeignKey,
     Index,
     Integer,
-    JSON,
     Numeric,
     String,
     Text,
     Time,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,6 +34,7 @@ from .enum import (
     DispositionTypeEnum,
     GoogleIntegrationTypeEnum,
     GoogleSyncStatusEnum,
+    TeleStatusEnum,
 )
 
 
@@ -58,6 +59,12 @@ class DialerContactModel(Base, TimestampMixin, DeleteMixin):
         String(36), nullable=False, index=True, comment="テナントID"
     )
     # 基本情報
+    name: Mapped[Optional[str]] = mapped_column(
+        String(200), nullable=True, comment="氏名（フルネーム）"
+    )
+    name_kana: Mapped[Optional[str]] = mapped_column(
+        String(200), nullable=True, comment="氏名カナ（フルネーム）"
+    )
     last_name: Mapped[str] = mapped_column(
         String(100), nullable=False, comment="姓"
     )
@@ -105,6 +112,13 @@ class DialerContactModel(Base, TimestampMixin, DeleteMixin):
     address_line: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True, comment="番地以降"
     )
+    # 追加属性
+    birth_date: Mapped[Optional[date]] = mapped_column(
+        Date, nullable=True, comment="生年月日"
+    )
+    registered_date: Mapped[Optional[date]] = mapped_column(
+        Date, nullable=True, comment="リスト登録日（元データの登録日）"
+    )
     # メタ
     status: Mapped[ContactStatusEnum] = mapped_column(
         Enum(ContactStatusEnum),
@@ -116,10 +130,16 @@ class DialerContactModel(Base, TimestampMixin, DeleteMixin):
         String(50), nullable=False, default="Asia/Tokyo", comment="タイムゾーン"
     )
     notes: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True, comment="メモ"
+        Text, nullable=True, comment="備考1"
+    )
+    notes2: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True, comment="備考2"
+    )
+    notes3: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True, comment="備考3"
     )
     tags: Mapped[Optional[str]] = mapped_column(
-        JSON, nullable=True, comment="タグ (JSON配列)"
+        Text, nullable=True, comment="タグ (JSON配列)"
     )
     google_contact_id: Mapped[Optional[str]] = mapped_column(
         String(255), nullable=True, comment="Google Contacts連携ID"
@@ -177,6 +197,26 @@ class DialerCallListModel(Base, TimestampMixin, DeleteMixin):
         nullable=True,
         comment="インポート元 (manual, google_contacts, google_sheets, csv)",
     )
+    # Google Sheets 連携
+    spreadsheet_id: Mapped[Optional[str]] = mapped_column(
+        String(256), nullable=True, comment="連携元Google SpreadsheetのID"
+    )
+    sheet_name: Mapped[Optional[str]] = mapped_column(
+        String(200), nullable=True, comment="シート名"
+    )
+    sheet_range: Mapped[Optional[str]] = mapped_column(
+        String(256), nullable=True, comment="読み取り範囲 (例: A:Z)"
+    )
+    column_mapping: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True, comment="カラムマッピング (JSON)"
+    )
+    header_row: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=1, server_default=text("1"),
+        comment="ヘッダー行番号 (1始まり)",
+    )
+    last_sheet_synced_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime, nullable=True, comment="最終スプシ同期日時"
+    )
 
     # Relationships
     contacts: Mapped[list[DialerCallListContactModel]] = relationship(
@@ -186,7 +226,7 @@ class DialerCallListModel(Base, TimestampMixin, DeleteMixin):
     __table_args__ = ({"comment": "コールリストテーブル"},)
 
 
-class DialerCallListContactModel(Base, TimestampMixin):
+class DialerCallListContactModel(Base, TimestampMixin, DeleteMixin):
     """コールリスト-連絡先 中間テーブル"""
 
     __tablename__ = "dialer_call_list_contacts"
@@ -204,6 +244,15 @@ class DialerCallListContactModel(Base, TimestampMixin):
         ForeignKey("dialer_contacts.contact_id"),
         nullable=False,
     )
+    tele_status: Mapped[TeleStatusEnum] = mapped_column(
+        Enum(TeleStatusEnum),
+        nullable=False,
+        default=TeleStatusEnum.NONE,
+        comment="テレアポ状況",
+    )
+    tele_note: Mapped[Optional[str]] = mapped_column(
+        Text, nullable=True, comment="テレアポメモ"
+    )
 
     # Relationships
     call_list: Mapped[DialerCallListModel] = relationship(
@@ -216,6 +265,11 @@ class DialerCallListContactModel(Base, TimestampMixin):
             "call_list_id",
             "contact_id",
             unique=True,
+        ),
+        Index(
+            "ix_calllist_contact_tele_status",
+            "call_list_id",
+            "tele_status",
         ),
         {"comment": "コールリスト-連絡先中間テーブル"},
     )
@@ -333,7 +387,7 @@ class DialerCampaignModel(Base, TimestampMixin, DeleteMixin):
         Time, nullable=False, default=time(18, 0), comment="日次終了時刻 (JST)"
     )
     active_days: Mapped[Optional[str]] = mapped_column(
-        JSON,
+        Text,
         nullable=True,
         comment="曜日 (1=月...7=日) JSON配列",
     )
@@ -490,17 +544,17 @@ class DialerCampaignContactModel(Base, TimestampMixin):
 
 
 # ════════════════════════════════════════════════════════════════
-# オペレーター (Agents)
+# エージェント (Agents)
 # ════════════════════════════════════════════════════════════════
 
 
 class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
-    """オペレーター"""
+    """エージェント"""
 
     __tablename__ = "dialer_agents"
 
     agent_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=_uuid, comment="オペレーターID"
+        String(36), primary_key=True, default=_uuid, comment="エージェントID"
     )
     tenant_id: Mapped[str] = mapped_column(
         String(36), nullable=False, index=True, comment="テナントID"
@@ -527,7 +581,7 @@ class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
         String(36), nullable=True, comment="現在の通話ID"
     )
     skills: Mapped[Optional[str]] = mapped_column(
-        JSON, nullable=True, comment="スキルタグ (JSON配列)"
+        Text, nullable=True, comment="スキルタグ (JSON配列)"
     )
     max_concurrent_calls: Mapped[int] = mapped_column(
         Integer, nullable=False, default=1, comment="最大同時通話数"
@@ -549,17 +603,17 @@ class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
             unique=True,
         ),
         Index("ix_dialer_agents_tenant_status", "tenant_id", "status"),
-        {"comment": "オペレーターテーブル"},
+        {"comment": "エージェントテーブル"},
     )
 
 
 # ════════════════════════════════════════════════════════════════
-# オペレーター-キャンペーン (M2M)
+# エージェント-キャンペーン (M2M)
 # ════════════════════════════════════════════════════════════════
 
 
 class DialerAgentCampaignModel(Base, TimestampMixin):
-    """オペレーター-キャンペーン 割当"""
+    """エージェント-キャンペーン 割当"""
 
     __tablename__ = "dialer_agent_campaigns"
 
@@ -595,7 +649,7 @@ class DialerAgentCampaignModel(Base, TimestampMixin):
             "campaign_id",
             unique=True,
         ),
-        {"comment": "オペレーター-キャンペーン割当テーブル"},
+        {"comment": "エージェント-キャンペーン割当テーブル"},
     )
 
 
@@ -785,7 +839,7 @@ class DialerCallbackModel(Base, TimestampMixin, DeleteMixin):
         String(36),
         ForeignKey("dialer_agents.agent_id"),
         nullable=True,
-        comment="担当オペレーターID",
+        comment="担当エージェントID",
     )
     scheduled_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, comment="予定日時 (JST)"
@@ -871,7 +925,7 @@ class DialerGoogleIntegrationModel(Base, TimestampMixin, DeleteMixin):
         Text, nullable=True, comment="同期カーソル/トークン"
     )
     config: Mapped[Optional[str]] = mapped_column(
-        JSON, nullable=True, comment="追加設定 (JSON)"
+        Text, nullable=True, comment="追加設定 (JSON)"
     )
 
     __table_args__ = (
@@ -908,7 +962,7 @@ class DialerTwilioConfigModel(Base, TimestampMixin, DeleteMixin):
         String(64), nullable=True, comment="TwiML App SID"
     )
     phone_numbers: Mapped[Optional[str]] = mapped_column(
-        JSON, nullable=True, comment="利用可能な発信番号一覧 (JSON配列)"
+        Text, nullable=True, comment="利用可能な発信番号一覧 (JSON配列)"
     )
     default_caller_id: Mapped[Optional[str]] = mapped_column(
         String(20), nullable=True, comment="デフォルト発信者番号"

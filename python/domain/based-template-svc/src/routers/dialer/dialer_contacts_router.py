@@ -27,7 +27,7 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("", response_model=PaginatedResponse)
 def list_contacts(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -77,7 +77,7 @@ def list_contacts(
     )
 
 
-@router.post("/", response_model=ContactResponseSchema, status_code=201)
+@router.post("", response_model=ContactResponseSchema, status_code=201)
 def create_contact(
     body: ContactCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),

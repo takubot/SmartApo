@@ -13,8 +13,6 @@ class TwilioConfigSchema(BaseSchema):
     twiml_app_sid: Optional[str] = None
     phone_numbers: Optional[list[str]] = None
     default_caller_id: Optional[str] = None
-    webhook_url: Optional[str] = None
-    status_callback_url: Optional[str] = None
     recording_enabled: bool = True
 
 
@@ -24,7 +22,6 @@ class TwilioConfigResponseSchema(BaseSchema):
     twiml_app_sid: Optional[str] = None
     phone_numbers: Optional[list[str]] = None
     default_caller_id: Optional[str] = None
-    webhook_url: Optional[str] = None
     recording_enabled: bool
 
 

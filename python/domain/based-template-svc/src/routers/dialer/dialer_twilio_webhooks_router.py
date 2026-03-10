@@ -11,6 +11,13 @@ from sqlalchemy import select
 from ...database_utils.database import SyncSessionLocal
 from ...models.tables.enum import CallStatusEnum
 from ...models.tables.model_defs import DialerCallLogModel
+from ...services.implementations.di import get_telephony_service
+from .calling_session import (
+    get_session_by_call_sid,
+    get_sids_to_cancel,
+    mark_canceled,
+    update_status,
+)
 
 router = APIRouter()
 logger = getLogger(__name__)
@@ -22,7 +29,7 @@ async def voice_webhook(request: Request):
     """着信/発信時のTwiML応答"""
     twiml = """<?xml version="1.0" encoding="UTF-8"?>
 <Response>
-  <Say language="ja-JP">お電話ありがとうございます。オペレーターにお繋ぎします。</Say>
+  <Say language="ja-JP">お電話ありがとうございます。エージェントにお繋ぎします。</Say>
   <Dial>
     <Queue>dialer-queue</Queue>
   </Dial>
@@ -53,6 +60,7 @@ async def status_webhook(
     mapped_status = status_map.get(CallStatus, CallStatusEnum.FAILED)
     now = datetime.now(JST)
 
+    # DB 更新
     with SyncSessionLocal() as db:
         log = db.execute(
             select(DialerCallLogModel).where(
@@ -68,6 +76,25 @@ async def status_webhook(
                 log.ended_at = now
                 log.duration_seconds = int(CallDuration)
             db.commit()
+
+    # ── セッション連携 ─────────────────────────────────────
+    session, call_log_id = get_session_by_call_sid(CallSid)
+    if session and call_log_id:
+        is_first_connect = update_status(
+            session.session_id, call_log_id, mapped_status.value
+        )
+        if is_first_connect:
+            # 最初の応答 → 他の通話を自動切断
+            sids_to_cancel = get_sids_to_cancel(session.session_id)
+            if sids_to_cancel:
+                svc = get_telephony_service()
+                for sid in sids_to_cancel:
+                    try:
+                        svc.end_call(sid)
+                        logger.info("Auto-canceled call: %s", sid)
+                    except Exception:
+                        logger.exception("Failed to auto-cancel call: %s", sid)
+                mark_canceled(session.session_id, sids_to_cancel)
 
     return Response(content="<Response/>", media_type="application/xml")
 

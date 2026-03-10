@@ -1,59 +1,7 @@
 extends:
   - recommended
 apis:
-  adviser_ai@v1:
-    root: ./packages\api-contracts\src\yaml\adviser_ai.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/adviser_ai.d.ts
-  astecpaints@v1:
-    root: ./packages\api-contracts\src\yaml\astecpaints.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/astecpaints.d.ts
   based_template@v1:
-    root: ./packages\api-contracts\src\yaml\based_template.yaml
+    root: ./packages/api-contracts/src/yaml/based_template.yaml
     x-openapi-ts:
       output: ./packages/api-contracts/src/types/based_template.d.ts
-  doshisha@v1:
-    root: ./packages\api-contracts\src\yaml\doshisha.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/doshisha.d.ts
-  freeplay@v1:
-    root: ./packages\api-contracts\src\yaml\freeplay.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/freeplay.d.ts
-  goda_kanko_shoji@v1:
-    root: ./packages\api-contracts\src\yaml\goda_kanko_shoji.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/goda_kanko_shoji.d.ts
-  imjp@v1:
-    root: ./packages\api-contracts\src\yaml\imjp.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/imjp.d.ts
-  kitepro@v1:
-    root: ./packages\api-contracts\src\yaml\kitepro.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/kitepro.d.ts
-  mitradata@v1:
-    root: ./packages\api-contracts\src\yaml\mitradata.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/mitradata.d.ts
-  miyakoya@v1:
-    root: ./packages\api-contracts\src\yaml\miyakoya.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/miyakoya.d.ts
-  toshibatec@v1:
-    root: ./packages\api-contracts\src\yaml\toshibatec.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/toshibatec.d.ts
-  tp_prime_members@v1:
-    root: ./packages\api-contracts\src\yaml\tp_prime_members.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/tp_prime_members.d.ts
-  vertex_e@v1:
-    root: ./packages\api-contracts\src\yaml\vertex_e.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/vertex_e.d.ts
-  vertex_p@v1:
-    root: ./packages\api-contracts\src\yaml\vertex_p.yaml
-    x-openapi-ts:
-      output: ./packages/api-contracts/src/types/vertex_p.d.ts

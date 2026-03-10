@@ -12,14 +12,7 @@ import {
   Divider,
 } from "@heroui/react";
 import { addToast } from "@heroui/react";
-import {
-  Play,
-  Pause,
-  Square,
-  Edit,
-  BarChart3,
-  ArrowLeft,
-} from "lucide-react";
+import { Play, Pause, Square, Edit, BarChart3, ArrowLeft } from "lucide-react";
 import { PageHeader, StatusBadge, KpiCard } from "@/components/dialer";
 import { useCampaign, useCampaignStats } from "@/hooks/dialer/useDialerSwr";
 import apiClient from "@/lib/apiClient";
@@ -43,7 +36,11 @@ export default function CampaignDetailPage({
   }
 
   if (!campaign) {
-    return <div className="text-center py-20 text-gray-500">キャンペーンが見つかりません</div>;
+    return (
+      <div className="text-center py-20 text-gray-500">
+        キャンペーンが見つかりません
+      </div>
+    );
   }
 
   const handleAction = async (action: "start" | "pause" | "stop") => {
@@ -51,7 +48,11 @@ export default function CampaignDetailPage({
       await apiClient.post(`/campaigns/${id}/${action}`);
       addToast({
         title:
-          action === "start" ? "開始しました" : action === "pause" ? "一時停止しました" : "停止しました",
+          action === "start"
+            ? "開始しました"
+            : action === "pause"
+              ? "一時停止しました"
+              : "停止しました",
         color: "success",
       });
       mutate();
@@ -60,9 +61,8 @@ export default function CampaignDetailPage({
     }
   };
 
-  const answerRate = stats && stats.totalCalls > 0
-    ? stats.totalAnswered / stats.totalCalls
-    : 0;
+  const answerRate =
+    stats && stats.totalCalls > 0 ? stats.totalAnswered / stats.totalCalls : 0;
 
   return (
     <div>
@@ -136,8 +136,16 @@ export default function CampaignDetailPage({
       {/* 統計 */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <KpiCard title="対象件数" value={stats.totalContacts} color="primary" />
-          <KpiCard title="完了件数" value={stats.completedContacts} color="success" />
+          <KpiCard
+            title="対象件数"
+            value={stats.totalContacts}
+            color="primary"
+          />
+          <KpiCard
+            title="完了件数"
+            value={stats.completedContacts}
+            color="success"
+          />
           <KpiCard
             title="応答率"
             value={`${(answerRate * 100).toFixed(1)}%`}

@@ -17,7 +17,7 @@ from .schemas.common_schemas import PaginatedResponse
 router = APIRouter()
 
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("", response_model=PaginatedResponse)
 def list_call_logs(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),

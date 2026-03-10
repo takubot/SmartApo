@@ -40,7 +40,11 @@ const columns: Column<CallbackRow>[] = [
     key: "priority",
     label: "優先度",
     render: (item) => (
-      <Chip size="sm" color={PRIORITY_COLORS[item.priority] ?? "default"} variant="flat">
+      <Chip
+        size="sm"
+        color={PRIORITY_COLORS[item.priority] ?? "default"}
+        variant="flat"
+      >
         {PRIORITY_LABELS[item.priority] ?? item.priority}
       </Chip>
     ),
@@ -50,9 +54,13 @@ const columns: Column<CallbackRow>[] = [
     label: "状態",
     render: (item) =>
       item.isCompleted ? (
-        <Chip size="sm" color="success" variant="flat">完了</Chip>
+        <Chip size="sm" color="success" variant="flat">
+          完了
+        </Chip>
       ) : (
-        <Chip size="sm" color="warning" variant="flat">未完了</Chip>
+        <Chip size="sm" color="warning" variant="flat">
+          未完了
+        </Chip>
       ),
   },
   { key: "notes", label: "メモ" },
@@ -69,10 +77,7 @@ export default function CallbacksPage() {
 
   return (
     <div>
-      <PageHeader
-        title="コールバック"
-        description="折り返し架電の管理"
-      />
+      <PageHeader title="コールバック" description="折り返し架電の管理" />
       <DataTable
         columns={columns}
         data={rows}

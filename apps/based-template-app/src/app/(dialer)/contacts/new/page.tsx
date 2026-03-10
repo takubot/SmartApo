@@ -106,12 +106,16 @@ export default function NewContactPage() {
               <Input
                 label="姓（カナ）"
                 value={form.lastNameKana ?? ""}
-                onValueChange={(v) => updateField("lastNameKana", v || undefined)}
+                onValueChange={(v) =>
+                  updateField("lastNameKana", v || undefined)
+                }
               />
               <Input
                 label="名（カナ）"
                 value={form.firstNameKana ?? ""}
-                onValueChange={(v) => updateField("firstNameKana", v || undefined)}
+                onValueChange={(v) =>
+                  updateField("firstNameKana", v || undefined)
+                }
               />
             </div>
           </CardBody>
@@ -133,12 +137,16 @@ export default function NewContactPage() {
               <Input
                 label="電話番号（サブ）"
                 value={form.phoneSecondary ?? ""}
-                onValueChange={(v) => updateField("phoneSecondary", v || undefined)}
+                onValueChange={(v) =>
+                  updateField("phoneSecondary", v || undefined)
+                }
               />
               <Input
                 label="携帯電話"
                 value={form.phoneMobile ?? ""}
-                onValueChange={(v) => updateField("phoneMobile", v || undefined)}
+                onValueChange={(v) =>
+                  updateField("phoneMobile", v || undefined)
+                }
               />
             </div>
             <Input

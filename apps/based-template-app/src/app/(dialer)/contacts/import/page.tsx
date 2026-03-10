@@ -81,7 +81,10 @@ export default function ImportContactsPage() {
               className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:border-primary-400 transition-colors"
               onClick={() => fileRef.current?.click()}
             >
-              <FileSpreadsheet size={40} className="mx-auto text-gray-400 mb-3" />
+              <FileSpreadsheet
+                size={40}
+                className="mx-auto text-gray-400 mb-3"
+              />
               {file ? (
                 <p className="text-sm font-medium text-gray-700">{file.name}</p>
               ) : (

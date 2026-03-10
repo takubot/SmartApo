@@ -68,7 +68,7 @@ if __name__ == "__main__":
 
     settings: Settings = get_settings()
 
-    host = "localhost" if settings.is_local else "0.0.0.0"
+    host = "localhost"
     backend_port = 8081
     log_level = "DEBUG" if settings.is_local else "INFO"
     print(f"Starting server at http://{host}:{backend_port} with log level {log_level}")

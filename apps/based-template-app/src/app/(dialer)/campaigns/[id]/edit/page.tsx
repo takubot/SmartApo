@@ -127,7 +127,9 @@ export default function EditCampaignPage({
                 type="number"
                 label="最大同時通話数"
                 value={String(form.maxConcurrentCalls ?? 10)}
-                onValueChange={(v) => updateField("maxConcurrentCalls", Number(v))}
+                onValueChange={(v) =>
+                  updateField("maxConcurrentCalls", Number(v))
+                }
               />
               <Input
                 label="プレディクティブ倍率"
@@ -183,19 +185,25 @@ export default function EditCampaignPage({
                 type="number"
                 label="最大試行回数"
                 value={String(form.maxAttemptsPerContact ?? 3)}
-                onValueChange={(v) => updateField("maxAttemptsPerContact", Number(v))}
+                onValueChange={(v) =>
+                  updateField("maxAttemptsPerContact", Number(v))
+                }
               />
               <Input
                 type="number"
                 label="リトライ間隔(分)"
                 value={String(form.retryIntervalMinutes ?? 30)}
-                onValueChange={(v) => updateField("retryIntervalMinutes", Number(v))}
+                onValueChange={(v) =>
+                  updateField("retryIntervalMinutes", Number(v))
+                }
               />
               <Input
                 type="number"
                 label="呼出タイムアウト(秒)"
                 value={String(form.ringTimeoutSeconds ?? 30)}
-                onValueChange={(v) => updateField("ringTimeoutSeconds", Number(v))}
+                onValueChange={(v) =>
+                  updateField("ringTimeoutSeconds", Number(v))
+                }
               />
               <Input
                 type="number"

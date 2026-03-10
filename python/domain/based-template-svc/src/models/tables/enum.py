@@ -45,11 +45,11 @@ class CallStatusEnum(str, enum.Enum):
     CANCELED = "canceled"
 
 
-# ── オペレーター ──────────────────────────────────────────────────
+# ── エージェント ──────────────────────────────────────────────────
 
 
 class AgentStatusEnum(str, enum.Enum):
-    """オペレーターの状態"""
+    """エージェントの状態"""
 
     OFFLINE = "offline"
     AVAILABLE = "available"
@@ -115,10 +115,27 @@ class GoogleSyncStatusEnum(str, enum.Enum):
 class GoogleIntegrationTypeEnum(str, enum.Enum):
     """Google連携の種類"""
 
+    GOOGLE = "google"
     CONTACTS = "contacts"
     CALENDAR = "calendar"
     GMAIL = "gmail"
     SHEETS = "sheets"
+
+
+# ── テレアポ状況（リスト内連絡先） ──────────────────────────────
+
+
+class TeleStatusEnum(str, enum.Enum):
+    """コールリスト内のテレアポ状況"""
+
+    NONE = "none"                # 未対応
+    NOT_REACHED = "not_reached"  # 不通
+    BUSY = "busy"                # 話し中
+    CALLBACK = "callback"        # 折り返し待ち
+    REFUSED = "refused"          # お断り
+    NURTURING = "nurturing"      # 育成中・検討中
+    APPOINTMENT = "appointment"  # アポ獲得
+    COMPLETED = "completed"      # 完了
 
 
 # ── コールバック ──────────────────────────────────────────────────

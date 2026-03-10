@@ -32,7 +32,9 @@ export function getSetupStatus(): SetupStepStatus {
   }
 }
 
-export function updateSetupStatus(partial: Partial<SetupStepStatus>): SetupStepStatus {
+export function updateSetupStatus(
+  partial: Partial<SetupStepStatus>,
+): SetupStepStatus {
   const current = getSetupStatus();
   const updated = { ...current, ...partial };
   localStorage.setItem(SETUP_KEY, JSON.stringify(updated));

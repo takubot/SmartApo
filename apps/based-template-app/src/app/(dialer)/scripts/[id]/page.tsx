@@ -119,7 +119,9 @@ export default function ScriptDetailPage({
             <Textarea
               placeholder="架電時のスクリプトを記入..."
               value={form.content ?? ""}
-              onValueChange={(v) => setForm((p) => ({ ...p, content: v || undefined }))}
+              onValueChange={(v) =>
+                setForm((p) => ({ ...p, content: v || undefined }))
+              }
               minRows={12}
               classNames={{ input: "font-mono text-sm" }}
             />

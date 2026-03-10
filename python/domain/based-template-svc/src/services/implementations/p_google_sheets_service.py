@@ -26,8 +26,8 @@ class PGoogleSheetsService(ISheetsService):
         flow = Flow.from_client_config(
             {
                 "web": {
-                    "client_id": settings.GOOGLE_SHEETS_CLIENT_ID,
-                    "client_secret": settings.GOOGLE_SHEETS_CLIENT_SECRET,
+                    "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
                     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                     "token_uri": "https://oauth2.googleapis.com/token",
                 }
@@ -47,8 +47,8 @@ class PGoogleSheetsService(ISheetsService):
         flow = Flow.from_client_config(
             {
                 "web": {
-                    "client_id": settings.GOOGLE_SHEETS_CLIENT_ID,
-                    "client_secret": settings.GOOGLE_SHEETS_CLIENT_SECRET,
+                    "client_id": settings.GOOGLE_OAUTH_CLIENT_ID,
+                    "client_secret": settings.GOOGLE_OAUTH_CLIENT_SECRET,
                     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                     "token_uri": "https://oauth2.googleapis.com/token",
                 }
@@ -154,7 +154,7 @@ class PGoogleSheetsService(ISheetsService):
             token=access_token,
             refresh_token=refresh_token,
             token_uri="https://oauth2.googleapis.com/token",
-            client_id=settings.GOOGLE_SHEETS_CLIENT_ID,
-            client_secret=settings.GOOGLE_SHEETS_CLIENT_SECRET,
+            client_id=settings.GOOGLE_OAUTH_CLIENT_ID,
+            client_secret=settings.GOOGLE_OAUTH_CLIENT_SECRET,
         )
         return build("sheets", "v4", credentials=creds)

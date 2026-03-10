@@ -39,7 +39,7 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=PaginatedResponse)
+@router.get("", response_model=PaginatedResponse)
 def list_campaigns(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
@@ -74,7 +74,7 @@ def list_campaigns(
     )
 
 
-@router.post("/", response_model=CampaignResponseSchema, status_code=201)
+@router.post("", response_model=CampaignResponseSchema, status_code=201)
 def create_campaign(
     body: CampaignCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),
@@ -322,7 +322,7 @@ def assign_agents(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーターをキャンペーンに割当"""
+    """エージェントをキャンペーンに割当"""
     _, tenant_id = auth
     _get_campaign(campaign_id, tenant_id, db)
     count = 0
@@ -337,7 +337,7 @@ def assign_agents(
             db.add(DialerAgentCampaignModel(campaign_id=campaign_id, agent_id=aid))
             count += 1
     db.flush()
-    return MessageResponse(message=f"{count}名のオペレーターを割り当てました")
+    return MessageResponse(message=f"{count}名のエージェントを割り当てました")
 
 
 @router.delete("/{campaign_id}/agents/{agent_id}", status_code=204)
@@ -347,7 +347,7 @@ def unassign_agent(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター割当解除"""
+    """エージェント割当解除"""
     _, tenant_id = auth
     _get_campaign(campaign_id, tenant_id, db)
     assignment = db.execute(

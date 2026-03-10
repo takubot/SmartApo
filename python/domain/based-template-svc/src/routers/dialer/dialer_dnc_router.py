@@ -20,7 +20,7 @@ from .schemas.dnc_schemas import (
 router = APIRouter()
 
 
-@router.get("/", response_model=list[DncResponseSchema])
+@router.get("", response_model=list[DncResponseSchema])
 def list_dnc(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -33,7 +33,7 @@ def list_dnc(
     return [DncResponseSchema.model_validate(r) for r in rows]
 
 
-@router.post("/", response_model=DncResponseSchema, status_code=201)
+@router.post("", response_model=DncResponseSchema, status_code=201)
 def add_dnc(
     body: DncCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),

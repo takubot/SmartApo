@@ -20,11 +20,10 @@ class GoogleCalendarService(ICalendarService):
         self.settings = get_settings()
         self.client_config = {
             "web": {
-                "client_id": self.settings.GOOGLE_CALENDAR_CLIENT_ID,
-                "client_secret": self.settings.GOOGLE_CALENDAR_CLIENT_SECRET,
+                "client_id": self.settings.GOOGLE_OAUTH_CLIENT_ID,
+                "client_secret": self.settings.GOOGLE_OAUTH_CLIENT_SECRET,
                 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
                 "token_uri": "https://oauth2.googleapis.com/token",
-                "redirect_uris": [self.settings.GOOGLE_CALENDAR_REDIRECT_URI]
             }
         }
 
@@ -77,6 +76,15 @@ class GoogleCalendarService(ICalendarService):
             "client_secret": creds.client_secret,
             "scopes": creds.scopes,
             "expiry": creds.expiry.isoformat() if creds.expiry else None
+        }
+
+    def exchange_code(self, code: str, redirect_uri: str) -> Dict[str, Any]:
+        """ルーターから統一的に呼べるよう fetch_token をラップ"""
+        result = self.fetch_token(code, redirect_uri)
+        return {
+            "access_token": result["token"],
+            "refresh_token": result["refresh_token"],
+            "expiry": result.get("expiry"),
         }
 
     def refresh_token(self, refresh_token: str) -> Dict[str, Any]:

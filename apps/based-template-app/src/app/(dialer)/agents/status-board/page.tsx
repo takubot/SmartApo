@@ -40,7 +40,11 @@ export default function StatusBoardPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {(data?.agents ?? []).map((agent) => (
-            <Card key={agent.agentId} shadow="sm" className="hover:shadow-md transition-shadow">
+            <Card
+              key={agent.agentId}
+              shadow="sm"
+              className="hover:shadow-md transition-shadow"
+            >
               <CardBody className="p-4">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">

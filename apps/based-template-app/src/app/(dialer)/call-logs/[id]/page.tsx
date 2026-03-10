@@ -33,7 +33,11 @@ export default function CallLogDetailPage({
   }
 
   if (!log) {
-    return <div className="text-center py-20 text-gray-500">ログが見つかりません</div>;
+    return (
+      <div className="text-center py-20 text-gray-500">
+        ログが見つかりません
+      </div>
+    );
   }
 
   const m = Math.floor(log.durationSeconds / 60);
@@ -72,10 +76,7 @@ export default function CallLogDetailPage({
               <div>
                 <dt className="text-gray-500">結果</dt>
                 <dd>
-                  <StatusBadge
-                    status={log.callStatus}
-                    category="call"
-                  />
+                  <StatusBadge status={log.callStatus} category="call" />
                 </dd>
               </div>
               <div>
@@ -118,7 +119,9 @@ export default function CallLogDetailPage({
               )}
               <div>
                 <dt className="text-gray-500">放棄フラグ</dt>
-                <dd className="font-medium">{log.isAbandoned ? "はい" : "いいえ"}</dd>
+                <dd className="font-medium">
+                  {log.isAbandoned ? "はい" : "いいえ"}
+                </dd>
               </div>
             </dl>
           </CardBody>

@@ -17,7 +17,7 @@ import sys
 from logging import getLogger
 from pathlib import Path
 
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 logger = getLogger(__name__)
@@ -37,7 +37,7 @@ def generate_er_diagram(output_path: str) -> None:
     output_file = Path(output_path)
 
     print("=" * 80)
-    print("ER図生成 (BigQuery)")
+    print("ER図生成 (MySQL)")
     print(f"出力先: {output_file.absolute()}")
     print("=" * 80)
     print()

@@ -18,7 +18,10 @@ import { Plus } from "lucide-react";
 import { PageHeader, DataTable, type Column } from "@/components/dialer";
 import { useDncList } from "@/hooks/dialer/useDialerSwr";
 import apiClient from "@/lib/apiClient";
-import type { DncResponseSchemaType, DncCreateSchemaType } from "@repo/api-contracts/based_template/zschema";
+import type {
+  DncResponseSchemaType,
+  DncCreateSchemaType,
+} from "@repo/api-contracts/based_template/zschema";
 
 type DncRow = DncResponseSchemaType & { id: string };
 
@@ -49,7 +52,10 @@ export default function DncPage() {
     if (!phone.trim()) return;
     setSaving(true);
     try {
-      const body: DncCreateSchemaType = { phoneNumber: phone, reason: reason || undefined };
+      const body: DncCreateSchemaType = {
+        phoneNumber: phone,
+        reason: reason || undefined,
+      };
       await apiClient.post("/dnc", body);
       addToast({ title: "DNCに追加しました", color: "success" });
       setPhone("");
@@ -113,11 +119,7 @@ export default function DncPage() {
                 <Button variant="flat" onPress={onClose}>
                   キャンセル
                 </Button>
-                <Button
-                  color="primary"
-                  isLoading={saving}
-                  onPress={handleAdd}
-                >
+                <Button color="primary" isLoading={saving} onPress={handleAdd}>
                   追加
                 </Button>
               </ModalFooter>

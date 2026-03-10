@@ -1,15 +1,14 @@
 """
-db.py – BigQuery + SQLAlchemy 接続設定 & 運用ユーティリティ
+db.py – MySQL + SQLAlchemy 接続設定 & 運用ユーティリティ
 ============================================================
 
-* BigQuery を SQLAlchemy 経由で利用（sqlalchemy-bigquery）
-* 同期セッションを提供（BigQuery は非同期ドライバ未対応）
+* MySQL を SQLAlchemy 経由で利用（pymysql）
+* 同期セッションを提供
 * FastAPI の依存関係として get_sync_session を提供
 """
 
 from __future__ import annotations
 
-import asyncio
 from collections.abc import Generator
 from logging import getLogger
 from typing import Final, TypedDict
@@ -31,12 +30,14 @@ logger = getLogger(__name__)
 
 settings = get_settings()
 
-# BigQuery Engine（プール不要 — BigQuery は HTTP API ベース）
 engine_kwargs: dict[str, object] = {
     "future": True,
+    "pool_pre_ping": True,
+    "pool_size": 5,
+    "max_overflow": 10,
 }
 
-sync_engine: Final[Engine] = create_engine(settings.bigquery_url, **engine_kwargs)
+sync_engine: Final[Engine] = create_engine(settings.mysql_url, **engine_kwargs)
 SyncSessionLocal: Final[sessionmaker[Session]] = sessionmaker(
     bind=sync_engine, expire_on_commit=False, autoflush=False, future=True
 )
@@ -75,10 +76,10 @@ def create_all_tables_sync() -> None:
 
 
 def ping_sync() -> None:
-    """[同期] BigQuery接続確認"""
+    """[同期] MySQL接続確認"""
     with sync_engine.connect() as conn:
         conn.execute(text("SELECT 1"))
-    logger.info("BigQuery connection OK")
+    logger.info("MySQL connection OK")
 
 
 # --------------------------------------------------------------------------- #
@@ -99,7 +100,7 @@ class DBSessionDict(TypedDict, total=False):
 def main_cli():
     """`$ python -m database` などで実行した際の動作。"""
     ping_sync()
-    print(f"BigQuery connection OK: {settings.bigquery_url}")
+    print(f"MySQL connection OK: {settings.mysql_url}")
 
 
 if __name__ == "__main__":  # pragma: no cover

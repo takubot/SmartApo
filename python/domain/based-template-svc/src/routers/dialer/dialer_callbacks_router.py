@@ -18,7 +18,7 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=list[CallbackResponseSchema])
+@router.get("", response_model=list[CallbackResponseSchema])
 def list_callbacks(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -33,7 +33,7 @@ def list_callbacks(
     return [CallbackResponseSchema.model_validate(r) for r in rows]
 
 
-@router.post("/", response_model=CallbackResponseSchema, status_code=201)
+@router.post("", response_model=CallbackResponseSchema, status_code=201)
 def create_callback(
     body: CallbackCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),

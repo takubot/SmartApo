@@ -9,10 +9,22 @@ import type { CallListResponseSchemaType } from "@repo/api-contracts/based_templ
 
 type CallListRow = CallListResponseSchemaType & { id: string };
 
+const SOURCE_LABELS: Record<string, string> = {
+  manual: "手動",
+  google_sheets: "Google Sheets",
+  csv: "CSV",
+  google_contacts: "Google Contacts",
+};
+
 const columns: Column<CallListRow>[] = [
   { key: "name", label: "リスト名" },
   { key: "description", label: "説明" },
   { key: "contactCount", label: "件数", align: "center" },
+  {
+    key: "source",
+    label: "ソース",
+    render: (item) => SOURCE_LABELS[item.source ?? "manual"] ?? item.source ?? "手動",
+  },
   {
     key: "createdAt",
     label: "作成日",

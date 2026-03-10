@@ -114,7 +114,7 @@ def agents_performance(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター実績"""
+    """エージェント実績"""
     _, tenant_id = auth
     now = datetime.now(JST)
     start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)

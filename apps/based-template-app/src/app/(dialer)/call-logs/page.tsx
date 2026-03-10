@@ -3,7 +3,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { PageHeader, DataTable, StatusBadge, type Column } from "@/components/dialer";
+import {
+  PageHeader,
+  DataTable,
+  StatusBadge,
+  type Column,
+} from "@/components/dialer";
 import { useCallLogs } from "@/hooks/dialer/useDialerSwr";
 import type { CallLogResponseSchemaType } from "@repo/api-contracts/based_template/zschema";
 

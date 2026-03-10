@@ -1,4 +1,4 @@
-"""オペレータールーター"""
+"""エージェントルーター"""
 
 from __future__ import annotations
 
@@ -23,12 +23,12 @@ router = APIRouter()
 JST = timezone(timedelta(hours=9))
 
 
-@router.get("/", response_model=list[AgentResponseSchema])
+@router.get("", response_model=list[AgentResponseSchema])
 def list_agents(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター一覧"""
+    """エージェント一覧"""
     _, tenant_id = auth
     rows = db.execute(
         select(DialerAgentModel).where(
@@ -39,13 +39,13 @@ def list_agents(
     return [AgentResponseSchema.model_validate(r) for r in rows]
 
 
-@router.post("/", response_model=AgentResponseSchema, status_code=201)
+@router.post("", response_model=AgentResponseSchema, status_code=201)
 def create_agent(
     body: AgentCreateSchema,
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター登録"""
+    """エージェント登録"""
     _, tenant_id = auth
     agent = DialerAgentModel(tenant_id=tenant_id, **body.model_dump(exclude_none=True))
     db.add(agent)
@@ -74,7 +74,7 @@ def available_agents(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """利用可能なオペレーター一覧"""
+    """利用可能なエージェント一覧"""
     _, tenant_id = auth
     rows = db.execute(
         select(DialerAgentModel).where(
@@ -92,7 +92,7 @@ def get_agent(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター詳細"""
+    """エージェント詳細"""
     _, tenant_id = auth
     agent = _get_agent(agent_id, tenant_id, db)
     return AgentResponseSchema.model_validate(agent)
@@ -105,7 +105,7 @@ def update_agent(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """オペレーター更新"""
+    """エージェント更新"""
     _, tenant_id = auth
     agent = _get_agent(agent_id, tenant_id, db)
     for key, val in body.model_dump(exclude_none=True).items():
@@ -139,5 +139,5 @@ def _get_agent(agent_id: str, tenant_id: str, db: Session) -> DialerAgentModel:
         )
     ).scalar_one_or_none()
     if not agent:
-        raise HTTPException(404, "オペレーターが見つかりません")
+        raise HTTPException(404, "エージェントが見つかりません")
     return agent

@@ -1,10 +1,11 @@
 // app/(dialer)/layout.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { Spinner } from "@heroui/react";
 import { DialerSidebar } from "@/components/dialer";
-import { isAuthenticated, logout } from "@/lib/auth";
+import { useAuth } from "../providers";
 
 export default function DialerLayout({
   children,
@@ -12,32 +13,28 @@ export default function DialerLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
-  const [checked, setChecked] = useState(false);
+  const { user, loading } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    if (!loading && !user) {
       router.replace("/");
-    } else {
-      setChecked(true);
     }
-  }, [router]);
+  }, [user, loading, router]);
 
-  if (!checked) {
-    return null;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="lg" />
+      </div>
+    );
   }
+
+  if (!user) return null;
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       <DialerSidebar />
       <main className="flex-1 ml-60 p-6 transition-all duration-200">
-        <div className="flex justify-end mb-2">
-          <button
-            onClick={() => { logout(); router.replace("/"); }}
-            className="text-sm text-gray-500 hover:text-gray-700 underline"
-          >
-            ログアウト
-          </button>
-        </div>
         {children}
       </main>
     </div>

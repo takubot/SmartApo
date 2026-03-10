@@ -1,43 +1,70 @@
 #!/usr/bin/env python3
 """
-Mock data creation script for based-template-svc (BigQuery)
+Identity Platform に管理者ユーザーを作成するスクリプト
 
 実行方法:
-1. DOPPELディレクトリから実行:
-   npm run uv:create:mock --group_id=YOUR_GROUP_ID
-
-2. 直接実行したい場合:
-   cd python/domain/based-template-svc
-   uv run python src/database_utils/db_mock.py --group-id YOUR_GROUP_ID
+  npm run uv:create:mock
 """
 
 import sys
-import argparse
 from pathlib import Path
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from src.database_utils.database import sync_engine
-from sqlalchemy.orm import sessionmaker
-from src.routers.mock.service import create_mock_data
+import firebase_admin
+from firebase_admin import auth as firebase_auth
+from firebase_admin import _apps as _firebase_apps
 
-def main():
-    parser = argparse.ArgumentParser(description="Create mock data for a specific group.")
-    parser.add_argument("--group-id", type=str, required=True, help="The group ID to create mock data for.")
-    args = parser.parse_args()
+from src.common.env_config import get_settings
 
-    Session = sessionmaker(bind=sync_engine)
-    with Session() as session:
-        try:
-            print(f"Creating mock data for group: {args.group_id}...")
-            result = create_mock_data(session, args.group_id)
-            session.commit()
-            print(f"[OK] {result['message']}")
-        except Exception as e:
-            session.rollback()
-            print(f"[ERROR] Failed to create mock data: {e}")
-            sys.exit(1)
+
+def initialize_firebase() -> None:
+    if _firebase_apps:
+        return
+    settings = get_settings()
+    firebase_admin.initialize_app(options={"projectId": settings.gcp_project_id})
+
+
+ADMIN_USER = {
+    "email": "admin@example.com",
+    "password": "admin1234",
+    "display_name": "管理者",
+}
+
+
+def create_admin_user() -> None:
+    email = ADMIN_USER["email"]
+    password = ADMIN_USER["password"]
+    display_name = ADMIN_USER["display_name"]
+
+    try:
+        existing = firebase_auth.get_user_by_email(email)
+        print(f"[SKIP] ユーザーは既に存在します: {email} (uid: {existing.uid})")
+        return
+    except firebase_auth.UserNotFoundError:
+        pass
+
+    user = firebase_auth.create_user(
+        email=email,
+        password=password,
+        display_name=display_name,
+        email_verified=True,
+    )
+    print(f"[OK] 管理者ユーザーを作成しました")
+    print(f"  email: {email}")
+    print(f"  password: {password}")
+    print(f"  display_name: {display_name}")
+    print(f"  uid: {user.uid}")
+
+
+def main() -> None:
+    print("Firebase Admin SDK を初期化中...")
+    initialize_firebase()
+    print("管理者ユーザーを作成中...")
+    create_admin_user()
+    print("完了")
+
 
 if __name__ == "__main__":
     main()

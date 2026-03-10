@@ -2,7 +2,7 @@
 // Firebase Auth 付き Axios クライアント
 
 import axios from "axios";
-import { getAuth } from "firebase/auth";
+import { auth } from "./firebase";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
@@ -15,25 +15,24 @@ const apiClient = axios.create({
 apiClient.interceptors.request.use(async (config) => {
   if (typeof window === "undefined") return config;
 
-  try {
-    const auth = getAuth();
-    const user = auth.currentUser;
-    if (user) {
-      const token = await user.getIdToken();
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-  } catch {
-    // 認証情報がなくてもリクエストは送る
+  const user = auth.currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
 
-// レスポンスインターセプター: 401 → /login リダイレクト
+// レスポンスインターセプター: 401 → / リダイレクト（Google トークン切れは除外）
 apiClient.interceptors.response.use(
   (res) => res,
   (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      window.location.href = "/login";
+      const detail: string = error.response?.data?.detail ?? "";
+      // Google OAuth トークン切れは呼び出し元でハンドリングさせる
+      if (!detail.includes("Google")) {
+        window.location.href = "/";
+      }
     }
     return Promise.reject(error);
   },

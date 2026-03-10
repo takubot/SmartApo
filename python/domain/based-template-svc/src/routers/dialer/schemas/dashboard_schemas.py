@@ -21,7 +21,7 @@ class DashboardOverviewSchema(BaseSchema):
 
 
 class AgentPerformanceSchema(BaseSchema):
-    """オペレーター実績"""
+    """エージェント実績"""
 
     agent_id: str
     display_name: str

@@ -24,14 +24,13 @@ export default function TwilioSettingsPage() {
   const { data: config, isLoading, mutate } = useTwilioConfig();
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
   const [form, setForm] = useState<TwilioConfigSchemaType>({
     accountSid: "",
     authToken: "",
     twimlAppSid: undefined,
     phoneNumbers: undefined,
     defaultCallerId: undefined,
-    webhookUrl: undefined,
-    statusCallbackUrl: undefined,
     recordingEnabled: true,
   });
 
@@ -43,8 +42,6 @@ export default function TwilioSettingsPage() {
         twimlAppSid: config.twimlAppSid ?? undefined,
         phoneNumbers: config.phoneNumbers ?? undefined,
         defaultCallerId: config.defaultCallerId ?? undefined,
-        webhookUrl: config.webhookUrl ?? undefined,
-        statusCallbackUrl: undefined,
         recordingEnabled: config.recordingEnabled,
       });
     }
@@ -66,7 +63,7 @@ export default function TwilioSettingsPage() {
       mutate();
       if (form.accountSid) updateSetupStatus({ twilioAccount: true });
       if (form.defaultCallerId) updateSetupStatus({ twilioPhoneNumber: true });
-      if (form.webhookUrl) updateSetupStatus({ twilioWebhook: true });
+      if (apiBaseUrl) updateSetupStatus({ twilioWebhook: true });
     } catch {
       addToast({ title: "保存に失敗しました", color: "danger" });
     } finally {
@@ -95,10 +92,7 @@ export default function TwilioSettingsPage() {
 
   return (
     <div>
-      <PageHeader
-        title="Twilio設定"
-        description="Twilioアカウントの接続設定"
-      />
+      <PageHeader title="Twilio設定" description="Twilioアカウントの接続設定" />
 
       <div className="max-w-2xl space-y-6">
         <div className="flex items-center gap-2">
@@ -122,18 +116,14 @@ export default function TwilioSettingsPage() {
               label="Account SID"
               placeholder="ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
               value={form.accountSid}
-              onValueChange={(v) =>
-                setForm((p) => ({ ...p, accountSid: v }))
-              }
+              onValueChange={(v) => setForm((p) => ({ ...p, accountSid: v }))}
             />
             <Input
               label="Auth Token"
               type="password"
               placeholder="設定済みの場合は空欄のまま"
               value={form.authToken}
-              onValueChange={(v) =>
-                setForm((p) => ({ ...p, authToken: v }))
-              }
+              onValueChange={(v) => setForm((p) => ({ ...p, authToken: v }))}
             />
             <Input
               label="TwiML App SID"
@@ -151,22 +141,26 @@ export default function TwilioSettingsPage() {
                 setForm((p) => ({ ...p, defaultCallerId: v || undefined }))
               }
             />
-            <Input
-              label="Webhook URL"
-              placeholder="https://your-domain.com/v2/dialer/webhooks/twilio"
-              value={form.webhookUrl ?? ""}
-              onValueChange={(v) =>
-                setForm((p) => ({ ...p, webhookUrl: v || undefined }))
-              }
-            />
-            <Input
-              label="Status Callback URL"
-              placeholder="https://your-domain.com/v2/dialer/webhooks/twilio/status"
-              value={form.statusCallbackUrl ?? ""}
-              onValueChange={(v) =>
-                setForm((p) => ({ ...p, statusCallbackUrl: v || undefined }))
-              }
-            />
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200 space-y-2">
+              <p className="text-xs font-medium text-gray-500">
+                Webhook URL（環境変数から自動設定）
+              </p>
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400">Voice URL</p>
+                <p className="text-xs font-mono text-gray-600">
+                  {apiBaseUrl}/v2/dialer/webhooks/twilio/voice
+                </p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-[10px] text-gray-400">Status Callback URL</p>
+                <p className="text-xs font-mono text-gray-600">
+                  {apiBaseUrl}/v2/dialer/webhooks/twilio/status
+                </p>
+              </div>
+              <p className="text-[11px] text-gray-400">
+                NEXT_PUBLIC_API_URL 環境変数から取得されます
+              </p>
+            </div>
             <Switch
               isSelected={form.recordingEnabled}
               onValueChange={(v) =>

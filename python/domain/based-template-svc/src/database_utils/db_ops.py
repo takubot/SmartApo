@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BigQuery テーブル作成スクリプト for based-template-svc
+MySQL テーブル作成スクリプト for based-template-svc
 
 実行方法:
 1. DOPPELディレクトリから実行:
@@ -40,11 +40,11 @@ logger = getLogger(__name__)
 
 
 def create_all_tables_sync() -> None:
-    """[同期] BigQuery上に全テーブルを作成"""
+    """[同期] MySQL上に全テーブルを作成"""
     try:
         Base.metadata.create_all(bind=sync_engine)
-        logger.info("All tables created successfully on BigQuery")
-        print("[OK] All tables created successfully on BigQuery!")
+        logger.info("All tables created successfully on MySQL")
+        print("[OK] All tables created successfully on MySQL!")
     except SQLAlchemyError as e:
         logger.error("Failed to create all tables: %s", e)
         print(f"[ERROR] Failed to create tables: {e}")
@@ -54,8 +54,8 @@ def create_all_tables_sync() -> None:
 def main() -> None:
     """テーブル作成のみを実行するエントリーポイント"""
     print("=" * 60)
-    print("based-template-svc | Create BigQuery Tables")
-    print(f"Dataset: {sync_engine.url}")
+    print("based-template-svc | Create MySQL Tables")
+    print(f"Database: {sync_engine.url}")
     print("=" * 60)
     try:
         create_all_tables_sync()

@@ -35,11 +35,11 @@ export default function TwilioSetupGuide({
   status,
   onStatusChange,
 }: TwilioSetupGuideProps) {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
   const [form, setForm] = useState({
     accountSid: "",
     authToken: "",
     defaultCallerId: "",
-    webhookUrl: "",
   });
   const [saving, setSaving] = useState(false);
   const [testing, setTesting] = useState(false);
@@ -61,7 +61,7 @@ export default function TwilioSetupGuide({
       if (form.defaultCallerId) {
         updates.twilioPhoneNumber = true;
       }
-      if (form.webhookUrl) {
+      if (apiBaseUrl) {
         updates.twilioWebhook = true;
       }
       onStatusChange(updateSetupStatus(updates));
@@ -101,10 +101,15 @@ export default function TwilioSetupGuide({
   return (
     <div className="space-y-6">
       {/* ==================== STEP 1: アカウント作成 ==================== */}
-      <Card shadow="sm" className={status.twilioAccount ? "border border-green-200" : ""}>
+      <Card
+        shadow="sm"
+        className={status.twilioAccount ? "border border-green-200" : ""}
+      >
         <CardHeader className="flex items-center justify-between px-6 pt-5 pb-2">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioAccount ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioAccount ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}
+            >
               {status.twilioAccount ? <CheckCircle2 size={18} /> : "1"}
             </div>
             <div>
@@ -117,7 +122,9 @@ export default function TwilioSetupGuide({
             </div>
           </div>
           {status.twilioAccount && (
-            <Chip size="sm" color="success" variant="flat">完了</Chip>
+            <Chip size="sm" color="success" variant="flat">
+              完了
+            </Chip>
           )}
         </CardHeader>
         <CardBody className="px-6 pb-6 space-y-4">
@@ -133,40 +140,63 @@ export default function TwilioSetupGuide({
               <div className="space-y-4 pb-2">
                 <div className="bg-blue-50 rounded-lg p-4 space-y-3">
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      1
+                    </span>
                     <div>
-                      <p className="text-sm font-medium text-gray-700">Twilio公式サイトにアクセス</p>
+                      <p className="text-sm font-medium text-gray-700">
+                        Twilio公式サイトにアクセス
+                      </p>
                       <Button
                         size="sm"
                         variant="flat"
                         color="primary"
                         className="mt-1"
                         endContent={<ExternalLink size={14} />}
-                        onPress={() => window.open("https://www.twilio.com/ja-jp/try-twilio", "_blank")}
+                        onPress={() =>
+                          window.open(
+                            "https://www.twilio.com/ja-jp/try-twilio",
+                            "_blank",
+                          )
+                        }
                       >
                         Twilio公式サイトを開く
                       </Button>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">2</span>
-                    <p className="text-sm text-gray-700">「無料で始める」ボタンからアカウントを作成</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      2
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      「無料で始める」ボタンからアカウントを作成
+                    </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">3</span>
-                    <p className="text-sm text-gray-700">メール認証・電話番号認証を完了</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      3
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      メール認証・電話番号認証を完了
+                    </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">4</span>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      4
+                    </span>
                     <div>
-                      <p className="text-sm text-gray-700">ダッシュボードで Account SID と Auth Token を確認</p>
+                      <p className="text-sm text-gray-700">
+                        ダッシュボードで Account SID と Auth Token を確認
+                      </p>
                       <Button
                         size="sm"
                         variant="flat"
                         color="primary"
                         className="mt-1"
                         endContent={<ExternalLink size={14} />}
-                        onPress={() => window.open("https://console.twilio.com/", "_blank")}
+                        onPress={() =>
+                          window.open("https://console.twilio.com/", "_blank")
+                        }
                       >
                         Twilioコンソールを開く
                       </Button>
@@ -176,7 +206,9 @@ export default function TwilioSetupGuide({
 
                 {/* Twilioコンソールのモック図解 */}
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-xs font-medium text-gray-500 mb-2">Twilioコンソール ダッシュボード画面</p>
+                  <p className="text-xs font-medium text-gray-500 mb-2">
+                    Twilioコンソール ダッシュボード画面
+                  </p>
                   <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-3">
                     <div className="flex items-center gap-2 text-gray-400 text-xs">
                       <div className="w-3 h-3 rounded-full bg-red-400" />
@@ -186,18 +218,28 @@ export default function TwilioSetupGuide({
                     </div>
                     <Divider />
                     <div className="space-y-2">
-                      <p className="text-xs text-gray-500 font-medium">Account Info</p>
+                      <p className="text-xs text-gray-500 font-medium">
+                        Account Info
+                      </p>
                       <div className="flex items-center justify-between bg-gray-50 rounded p-2">
                         <div>
-                          <p className="text-[10px] text-gray-400">Account SID</p>
-                          <p className="text-xs font-mono text-gray-600">ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</p>
+                          <p className="text-[10px] text-gray-400">
+                            Account SID
+                          </p>
+                          <p className="text-xs font-mono text-gray-600">
+                            ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                          </p>
                         </div>
                         <Copy size={12} className="text-gray-400" />
                       </div>
                       <div className="flex items-center justify-between bg-gray-50 rounded p-2">
                         <div>
-                          <p className="text-[10px] text-gray-400">Auth Token</p>
-                          <p className="text-xs font-mono text-gray-600">********************************</p>
+                          <p className="text-[10px] text-gray-400">
+                            Auth Token
+                          </p>
+                          <p className="text-xs font-mono text-gray-600">
+                            ********************************
+                          </p>
                         </div>
                         <Copy size={12} className="text-gray-400" />
                       </div>
@@ -209,9 +251,13 @@ export default function TwilioSetupGuide({
                 </div>
 
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
-                  <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                  <AlertCircle
+                    size={16}
+                    className="text-amber-500 flex-shrink-0 mt-0.5"
+                  />
                   <p className="text-xs text-amber-700">
-                    <strong>注意:</strong> トライアルアカウントでは認証済みの電話番号にしか発信できません。
+                    <strong>注意:</strong>{" "}
+                    トライアルアカウントでは認証済みの電話番号にしか発信できません。
                     本番運用にはアカウントのアップグレード（クレジットカード登録）が必要です。
                   </p>
                 </div>
@@ -281,10 +327,15 @@ export default function TwilioSetupGuide({
       </Card>
 
       {/* ==================== STEP 2: 電話番号 ==================== */}
-      <Card shadow="sm" className={status.twilioPhoneNumber ? "border border-green-200" : ""}>
+      <Card
+        shadow="sm"
+        className={status.twilioPhoneNumber ? "border border-green-200" : ""}
+      >
         <CardHeader className="flex items-center justify-between px-6 pt-5 pb-2">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioPhoneNumber ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioPhoneNumber ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}
+            >
               {status.twilioPhoneNumber ? <CheckCircle2 size={18} /> : "2"}
             </div>
             <div>
@@ -297,7 +348,9 @@ export default function TwilioSetupGuide({
             </div>
           </div>
           {status.twilioPhoneNumber && (
-            <Chip size="sm" color="success" variant="flat">完了</Chip>
+            <Chip size="sm" color="success" variant="flat">
+              完了
+            </Chip>
           )}
         </CardHeader>
         <CardBody className="px-6 pb-6 space-y-4">
@@ -313,10 +366,15 @@ export default function TwilioSetupGuide({
               <div className="space-y-4 pb-2">
                 <div className="bg-blue-50 rounded-lg p-4 space-y-3">
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      1
+                    </span>
                     <div>
                       <p className="text-sm text-gray-700">
-                        Twilioコンソール <ArrowRight size={12} className="inline mx-1" /> Phone Numbers <ArrowRight size={12} className="inline mx-1" /> Buy a Number
+                        Twilioコンソール{" "}
+                        <ArrowRight size={12} className="inline mx-1" /> Phone
+                        Numbers <ArrowRight size={12} className="inline mx-1" />{" "}
+                        Buy a Number
                       </p>
                       <Button
                         size="sm"
@@ -324,51 +382,90 @@ export default function TwilioSetupGuide({
                         color="primary"
                         className="mt-1"
                         endContent={<ExternalLink size={14} />}
-                        onPress={() => window.open("https://console.twilio.com/us1/develop/phone-numbers/manage/search", "_blank")}
+                        onPress={() =>
+                          window.open(
+                            "https://console.twilio.com/us1/develop/phone-numbers/manage/search",
+                            "_blank",
+                          )
+                        }
                       >
                         番号購入ページを開く
                       </Button>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">2</span>
-                    <p className="text-sm text-gray-700">Country: <strong>Japan (+81)</strong> を選択、Capabilities: <strong>Voice</strong> にチェック</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      2
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      Country: <strong>Japan (+81)</strong>{" "}
+                      を選択、Capabilities: <strong>Voice</strong> にチェック
+                    </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">3</span>
-                    <p className="text-sm text-gray-700">番号を選択して「Buy」をクリック</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      3
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      番号を選択して「Buy」をクリック
+                    </p>
                   </div>
                 </div>
 
                 <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
-                  <AlertCircle size={16} className="text-amber-500 flex-shrink-0 mt-0.5" />
+                  <AlertCircle
+                    size={16}
+                    className="text-amber-500 flex-shrink-0 mt-0.5"
+                  />
                   <div className="text-xs text-amber-700">
                     <p className="font-bold mb-1">日本の電話番号について</p>
-                    <p>日本の番号を取得するにはRegulatory Bundle（規制対応書類）の提出が必要です。会社情報・住所証明書類を提出し、審査通過まで数営業日かかります。</p>
-                    <p className="mt-1">テスト用途であれば、米国番号（+1）なら即座に購入可能です。</p>
+                    <p>
+                      日本の番号を取得するにはRegulatory
+                      Bundle（規制対応書類）の提出が必要です。会社情報・住所証明書類を提出し、審査通過まで数営業日かかります。
+                    </p>
+                    <p className="mt-1">
+                      テスト用途であれば、米国番号（+1）なら即座に購入可能です。
+                    </p>
                   </div>
                 </div>
 
                 {/* 番号購入画面のモックアップ */}
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <p className="text-xs font-medium text-gray-500 mb-2">Twilio 番号購入画面のイメージ</p>
+                  <p className="text-xs font-medium text-gray-500 mb-2">
+                    Twilio 番号購入画面のイメージ
+                  </p>
                   <div className="bg-white rounded-lg border border-gray-200 p-4 space-y-2">
                     <div className="flex items-center gap-2 text-gray-400 text-xs">
                       <div className="w-3 h-3 rounded-full bg-red-400" />
                       <div className="w-3 h-3 rounded-full bg-yellow-400" />
                       <div className="w-3 h-3 rounded-full bg-green-400" />
-                      <span className="ml-2">console.twilio.com / Phone Numbers / Buy</span>
+                      <span className="ml-2">
+                        console.twilio.com / Phone Numbers / Buy
+                      </span>
                     </div>
                     <Divider />
                     <div className="flex gap-2 items-center">
-                      <div className="bg-gray-100 rounded px-2 py-1 text-xs">Country: Japan (+81)</div>
-                      <div className="bg-blue-100 rounded px-2 py-1 text-xs text-blue-700">Voice</div>
+                      <div className="bg-gray-100 rounded px-2 py-1 text-xs">
+                        Country: Japan (+81)
+                      </div>
+                      <div className="bg-blue-100 rounded px-2 py-1 text-xs text-blue-700">
+                        Voice
+                      </div>
                     </div>
                     <div className="space-y-1 mt-2">
-                      {["+81 50-1234-5678", "+81 50-9876-5432", "+81 3-1234-5678"].map((num) => (
-                        <div key={num} className="flex items-center justify-between bg-gray-50 rounded p-2">
+                      {[
+                        "+81 50-1234-5678",
+                        "+81 50-9876-5432",
+                        "+81 3-1234-5678",
+                      ].map((num) => (
+                        <div
+                          key={num}
+                          className="flex items-center justify-between bg-gray-50 rounded p-2"
+                        >
                           <span className="text-xs font-mono">{num}</span>
-                          <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded">Buy $4.50/mo</span>
+                          <span className="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded">
+                            Buy $4.50/mo
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -388,7 +485,9 @@ export default function TwilioSetupGuide({
               label="デフォルト発信者番号"
               placeholder="+81XXXXXXXXXX"
               value={form.defaultCallerId}
-              onValueChange={(v) => setForm((p) => ({ ...p, defaultCallerId: v }))}
+              onValueChange={(v) =>
+                setForm((p) => ({ ...p, defaultCallerId: v }))
+              }
               description="E.164形式（+81で始まる番号）で入力してください"
             />
             {!status.twilioPhoneNumber && (
@@ -406,10 +505,15 @@ export default function TwilioSetupGuide({
       </Card>
 
       {/* ==================== STEP 3: Webhook ==================== */}
-      <Card shadow="sm" className={status.twilioWebhook ? "border border-green-200" : ""}>
+      <Card
+        shadow="sm"
+        className={status.twilioWebhook ? "border border-green-200" : ""}
+      >
         <CardHeader className="flex items-center justify-between px-6 pt-5 pb-2">
           <div className="flex items-center gap-3">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioWebhook ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${status.twilioWebhook ? "bg-green-100 text-green-600" : "bg-blue-100 text-blue-600"}`}
+            >
               {status.twilioWebhook ? <CheckCircle2 size={18} /> : "3"}
             </div>
             <div>
@@ -422,7 +526,9 @@ export default function TwilioSetupGuide({
             </div>
           </div>
           {status.twilioWebhook && (
-            <Chip size="sm" color="success" variant="flat">完了</Chip>
+            <Chip size="sm" color="success" variant="flat">
+              完了
+            </Chip>
           )}
         </CardHeader>
         <CardBody className="px-6 pb-6 space-y-4">
@@ -437,12 +543,17 @@ export default function TwilioSetupGuide({
             >
               <div className="space-y-4 pb-2">
                 <div className="bg-blue-50 rounded-lg p-4 space-y-3">
-                  <p className="text-xs font-bold text-blue-700 mb-1">TwiML Appの作成</p>
+                  <p className="text-xs font-bold text-blue-700 mb-1">
+                    TwiML Appの作成
+                  </p>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">1</span>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      1
+                    </span>
                     <div>
                       <p className="text-sm text-gray-700">
-                        Twilioコンソール <ArrowRight size={12} className="inline mx-1" />
+                        Twilioコンソール{" "}
+                        <ArrowRight size={12} className="inline mx-1" />
                         Voice <ArrowRight size={12} className="inline mx-1" />
                         TwiML <ArrowRight size={12} className="inline mx-1" />
                         TwiML Apps
@@ -453,40 +564,72 @@ export default function TwilioSetupGuide({
                         color="primary"
                         className="mt-1"
                         endContent={<ExternalLink size={14} />}
-                        onPress={() => window.open("https://console.twilio.com/us1/develop/voice/manage/twiml-apps", "_blank")}
+                        onPress={() =>
+                          window.open(
+                            "https://console.twilio.com/us1/develop/voice/manage/twiml-apps",
+                            "_blank",
+                          )
+                        }
                       >
                         TwiML Apps設定を開く
                       </Button>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">2</span>
-                    <p className="text-sm text-gray-700">「Create new TwiML App」をクリック</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      2
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      「Create new TwiML App」をクリック
+                    </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">3</span>
-                    <p className="text-sm text-gray-700">以下のURLを設定して保存</p>
+                    <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-200 text-blue-700 text-xs font-bold flex items-center justify-center">
+                      3
+                    </span>
+                    <p className="text-sm text-gray-700">
+                      以下のURLを設定して保存
+                    </p>
                   </div>
                 </div>
 
                 {/* Webhook URL一覧 */}
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 space-y-2">
-                  <p className="text-xs font-medium text-gray-500 mb-2">設定するWebhook URL</p>
+                  <p className="text-xs font-medium text-gray-500 mb-2">
+                    設定するWebhook URL（環境変数から自動取得）
+                  </p>
                   {[
-                    { label: "Voice Request URL", path: "/v2/dialer/webhooks/twilio/voice" },
-                    { label: "Status Callback URL", path: "/v2/dialer/webhooks/twilio/status" },
-                    { label: "Recording Callback (任意)", path: "/v2/dialer/webhooks/twilio/recording" },
+                    {
+                      label: "Voice Request URL",
+                      path: "/v2/dialer/webhooks/twilio/voice",
+                    },
+                    {
+                      label: "Status Callback URL",
+                      path: "/v2/dialer/webhooks/twilio/status",
+                    },
+                    {
+                      label: "Recording Callback (任意)",
+                      path: "/v2/dialer/webhooks/twilio/recording",
+                    },
                   ].map((item) => (
-                    <div key={item.path} className="flex items-center justify-between bg-white rounded p-2 border border-gray-100">
+                    <div
+                      key={item.path}
+                      className="flex items-center justify-between bg-white rounded p-2 border border-gray-100"
+                    >
                       <div>
-                        <p className="text-[10px] text-gray-400">{item.label}</p>
+                        <p className="text-[10px] text-gray-400">
+                          {item.label}
+                        </p>
                         <p className="text-xs font-mono text-gray-600">
-                          {"https://<your-domain>"}{item.path}
+                          {apiBaseUrl}
+                          {item.path}
                         </p>
                       </div>
                       <button
                         className="text-gray-400 hover:text-gray-600 p-1"
-                        onClick={() => copyToClipboard(item.path)}
+                        onClick={() =>
+                          copyToClipboard(`${apiBaseUrl}${item.path}`)
+                        }
                       >
                         <Copy size={12} />
                       </button>
@@ -495,10 +638,15 @@ export default function TwilioSetupGuide({
                 </div>
 
                 <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3 flex items-start gap-2">
-                  <AlertCircle size={16} className="text-indigo-500 flex-shrink-0 mt-0.5" />
+                  <AlertCircle
+                    size={16}
+                    className="text-indigo-500 flex-shrink-0 mt-0.5"
+                  />
                   <div className="text-xs text-indigo-700">
                     <p className="font-bold mb-1">ローカル開発の場合</p>
-                    <p>ngrok等のトンネルツールを使って、ローカルサーバーへのURLを作成してください:</p>
+                    <p>
+                      ngrok等のトンネルツールを使って、ローカルサーバーへのURLを作成してください:
+                    </p>
                     <code className="block bg-white/50 rounded px-2 py-1 mt-1 font-mono text-[11px]">
                       ngrok http 8081
                     </code>
@@ -512,15 +660,29 @@ export default function TwilioSetupGuide({
 
           <div className="space-y-3">
             <p className="text-sm font-medium text-gray-700">
-              バックエンドの公開URLを入力
+              Webhook Base URL（環境変数から自動設定）
             </p>
-            <Input
-              label="Webhook Base URL"
-              placeholder="https://your-domain.com"
-              value={form.webhookUrl}
-              onValueChange={(v) => setForm((p) => ({ ...p, webhookUrl: v }))}
-              description="Twilioが通話ステータスを送信するベースURL"
-            />
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+              <p className="text-xs text-gray-500 mb-1">現在のBase URL</p>
+              <div className="flex items-center justify-between">
+                <p className="text-sm font-mono text-gray-700">
+                  {apiBaseUrl || "（NEXT_PUBLIC_API_URL 未設定）"}
+                </p>
+                {apiBaseUrl && (
+                  <button
+                    className="text-gray-400 hover:text-gray-600 p-1"
+                    onClick={() => copyToClipboard(apiBaseUrl)}
+                  >
+                    <Copy size={14} />
+                  </button>
+                )}
+              </div>
+              <p className="text-[11px] text-gray-400 mt-2">
+                上記のWebhook
+                URLをTwilioコンソールに設定してください。URLは環境変数
+                NEXT_PUBLIC_API_URL から取得されます。
+              </p>
+            </div>
             {!status.twilioWebhook && (
               <Button
                 size="sm"
@@ -528,7 +690,7 @@ export default function TwilioSetupGuide({
                 className="text-gray-400"
                 onPress={() => handleMarkComplete("twilioWebhook")}
               >
-                手動で完了にする
+                Twilioコンソールで設定済みにする
               </Button>
             )}
           </div>
@@ -543,7 +705,9 @@ export default function TwilioSetupGuide({
           startContent={<Save size={18} />}
           isLoading={saving}
           onPress={handleSave}
-          isDisabled={!form.accountSid && !form.authToken && !form.defaultCallerId && !form.webhookUrl}
+          isDisabled={
+            !form.accountSid && !form.authToken && !form.defaultCallerId
+          }
         >
           Twilio設定をまとめて保存
         </Button>

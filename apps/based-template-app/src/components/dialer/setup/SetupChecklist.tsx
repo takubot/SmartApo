@@ -16,7 +16,11 @@ import {
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { SetupStepStatus } from "@/lib/setupStatus";
-import { getCompletedCount, getTotalSteps, isSetupComplete } from "@/lib/setupStatus";
+import {
+  getCompletedCount,
+  getTotalSteps,
+  isSetupComplete,
+} from "@/lib/setupStatus";
 
 interface SetupStep {
   key: keyof SetupStepStatus;
@@ -31,7 +35,8 @@ const SETUP_STEPS: SetupStep[] = [
   {
     key: "twilioAccount",
     title: "Twilioアカウントを接続",
-    description: "Account SIDとAuth Tokenを設定して、Twilioとの接続を確立します",
+    description:
+      "Account SIDとAuth Tokenを設定して、Twilioとの接続を確立します",
     icon: <Phone size={20} />,
     actionLabel: "Twilio設定へ",
     href: "/settings/twilio",
@@ -39,23 +44,25 @@ const SETUP_STEPS: SetupStep[] = [
   {
     key: "twilioPhoneNumber",
     title: "発信用電話番号を登録",
-    description: "Twilioで購入した電話番号をデフォルト発信者番号として設定します",
+    description:
+      "Twilioで購入した電話番号をデフォルト発信者番号として設定します",
     icon: <PhoneCall size={20} />,
     actionLabel: "番号を設定",
     href: "/settings/twilio",
   },
   {
     key: "twilioWebhook",
-    title: "Webhook URLを設定",
-    description: "通話ステータスの受信に必要なWebhook URLを設定します",
+    title: "TwilioコンソールでWebhookを設定",
+    description:
+      "TwilioコンソールにWebhook URLを設定します（URLは環境変数から自動取得）",
     icon: <Globe size={20} />,
     actionLabel: "Webhookを設定",
     href: "/settings/twilio",
   },
   {
     key: "agentRegistered",
-    title: "オペレーターを登録",
-    description: "架電を行うオペレーター（エージェント）を少なくとも1名登録します",
+    title: "エージェントを登録",
+    description: "架電を行うエージェントを少なくとも1名登録します",
     icon: <Headphones size={20} />,
     actionLabel: "エージェント登録",
     href: "/agents",
@@ -71,7 +78,8 @@ const SETUP_STEPS: SetupStep[] = [
   {
     key: "campaignCreated",
     title: "キャンペーンを作成",
-    description: "架電キャンペーンを作成して、コンタクトとエージェントを割り当てます",
+    description:
+      "架電キャンペーンを作成して、コンタクトとエージェントを割り当てます",
     icon: <Megaphone size={20} />,
     actionLabel: "キャンペーン作成",
     href: "/campaigns/new",
@@ -83,7 +91,10 @@ interface SetupChecklistProps {
   onSkip?: () => void;
 }
 
-export default function SetupChecklist({ status, onSkip }: SetupChecklistProps) {
+export default function SetupChecklist({
+  status,
+  onSkip,
+}: SetupChecklistProps) {
   const router = useRouter();
   const completed = getCompletedCount(status);
   const total = getTotalSteps();
@@ -144,7 +155,9 @@ export default function SetupChecklist({ status, onSkip }: SetupChecklistProps) 
         </div>
         <div className="w-full">
           <div className="flex justify-between text-xs text-gray-500 mb-1">
-            <span>{completed} / {total} ステップ完了</span>
+            <span>
+              {completed} / {total} ステップ完了
+            </span>
             <span>{progressPercent}%</span>
           </div>
           <Progress

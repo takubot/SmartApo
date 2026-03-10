@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-BigQuery スキーマ確認スクリプト for based-template-svc
+MySQL スキーマ確認スクリプト for based-template-svc
 
-- モデル(Base.metadata) と BigQuery上の実テーブルを比較
+- モデル(Base.metadata) と MySQL上の実テーブルを比較
 - 差分情報を標準出力に表示（SQLの実行は行わない）
 
 Usage:
@@ -22,7 +22,7 @@ sys.path.insert(0, str(project_root))
 logger = getLogger(__name__)
 
 try:
-    from sqlalchemy import MetaData, inspect
+    from sqlalchemy import MetaData
 
     from src.database_utils.database import sync_engine
     from src.models.tables import Base
@@ -32,45 +32,45 @@ except Exception as e:  # pragma: no cover
     sys.exit(1)
 
 
-def load_bq_metadata() -> MetaData:
-    """BigQueryから現在のメタデータを取得"""
-    bq_md = MetaData()
+def load_db_metadata() -> MetaData:
+    """MySQLから現在のメタデータを取得"""
+    db_md = MetaData()
     with sync_engine.connect() as conn:
-        bq_md.reflect(bind=conn)
-    return bq_md
+        db_md.reflect(bind=conn)
+    return db_md
 
 
-def get_dataset_name() -> str:
-    """データセット名を取得する"""
+def get_database_name() -> str:
+    """データベース名を取得する"""
     return str(sync_engine.url)
 
 
 def main() -> None:
-    dataset_name = get_dataset_name()
+    database_name = get_database_name()
 
     print("=" * 80)
-    print("BigQuery スキーマ差分確認")
-    print(f"データセット: {dataset_name}")
+    print("MySQL スキーマ差分確認")
+    print(f"データベース: {database_name}")
     print("=" * 80)
     print()
 
     with sync_engine.connect() as conn:
-        bq_md = MetaData()
-        bq_md.reflect(bind=conn)
+        db_md = MetaData()
+        db_md.reflect(bind=conn)
         model_md = Base.metadata
 
         model_tables = set(model_md.tables.keys())
-        bq_tables = set(bq_md.tables.keys())
+        db_tables = set(db_md.tables.keys())
 
-        missing_tables = model_tables - bq_tables
-        extra_tables = bq_tables - model_tables
-        common_tables = model_tables & bq_tables
+        missing_tables = model_tables - db_tables
+        extra_tables = db_tables - model_tables
+        common_tables = model_tables & db_tables
 
         print("分析結果:")
         print(f"  モデル定義テーブル: {len(model_tables)} 個")
-        print(f"  BigQuery上テーブル: {len(bq_tables)} 個")
+        print(f"  MySQL上テーブル: {len(db_tables)} 個")
         print(f"  新規テーブル (未作成): {len(missing_tables)} 個")
-        print(f"  BigQueryのみ: {len(extra_tables)} 個")
+        print(f"  MySQLのみ: {len(extra_tables)} 個")
         print(f"  共通テーブル: {len(common_tables)} 個")
         print()
 
@@ -84,7 +84,7 @@ def main() -> None:
 
         if extra_tables:
             print("=" * 60)
-            print("BigQueryのみに存在するテーブル")
+            print("MySQLのみに存在するテーブル")
             print("=" * 60)
             for t in sorted(extra_tables):
                 print(f"  - {t}")
@@ -96,17 +96,17 @@ def main() -> None:
             print("=" * 60)
             for t in sorted(common_tables):
                 model_cols = {c.name for c in model_md.tables[t].columns}
-                bq_cols = {c.name for c in bq_md.tables[t].columns}
+                db_cols = {c.name for c in db_md.tables[t].columns}
 
-                missing_cols = model_cols - bq_cols
-                extra_cols = bq_cols - model_cols
+                missing_cols = model_cols - db_cols
+                extra_cols = db_cols - model_cols
 
                 if missing_cols or extra_cols:
                     print(f"  [{t}]")
                     for col in sorted(missing_cols):
                         print(f"    + 追加が必要: {col}")
                     for col in sorted(extra_cols):
-                        print(f"    - BigQueryのみ: {col}")
+                        print(f"    - MySQLのみ: {col}")
                 else:
                     print(f"  [{t}] OK")
             print()

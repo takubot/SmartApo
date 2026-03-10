@@ -40,13 +40,10 @@ export default function CampaignMonitorPage({
     );
   }
 
-  const answerRate = stats && stats.totalCalls > 0
-    ? stats.totalAnswered / stats.totalCalls
-    : 0;
+  const answerRate =
+    stats && stats.totalCalls > 0 ? stats.totalAnswered / stats.totalCalls : 0;
 
-  const remaining = stats
-    ? stats.totalContacts - stats.completedContacts
-    : 0;
+  const remaining = stats ? stats.totalContacts - stats.completedContacts : 0;
 
   const pieData = stats
     ? [
@@ -74,8 +71,16 @@ export default function CampaignMonitorPage({
       {stats && (
         <>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <KpiCard title="総件数" value={stats.totalContacts} color="primary" />
-            <KpiCard title="完了件数" value={stats.completedContacts} color="success" />
+            <KpiCard
+              title="総件数"
+              value={stats.totalContacts}
+              color="primary"
+            />
+            <KpiCard
+              title="完了件数"
+              value={stats.completedContacts}
+              color="success"
+            />
             <KpiCard
               title="応答率"
               value={`${(answerRate * 100).toFixed(1)}%`}

@@ -15,7 +15,7 @@ class GoogleAuthUrlResponseSchema(BaseSchema):
 class GoogleCallbackSchema(BaseSchema):
     code: str
     state: Optional[str] = None
-    integration_type: str
+    redirect_uri: Optional[str] = None
 
 
 class GoogleIntegrationStatusSchema(BaseSchema):
@@ -23,3 +23,13 @@ class GoogleIntegrationStatusSchema(BaseSchema):
     integration_type: str
     status: str
     last_synced_at: Optional[datetime] = None
+
+
+class GoogleIntegrationListSchema(BaseSchema):
+    integrations: list[GoogleIntegrationStatusSchema]
+
+
+class GooglePickerConfigSchema(BaseSchema):
+    access_token: str
+    api_key: str
+    app_id: str
