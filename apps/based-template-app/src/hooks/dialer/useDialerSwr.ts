@@ -8,8 +8,6 @@ import type {
   CampaignResponseSchemaType,
   CampaignStatsSchemaType,
   ContactResponseSchemaType,
-  AgentResponseSchemaType,
-  AgentPerformanceSchemaType,
   CallLogResponseSchemaType,
   CallListResponseSchemaType,
   CallbackResponseSchemaType,
@@ -18,9 +16,13 @@ import type {
   ScriptResponseSchemaType,
   DashboardOverviewSchemaType,
   HourlyStatSchemaType,
-  TwilioConfigResponseSchemaType,
   GoogleIntegrationStatusSchemaType,
+  UserResponseSchemaType,
+  UserPerformanceSchemaType,
 } from "@repo/api-contracts/based_template/zschema";
+
+export type DialerUserType = UserResponseSchemaType;
+export type UserPerformanceType = UserPerformanceSchemaType;
 
 // ────────────────────────────────────────────
 // 汎用型（バックエンド PaginatedResponse と一致）
@@ -115,9 +117,9 @@ export function useDashboardHourly() {
   );
 }
 
-export function useDashboardAgentPerformance() {
-  return useDialerDetail<{ agents: AgentPerformanceSchemaType[] }>(
-    "/dashboard/agent-performance",
+export function useDashboardUserPerformance() {
+  return useDialerDetail<{ users: UserPerformanceType[] }>(
+    "/dashboard/users/performance",
   );
 }
 
@@ -159,21 +161,36 @@ export function useContact(id: string | null) {
 }
 
 // ────────────────────────────────────────────
-// Agents
+// Users
 // ────────────────────────────────────────────
-export function useAgents() {
-  return useSWR<AgentResponseSchemaType[]>("/agents", swrFetcher, {
+
+/** ログインユーザーの情報を取得（自動作成） */
+export function useCurrentUser(displayName?: string | null) {
+  const qs = displayName
+    ? `?display_name=${encodeURIComponent(displayName)}`
+    : "";
+  return useSWR<DialerUserType>(`/users/me${qs}`, swrFetcher, {
     revalidateOnFocus: false,
   });
 }
 
-export function useAgentStatusBoard() {
+export function useUsers() {
+  return useSWR<DialerUserType[]>("/users", swrFetcher, {
+    revalidateOnFocus: false,
+  });
+}
+
+export function useUser(id: string | null) {
+  return useDialerDetail<DialerUserType>(id ? `/users/${id}` : null);
+}
+
+export function useUserStatusBoard() {
   return useDialerDetail<{
-    agents: (AgentResponseSchemaType & {
+    users: (DialerUserType & {
       callDuration?: number;
       campaignName?: string | null;
     })[];
-  }>("/agents/status-board");
+  }>("/users/status-board");
 }
 
 // ────────────────────────────────────────────
@@ -292,8 +309,12 @@ export function useDispositions() {
 // ────────────────────────────────────────────
 // Settings
 // ────────────────────────────────────────────
-export function useTwilioConfig() {
-  return useDialerDetail<TwilioConfigResponseSchemaType>("/settings/twilio");
+export function usePhoneConfig() {
+  return useDialerDetail<{
+    eslConnected: boolean;
+    sipGateway: string | null;
+    registeredUsers: number;
+  }>("/settings/phone");
 }
 
 export function useGoogleIntegrations() {

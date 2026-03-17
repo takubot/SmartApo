@@ -95,7 +95,7 @@ class CampaignStatsSchema(BaseSchema):
     total_abandoned: int
     answer_rate: float
     abandon_rate: float
-    active_agents: int
+    active_users: int
     active_calls: int
     predictive_ratio: Decimal
 

@@ -1,0 +1,113 @@
+<!--
+  FreeSWITCH ユーザーディレクトリ - エージェントテンプレート
+  WebRTC (SIP.js) で接続するオペレーターの SIP アカウント定義。
+
+  内線番号 1001〜1005 を定義。
+  実運用ではDBからの動的ロード (mod_xml_curl) を推奨。
+
+  SIP.js 側の設定:
+    extension: "1001"
+    password: "agent1001pass"
+    domain: FreeSWITCHのホスト名 or IP
+-->
+<include>
+
+  <!-- エージェント 1001 -->
+  <user id="1001">
+    <params>
+      <param name="password" value="agent1001pass"/>
+      <!-- WebRTC 必須パラメータ -->
+      <param name="vm-password" value="1001"/>
+    </params>
+    <variables>
+      <variable name="toll_allow" value="domestic,international,local"/>
+      <variable name="accountcode" value="1001"/>
+      <variable name="user_context" value="default"/>
+      <variable name="effective_caller_id_name" value="Agent 1001"/>
+      <variable name="effective_caller_id_number" value="1001"/>
+      <!-- WebRTC: SRTP必須 -->
+      <variable name="rtp_secure_media" value="true"/>
+      <variable name="rtp_secure_media_inbound" value="true"/>
+      <variable name="rtp_secure_media_outbound" value="true"/>
+      <!-- WebRTC: メディアバイパス無効 (FreeSWITCHがメディアを中継) -->
+      <variable name="bypass_media" value="false"/>
+    </variables>
+  </user>
+
+  <!-- エージェント 1002 -->
+  <user id="1002">
+    <params>
+      <param name="password" value="agent1002pass"/>
+      <param name="vm-password" value="1002"/>
+    </params>
+    <variables>
+      <variable name="toll_allow" value="domestic,international,local"/>
+      <variable name="accountcode" value="1002"/>
+      <variable name="user_context" value="default"/>
+      <variable name="effective_caller_id_name" value="Agent 1002"/>
+      <variable name="effective_caller_id_number" value="1002"/>
+      <variable name="rtp_secure_media" value="true"/>
+      <variable name="rtp_secure_media_inbound" value="true"/>
+      <variable name="rtp_secure_media_outbound" value="true"/>
+      <variable name="bypass_media" value="false"/>
+    </variables>
+  </user>
+
+  <!-- エージェント 1003 -->
+  <user id="1003">
+    <params>
+      <param name="password" value="agent1003pass"/>
+      <param name="vm-password" value="1003"/>
+    </params>
+    <variables>
+      <variable name="toll_allow" value="domestic,international,local"/>
+      <variable name="accountcode" value="1003"/>
+      <variable name="user_context" value="default"/>
+      <variable name="effective_caller_id_name" value="Agent 1003"/>
+      <variable name="effective_caller_id_number" value="1003"/>
+      <variable name="rtp_secure_media" value="true"/>
+      <variable name="rtp_secure_media_inbound" value="true"/>
+      <variable name="rtp_secure_media_outbound" value="true"/>
+      <variable name="bypass_media" value="false"/>
+    </variables>
+  </user>
+
+  <!-- エージェント 1004 -->
+  <user id="1004">
+    <params>
+      <param name="password" value="agent1004pass"/>
+      <param name="vm-password" value="1004"/>
+    </params>
+    <variables>
+      <variable name="toll_allow" value="domestic,international,local"/>
+      <variable name="accountcode" value="1004"/>
+      <variable name="user_context" value="default"/>
+      <variable name="effective_caller_id_name" value="Agent 1004"/>
+      <variable name="effective_caller_id_number" value="1004"/>
+      <variable name="rtp_secure_media" value="true"/>
+      <variable name="rtp_secure_media_inbound" value="true"/>
+      <variable name="rtp_secure_media_outbound" value="true"/>
+      <variable name="bypass_media" value="false"/>
+    </variables>
+  </user>
+
+  <!-- エージェント 1005 -->
+  <user id="1005">
+    <params>
+      <param name="password" value="agent1005pass"/>
+      <param name="vm-password" value="1005"/>
+    </params>
+    <variables>
+      <variable name="toll_allow" value="domestic,international,local"/>
+      <variable name="accountcode" value="1005"/>
+      <variable name="user_context" value="default"/>
+      <variable name="effective_caller_id_name" value="Agent 1005"/>
+      <variable name="effective_caller_id_number" value="1005"/>
+      <variable name="rtp_secure_media" value="true"/>
+      <variable name="rtp_secure_media_inbound" value="true"/>
+      <variable name="rtp_secure_media_outbound" value="true"/>
+      <variable name="bypass_media" value="false"/>
+    </variables>
+  </user>
+
+</include>

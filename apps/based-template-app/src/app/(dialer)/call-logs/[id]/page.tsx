@@ -111,10 +111,10 @@ export default function CallLogDetailPage({
                   </dd>
                 </div>
               )}
-              {log.twilioCallSid && (
+              {log.callUuid && (
                 <div>
-                  <dt className="text-gray-500">Twilio Call SID</dt>
-                  <dd className="font-medium text-xs">{log.twilioCallSid}</dd>
+                  <dt className="text-gray-500">通話UUID</dt>
+                  <dd className="font-medium text-xs">{log.callUuid}</dd>
                 </div>
               )}
               <div>

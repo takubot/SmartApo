@@ -60,7 +60,7 @@ def _setup_middleware(app: FastAPI, settings: Settings) -> None:
 # ルーター登録（既存の install_routers を使用）
 # ─────────────────────────────────────────────────────────────
 def _register_routers(app: FastAPI) -> None:
-    from .routers.dialer.dialer_agents_router import router as dialer_agents_router
+    from .routers.dialer.dialer_users_router import router as dialer_users_router
     from .routers.dialer.dialer_call_lists_router import router as dialer_call_lists_router
     from .routers.dialer.dialer_call_logs_router import router as dialer_call_logs_router
     from .routers.dialer.dialer_callbacks_router import router as dialer_callbacks_router
@@ -73,15 +73,13 @@ def _register_routers(app: FastAPI) -> None:
     from .routers.dialer.dialer_google_router import router as dialer_google_router
     from .routers.dialer.dialer_scripts_router import router as dialer_scripts_router
     from .routers.dialer.dialer_settings_router import router as dialer_settings_router
-    from .routers.dialer.dialer_twilio_webhooks_router import (
-        router as dialer_twilio_webhooks_router,
-    )
+    from .routers.dialer.dialer_dial_router import router as dialer_dial_router
 
     routers_to_register = [
         # ── Dialer ──
         (dialer_contacts_router, "/v2/dialer/contacts", ["Dialer Contacts"]),
         (dialer_campaigns_router, "/v2/dialer/campaigns", ["Dialer Campaigns"]),
-        (dialer_agents_router, "/v2/dialer/agents", ["Dialer Agents"]),
+        (dialer_users_router, "/v2/dialer/users", ["Dialer Users"]),
         (dialer_calls_router, "/v2/dialer/calls", ["Dialer Calls"]),
         (dialer_call_logs_router, "/v2/dialer/call-logs", ["Dialer Call Logs"]),
         (dialer_call_lists_router, "/v2/dialer/call-lists", ["Dialer Call Lists"]),
@@ -92,7 +90,7 @@ def _register_routers(app: FastAPI) -> None:
         (dialer_dashboard_router, "/v2/dialer/dashboard", ["Dialer Dashboard"]),
         (dialer_google_router, "/v2/dialer/google", ["Dialer Google"]),
         (dialer_settings_router, "/v2/dialer/settings", ["Dialer Settings"]),
-        (dialer_twilio_webhooks_router, "/v2/dialer/webhooks/twilio", ["Dialer Webhooks"]),
+        (dialer_dial_router, "/v2/dialer", ["Dialer"]),
     ]
 
     for router, prefix, tags in routers_to_register:
@@ -140,14 +138,37 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup
     initialize_firebase()
     logger.info("Firebase Admin SDK initialized.")
+
+    # FreeSWITCH ESLイベントハンドラ起動（環境変数が設定されている場合のみ）
+    _esl_started = False
+    if settings.FREESWITCH_ESL_HOST:
+        try:
+            from .services.implementations.freeswitch_event_handler import (
+                start_event_handler,
+                stop_event_handler,
+            )
+
+            start_event_handler(
+                esl_host=settings.FREESWITCH_ESL_HOST,
+                esl_port=settings.FREESWITCH_ESL_PORT,
+                esl_password=settings.FREESWITCH_ESL_PASSWORD,
+            )
+            _esl_started = True
+            logger.info("FreeSWITCH ESL event handler started.")
+        except Exception:
+            logger.warning("FreeSWITCH ESL event handler起動失敗", exc_info=True)
+    else:
+        logger.info("FREESWITCH_ESL_HOST が未設定のためESLイベントハンドラをスキップ")
+
     try:
         yield
     finally:
-        # Shutdown（Firebase Admin は明示解放不要。必要ならここでクリーンアップを実施）
-        # 例）from firebase_admin import delete_app, get_app
-        #     try: delete_app(get_app())
-        #     except Exception: pass
-        ...
+        # Shutdown
+        if _esl_started:
+            try:
+                stop_event_handler()
+            except Exception:
+                pass
 
 
 # ─────────────────────────────────────────────────────────────

@@ -1,11 +1,9 @@
 import apiClient from "@app-alias/fetchclient";
 import type {
-  AgentCreateSchemaType,
-  AgentStatusUpdateSchemaType,
-  AgentUpdateSchemaType,
   CallListContactAddSchemaType,
   CallListCreateSchemaType,
   CallListUpdateSchemaType,
+  CallResultRequestSchemaType,
   CallbackCreateSchemaType,
   CallbackUpdateSchemaType,
   CampaignContactAddSchemaType,
@@ -14,6 +12,7 @@ import type {
   ContactCreateSchemaType,
   ContactSearchSchemaType,
   ContactUpdateSchemaType,
+  DialRequestType,
   DispositionCreateSchemaType,
   DispositionUpdateSchemaType,
   DncBulkCreateSchemaType,
@@ -21,7 +20,12 @@ import type {
   GoogleCallbackSchemaType,
   ScriptCreateSchemaType,
   ScriptUpdateSchemaType,
-  TwilioConfigSchemaType,
+  SheetsImportRequestSchemaType,
+  SheetsPreviewRequestSchemaType,
+  StartCallingRequestSchemaType,
+  UserCreateSchemaType,
+  UserStatusUpdateSchemaType,
+  UserUpdateSchemaType,
 } from "../zod/based_template";
 export async function list_contacts_v2_dialer_contacts_get() {
   const { data, error } = await apiClient.GET(`/v2/dialer/contacts`);
@@ -211,78 +215,100 @@ export async function remove_contact_from_campaign_v2_dialer_campaigns__campaign
   return data as any; // refine typing in consumer
 }
 
-export async function assign_agents_v2_dialer_campaigns__campaign_id__agents_post(
+export async function assign_users_v2_dialer_campaigns__campaign_id__users_post(
   campaign_id: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/campaigns/${campaign_id}/agents`,
+    `/v2/dialer/campaigns/${campaign_id}/users`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete(
+export async function unassign_user_v2_dialer_campaigns__campaign_id__users__user_id__delete(
   campaign_id: string,
-  agent_id: string,
+  user_id: string,
 ) {
   const { data, error } = await apiClient.DELETE(
-    `/v2/dialer/campaigns/${campaign_id}/agents/${agent_id}`,
+    `/v2/dialer/campaigns/${campaign_id}/users/${user_id}`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function list_agents_v2_dialer_agents_get() {
-  const { data, error } = await apiClient.GET(`/v2/dialer/agents`);
+export async function get_or_create_my_user_v2_dialer_users_me_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/users/me`);
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function create_agent_v2_dialer_agents_post(
-  body: AgentCreateSchemaType,
+export async function update_my_status_v2_dialer_users_me_status_put(
+  body: UserStatusUpdateSchemaType,
 ) {
-  const { data, error } = await apiClient.POST(`/v2/dialer/agents`, { body });
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function status_board_v2_dialer_agents_status_board_get() {
-  const { data, error } = await apiClient.GET(`/v2/dialer/agents/status-board`);
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function available_agents_v2_dialer_agents_available_get() {
-  const { data, error } = await apiClient.GET(`/v2/dialer/agents/available`);
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function get_agent_v2_dialer_agents__agent_id__get(
-  agent_id: string,
-) {
-  const { data, error } = await apiClient.GET(`/v2/dialer/agents/${agent_id}`);
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function update_agent_v2_dialer_agents__agent_id__put(
-  agent_id: string,
-  body: AgentUpdateSchemaType,
-) {
-  const { data, error } = await apiClient.PUT(`/v2/dialer/agents/${agent_id}`, {
+  const { data, error } = await apiClient.PUT(`/v2/dialer/users/me/status`, {
     body,
   });
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function update_agent_status_v2_dialer_agents__agent_id__status_put(
-  agent_id: string,
-  body: AgentStatusUpdateSchemaType,
+export async function list_users_v2_dialer_users_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/users`);
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function create_user_v2_dialer_users_post(
+  body: UserCreateSchemaType,
+) {
+  const { data, error } = await apiClient.POST(`/v2/dialer/users`, { body });
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function status_board_v2_dialer_users_status_board_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/users/status-board`);
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function available_users_v2_dialer_users_available_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/users/available`);
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function get_user_v2_dialer_users__user_id__get(user_id: string) {
+  const { data, error } = await apiClient.GET(`/v2/dialer/users/${user_id}`);
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function update_user_v2_dialer_users__user_id__put(
+  user_id: string,
+  body: UserUpdateSchemaType,
+) {
+  const { data, error } = await apiClient.PUT(`/v2/dialer/users/${user_id}`, {
+    body,
+  });
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function delete_user_v2_dialer_users__user_id__delete(
+  user_id: string,
+) {
+  const { data, error } = await apiClient.DELETE(`/v2/dialer/users/${user_id}`);
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function update_user_status_v2_dialer_users__user_id__status_put(
+  user_id: string,
+  body: UserStatusUpdateSchemaType,
 ) {
   const { data, error } = await apiClient.PUT(
-    `/v2/dialer/agents/${agent_id}/status`,
+    `/v2/dialer/users/${user_id}/status`,
     { body },
   );
   if (error) throw error;
@@ -295,51 +321,51 @@ export async function initiate_call_v2_dialer_calls_initiate_post() {
   return data as any; // refine typing in consumer
 }
 
-export async function hold_call_v2_dialer_calls__call_sid__hold_post(
-  call_sid: string,
+export async function hold_call_v2_dialer_calls__call_uuid__hold_post(
+  call_uuid: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/calls/${call_sid}/hold`,
+    `/v2/dialer/calls/${call_uuid}/hold`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function resume_call_v2_dialer_calls__call_sid__resume_post(
-  call_sid: string,
+export async function resume_call_v2_dialer_calls__call_uuid__resume_post(
+  call_uuid: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/calls/${call_sid}/resume`,
+    `/v2/dialer/calls/${call_uuid}/resume`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function transfer_call_v2_dialer_calls__call_sid__transfer_post(
-  call_sid: string,
+export async function transfer_call_v2_dialer_calls__call_uuid__transfer_post(
+  call_uuid: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/calls/${call_sid}/transfer`,
+    `/v2/dialer/calls/${call_uuid}/transfer`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function end_call_v2_dialer_calls__call_sid__end_post(
-  call_sid: string,
+export async function end_call_v2_dialer_calls__call_uuid__end_post(
+  call_uuid: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/calls/${call_sid}/end`,
+    `/v2/dialer/calls/${call_uuid}/end`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function set_disposition_v2_dialer_calls__call_sid__disposition_post(
-  call_sid: string,
+export async function set_disposition_v2_dialer_calls__call_uuid__disposition_post(
+  call_uuid: string,
 ) {
   const { data, error } = await apiClient.POST(
-    `/v2/dialer/calls/${call_sid}/disposition`,
+    `/v2/dialer/calls/${call_uuid}/disposition`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
@@ -437,12 +463,130 @@ export async function add_contacts_v2_dialer_call_lists__call_list_id__contacts_
   return data as any; // refine typing in consumer
 }
 
+export async function list_call_list_contacts_v2_dialer_call_lists__call_list_id__contacts_get(
+  call_list_id: string,
+) {
+  const { data, error } = await apiClient.GET(
+    `/v2/dialer/call-lists/${call_list_id}/contacts`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
 export async function remove_contact_v2_dialer_call_lists__call_list_id__contacts__contact_id__delete(
   call_list_id: string,
   contact_id: string,
 ) {
   const { data, error } = await apiClient.DELETE(
     `/v2/dialer/call-lists/${call_list_id}/contacts/${contact_id}`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function start_calling_v2_dialer_call_lists__call_list_id__start_calling_post(
+  call_list_id: string,
+  body: StartCallingRequestSchemaType,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/${call_list_id}/start-calling`,
+    { body },
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function get_calling_session_status_v2_dialer_call_lists__call_list_id__calling_session__session_id__get(
+  call_list_id: string,
+  session_id: string,
+) {
+  const { data, error } = await apiClient.GET(
+    `/v2/dialer/call-lists/${call_list_id}/calling-session/${session_id}`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function submit_call_result_v2_dialer_call_lists__call_list_id__calling_session__session_id__result_post(
+  call_list_id: string,
+  session_id: string,
+  body: CallResultRequestSchemaType,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/${call_list_id}/calling-session/${session_id}/result`,
+    { body },
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function end_session_call_v2_dialer_call_lists__call_list_id__calling_session__session_id__end_call_post(
+  call_list_id: string,
+  session_id: string,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/${call_list_id}/calling-session/${session_id}/end-call`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function cancel_calling_session_v2_dialer_call_lists__call_list_id__calling_session__session_id__cancel_post(
+  call_list_id: string,
+  session_id: string,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/${call_list_id}/calling-session/${session_id}/cancel`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function list_spreadsheets_v2_dialer_call_lists_sheets_spreadsheets_get() {
+  const { data, error } = await apiClient.GET(
+    `/v2/dialer/call-lists/sheets/spreadsheets`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function list_sheet_tabs_v2_dialer_call_lists_sheets_spreadsheets__spreadsheet_id__tabs_get(
+  spreadsheet_id: string,
+) {
+  const { data, error } = await apiClient.GET(
+    `/v2/dialer/call-lists/sheets/spreadsheets/${spreadsheet_id}/tabs`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function preview_sheet_v2_dialer_call_lists_sheets_preview_post(
+  body: SheetsPreviewRequestSchemaType,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/sheets/preview`,
+    { body },
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function import_from_sheets_v2_dialer_call_lists_sheets_import_post(
+  body: SheetsImportRequestSchemaType,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/sheets/import`,
+    { body },
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function sync_from_sheets_v2_dialer_call_lists__call_list_id__sheets_sync_post(
+  call_list_id: string,
+) {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/call-lists/${call_list_id}/sheets/sync`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
@@ -628,9 +772,9 @@ export async function dashboard_overview_v2_dialer_dashboard_overview_get() {
   return data as any; // refine typing in consumer
 }
 
-export async function agents_performance_v2_dialer_dashboard_agents_performance_get() {
+export async function users_performance_v2_dialer_dashboard_users_performance_get() {
   const { data, error } = await apiClient.GET(
-    `/v2/dialer/dashboard/agents/performance`,
+    `/v2/dialer/dashboard/users/performance`,
   );
   if (error) throw error;
   return data as any; // refine typing in consumer
@@ -644,12 +788,8 @@ export async function hourly_stats_v2_dialer_dashboard_hourly_stats_get() {
   return data as any; // refine typing in consumer
 }
 
-export async function get_auth_url_v2_dialer_google_auth_url__integration_type__get(
-  integration_type: string,
-) {
-  const { data, error } = await apiClient.GET(
-    `/v2/dialer/google/auth-url/${integration_type}`,
-  );
+export async function get_auth_url_v2_dialer_google_auth_url_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/google/auth-url`);
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
@@ -664,18 +804,16 @@ export async function oauth_callback_v2_dialer_google_callback_post(
   return data as any; // refine typing in consumer
 }
 
-export async function integration_status_v2_dialer_google_status_get() {
-  const { data, error } = await apiClient.GET(`/v2/dialer/google/status`);
+export async function picker_config_v2_dialer_google_picker_config_get() {
+  const { data, error } = await apiClient.GET(
+    `/v2/dialer/google/picker-config`,
+  );
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function manual_sync_v2_dialer_google_sync__integration_type__post(
-  integration_type: string,
-) {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/google/sync/${integration_type}`,
-  );
+export async function integration_status_v2_dialer_google_status_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/google/status`);
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
@@ -690,58 +828,24 @@ export async function disconnect_v2_dialer_google__integration_id__delete(
   return data as any; // refine typing in consumer
 }
 
-export async function get_twilio_config_v2_dialer_settings_twilio_get() {
-  const { data, error } = await apiClient.GET(`/v2/dialer/settings/twilio`);
+export async function get_phone_config_v2_dialer_settings_phone_get() {
+  const { data, error } = await apiClient.GET(`/v2/dialer/settings/phone`);
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
 
-export async function update_twilio_config_v2_dialer_settings_twilio_put(
-  body: TwilioConfigSchemaType,
+export async function test_esl_connection_v2_dialer_settings_phone_test_post() {
+  const { data, error } = await apiClient.POST(
+    `/v2/dialer/settings/phone/test`,
+  );
+  if (error) throw error;
+  return data as any; // refine typing in consumer
+}
+
+export async function dial_and_bridge_v2_dialer_dial_post(
+  body: DialRequestType,
 ) {
-  const { data, error } = await apiClient.PUT(`/v2/dialer/settings/twilio`, {
-    body,
-  });
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function test_twilio_v2_dialer_settings_twilio_test_post() {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/settings/twilio/test`,
-  );
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function voice_webhook_v2_dialer_webhooks_twilio_voice_post() {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/webhooks/twilio/voice`,
-  );
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function status_webhook_v2_dialer_webhooks_twilio_status_post() {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/webhooks/twilio/status`,
-  );
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function recording_webhook_v2_dialer_webhooks_twilio_recording_post() {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/webhooks/twilio/recording`,
-  );
-  if (error) throw error;
-  return data as any; // refine typing in consumer
-}
-
-export async function fallback_webhook_v2_dialer_webhooks_twilio_fallback_post() {
-  const { data, error } = await apiClient.POST(
-    `/v2/dialer/webhooks/twilio/fallback`,
-  );
+  const { data, error } = await apiClient.POST(`/v2/dialer/dial`, { body });
   if (error) throw error;
   return data as any; // refine typing in consumer
 }
@@ -783,21 +887,24 @@ export const basedTemplateService = {
   add_contacts_to_campaign_v2_dialer_campaigns__campaign_id__contacts_post,
   list_campaign_contacts_v2_dialer_campaigns__campaign_id__contacts_get,
   remove_contact_from_campaign_v2_dialer_campaigns__campaign_id__contacts__contact_id__delete,
-  assign_agents_v2_dialer_campaigns__campaign_id__agents_post,
-  unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete,
-  list_agents_v2_dialer_agents_get,
-  create_agent_v2_dialer_agents_post,
-  status_board_v2_dialer_agents_status_board_get,
-  available_agents_v2_dialer_agents_available_get,
-  get_agent_v2_dialer_agents__agent_id__get,
-  update_agent_v2_dialer_agents__agent_id__put,
-  update_agent_status_v2_dialer_agents__agent_id__status_put,
+  assign_users_v2_dialer_campaigns__campaign_id__users_post,
+  unassign_user_v2_dialer_campaigns__campaign_id__users__user_id__delete,
+  get_or_create_my_user_v2_dialer_users_me_get,
+  update_my_status_v2_dialer_users_me_status_put,
+  list_users_v2_dialer_users_get,
+  create_user_v2_dialer_users_post,
+  status_board_v2_dialer_users_status_board_get,
+  available_users_v2_dialer_users_available_get,
+  get_user_v2_dialer_users__user_id__get,
+  update_user_v2_dialer_users__user_id__put,
+  delete_user_v2_dialer_users__user_id__delete,
+  update_user_status_v2_dialer_users__user_id__status_put,
   initiate_call_v2_dialer_calls_initiate_post,
-  hold_call_v2_dialer_calls__call_sid__hold_post,
-  resume_call_v2_dialer_calls__call_sid__resume_post,
-  transfer_call_v2_dialer_calls__call_sid__transfer_post,
-  end_call_v2_dialer_calls__call_sid__end_post,
-  set_disposition_v2_dialer_calls__call_sid__disposition_post,
+  hold_call_v2_dialer_calls__call_uuid__hold_post,
+  resume_call_v2_dialer_calls__call_uuid__resume_post,
+  transfer_call_v2_dialer_calls__call_uuid__transfer_post,
+  end_call_v2_dialer_calls__call_uuid__end_post,
+  set_disposition_v2_dialer_calls__call_uuid__disposition_post,
   active_calls_v2_dialer_calls_active_get,
   list_call_logs_v2_dialer_call_logs_get,
   get_call_log_v2_dialer_call_logs__call_log_id__get,
@@ -808,7 +915,18 @@ export const basedTemplateService = {
   update_call_list_v2_dialer_call_lists__call_list_id__put,
   delete_call_list_v2_dialer_call_lists__call_list_id__delete,
   add_contacts_v2_dialer_call_lists__call_list_id__contacts_post,
+  list_call_list_contacts_v2_dialer_call_lists__call_list_id__contacts_get,
   remove_contact_v2_dialer_call_lists__call_list_id__contacts__contact_id__delete,
+  start_calling_v2_dialer_call_lists__call_list_id__start_calling_post,
+  get_calling_session_status_v2_dialer_call_lists__call_list_id__calling_session__session_id__get,
+  submit_call_result_v2_dialer_call_lists__call_list_id__calling_session__session_id__result_post,
+  end_session_call_v2_dialer_call_lists__call_list_id__calling_session__session_id__end_call_post,
+  cancel_calling_session_v2_dialer_call_lists__call_list_id__calling_session__session_id__cancel_post,
+  list_spreadsheets_v2_dialer_call_lists_sheets_spreadsheets_get,
+  list_sheet_tabs_v2_dialer_call_lists_sheets_spreadsheets__spreadsheet_id__tabs_get,
+  preview_sheet_v2_dialer_call_lists_sheets_preview_post,
+  import_from_sheets_v2_dialer_call_lists_sheets_import_post,
+  sync_from_sheets_v2_dialer_call_lists__call_list_id__sheets_sync_post,
   list_callbacks_v2_dialer_callbacks_get,
   create_callback_v2_dialer_callbacks_post,
   update_callback_v2_dialer_callbacks__callback_id__put,
@@ -830,20 +948,16 @@ export const basedTemplateService = {
   update_script_v2_dialer_scripts__script_id__put,
   delete_script_v2_dialer_scripts__script_id__delete,
   dashboard_overview_v2_dialer_dashboard_overview_get,
-  agents_performance_v2_dialer_dashboard_agents_performance_get,
+  users_performance_v2_dialer_dashboard_users_performance_get,
   hourly_stats_v2_dialer_dashboard_hourly_stats_get,
-  get_auth_url_v2_dialer_google_auth_url__integration_type__get,
+  get_auth_url_v2_dialer_google_auth_url_get,
   oauth_callback_v2_dialer_google_callback_post,
+  picker_config_v2_dialer_google_picker_config_get,
   integration_status_v2_dialer_google_status_get,
-  manual_sync_v2_dialer_google_sync__integration_type__post,
   disconnect_v2_dialer_google__integration_id__delete,
-  get_twilio_config_v2_dialer_settings_twilio_get,
-  update_twilio_config_v2_dialer_settings_twilio_put,
-  test_twilio_v2_dialer_settings_twilio_test_post,
-  voice_webhook_v2_dialer_webhooks_twilio_voice_post,
-  status_webhook_v2_dialer_webhooks_twilio_status_post,
-  recording_webhook_v2_dialer_webhooks_twilio_recording_post,
-  fallback_webhook_v2_dialer_webhooks_twilio_fallback_post,
+  get_phone_config_v2_dialer_settings_phone_get,
+  test_esl_connection_v2_dialer_settings_phone_test_post,
+  dial_and_bridge_v2_dialer_dial_post,
   redoc_html_redoc_get,
   health_check_health_get,
   show_settings_settings_get,

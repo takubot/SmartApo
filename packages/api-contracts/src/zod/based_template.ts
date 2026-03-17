@@ -192,7 +192,7 @@ export const CampaignStatsSchema = z.object({
   totalAbandoned: z.number().int(),
   answerRate: z.number(),
   abandonRate: z.number(),
-  activeAgents: z.number().int(),
+  activeUsers: z.number().int(),
   activeCalls: z.number().int(),
   predictiveRatio: z.string(),
 });
@@ -204,9 +204,9 @@ export const CampaignContactAddSchema = z.object({
 export type CampaignContactAddSchemaType = z.infer<
   typeof CampaignContactAddSchema
 >;
-export const AgentResponseSchema = z.object({
-  agentId: z.string(),
+export const UserResponseSchema = z.object({
   userId: z.string(),
+  firebaseUid: z.string(),
   displayName: z.string(),
   extension: z.union([z.string(), z.null()]).optional(),
   status: z.string(),
@@ -217,16 +217,19 @@ export const AgentResponseSchema = z.object({
   createdAt: z.string().datetime({ offset: true }),
   updatedAt: z.string().datetime({ offset: true }),
 });
-export type AgentResponseSchemaType = z.infer<typeof AgentResponseSchema>;
-export const AgentCreateSchema = z.object({
+export type UserResponseSchemaType = z.infer<typeof UserResponseSchema>;
+export const UserStatusUpdateSchema = z.object({ status: z.string() });
+export type UserStatusUpdateSchemaType = z.infer<typeof UserStatusUpdateSchema>;
+export const UserCreateSchema = z.object({
+  email: z.string(),
+  password: z.string(),
   displayName: z.string(),
-  userId: z.string(),
   extension: z.union([z.string(), z.null()]).optional(),
   skills: z.union([z.array(z.string()), z.null()]).optional(),
   maxConcurrentCalls: z.number().int().optional().default(1),
 });
-export type AgentCreateSchemaType = z.infer<typeof AgentCreateSchema>;
-export const AgentUpdateSchema = z
+export type UserCreateSchemaType = z.infer<typeof UserCreateSchema>;
+export const UserUpdateSchema = z
   .object({
     displayName: z.union([z.string(), z.null()]),
     extension: z.union([z.string(), z.null()]),
@@ -234,18 +237,14 @@ export const AgentUpdateSchema = z
     maxConcurrentCalls: z.union([z.number(), z.null()]),
   })
   .partial();
-export type AgentUpdateSchemaType = z.infer<typeof AgentUpdateSchema>;
-export const AgentStatusUpdateSchema = z.object({ status: z.string() });
-export type AgentStatusUpdateSchemaType = z.infer<
-  typeof AgentStatusUpdateSchema
->;
+export type UserUpdateSchemaType = z.infer<typeof UserUpdateSchema>;
 export const CallLogResponseSchema = z.object({
   callLogId: z.string(),
   campaignId: z.union([z.string(), z.null()]).optional(),
   contactId: z.string(),
-  agentId: z.union([z.string(), z.null()]).optional(),
+  userId: z.union([z.string(), z.null()]).optional(),
   dispositionId: z.union([z.string(), z.null()]).optional(),
-  twilioCallSid: z.union([z.string(), z.null()]).optional(),
+  callUuid: z.union([z.string(), z.null()]).optional(),
   phoneNumberDialed: z.string(),
   callerIdUsed: z.union([z.string(), z.null()]).optional(),
   callStatus: z.string(),
@@ -261,21 +260,27 @@ export const CallLogResponseSchema = z.object({
   createdAt: z.string().datetime({ offset: true }),
 });
 export type CallLogResponseSchemaType = z.infer<typeof CallLogResponseSchema>;
+export const CallListCreateSchema = z.object({
+  name: z.string(),
+  description: z.union([z.string(), z.null()]).optional(),
+});
+export type CallListCreateSchemaType = z.infer<typeof CallListCreateSchema>;
 export const CallListResponseSchema = z.object({
   callListId: z.string(),
   name: z.string(),
   description: z.union([z.string(), z.null()]).optional(),
   contactCount: z.number().int(),
   source: z.union([z.string(), z.null()]).optional(),
+  spreadsheetId: z.union([z.string(), z.null()]).optional(),
+  sheetName: z.union([z.string(), z.null()]).optional(),
+  sheetRange: z.union([z.string(), z.null()]).optional(),
+  columnMapping: z.union([z.string(), z.null()]).optional(),
+  headerRow: z.number().int().optional().default(1),
+  lastSheetSyncedAt: z.union([z.string(), z.null()]).optional(),
   createdAt: z.string().datetime({ offset: true }),
   updatedAt: z.string().datetime({ offset: true }),
 });
 export type CallListResponseSchemaType = z.infer<typeof CallListResponseSchema>;
-export const CallListCreateSchema = z.object({
-  name: z.string(),
-  description: z.union([z.string(), z.null()]).optional(),
-});
-export type CallListCreateSchemaType = z.infer<typeof CallListCreateSchema>;
 export const CallListUpdateSchema = z
   .object({
     name: z.union([z.string(), z.null()]),
@@ -289,11 +294,140 @@ export const CallListContactAddSchema = z.object({
 export type CallListContactAddSchemaType = z.infer<
   typeof CallListContactAddSchema
 >;
+export const StartCallingRequestSchema = z
+  .object({
+    callerId: z.union([z.string(), z.null()]),
+    maxConcurrentCalls: z.number().int().default(1),
+    contactIds: z.union([z.array(z.string()), z.null()]),
+  })
+  .partial();
+export type StartCallingRequestSchemaType = z.infer<
+  typeof StartCallingRequestSchema
+>;
+export const StartCallingResponseSchema = z.object({
+  initiatedCount: z.number().int(),
+  message: z.string(),
+  sessionId: z.union([z.string(), z.null()]).optional(),
+});
+export type StartCallingResponseSchemaType = z.infer<
+  typeof StartCallingResponseSchema
+>;
+export const CallingSessionCallSchema = z.object({
+  callLogId: z.string(),
+  contactId: z.string(),
+  status: z.string(),
+  phoneNumber: z.string(),
+  contactName: z.string().optional().default(""),
+  companyName: z.union([z.string(), z.null()]).optional(),
+});
+export type CallingSessionCallSchemaType = z.infer<
+  typeof CallingSessionCallSchema
+>;
+export const CallingSessionContactSchema = z.object({
+  contactId: z.string(),
+  lastName: z.string(),
+  firstName: z.string(),
+  phonePrimary: z.string(),
+  phoneSecondary: z.union([z.string(), z.null()]).optional(),
+  phoneMobile: z.union([z.string(), z.null()]).optional(),
+  email: z.union([z.string(), z.null()]).optional(),
+  companyName: z.union([z.string(), z.null()]).optional(),
+  department: z.union([z.string(), z.null()]).optional(),
+  position: z.union([z.string(), z.null()]).optional(),
+});
+export type CallingSessionContactSchemaType = z.infer<
+  typeof CallingSessionContactSchema
+>;
+export const CallingSessionStatusSchema = z.object({
+  sessionId: z.string(),
+  calls: z.array(CallingSessionCallSchema),
+  connectedCallLogId: z.union([z.string(), z.null()]).optional(),
+  connectedContact: z.union([CallingSessionContactSchema, z.null()]).optional(),
+  isComplete: z.boolean(),
+});
+export type CallingSessionStatusSchemaType = z.infer<
+  typeof CallingSessionStatusSchema
+>;
+export const CallResultRequestSchema = z.object({
+  teleStatus: z.string(),
+  teleNote: z.union([z.string(), z.null()]).optional(),
+  notes: z.union([z.string(), z.null()]).optional(),
+  dispositionId: z.union([z.string(), z.null()]).optional(),
+});
+export type CallResultRequestSchemaType = z.infer<
+  typeof CallResultRequestSchema
+>;
+export const SpreadsheetItemSchema = z.object({
+  spreadsheetId: z.string(),
+  name: z.string(),
+  modifiedTime: z.union([z.string(), z.null()]).optional(),
+});
+export type SpreadsheetItemSchemaType = z.infer<typeof SpreadsheetItemSchema>;
+export const SpreadsheetListSchema = z.object({
+  items: z.array(SpreadsheetItemSchema),
+});
+export type SpreadsheetListSchemaType = z.infer<typeof SpreadsheetListSchema>;
+export const SheetTabSchema = z.object({
+  sheetId: z.number().int(),
+  title: z.string(),
+});
+export type SheetTabSchemaType = z.infer<typeof SheetTabSchema>;
+export const SheetTabListSchema = z.object({ items: z.array(SheetTabSchema) });
+export type SheetTabListSchemaType = z.infer<typeof SheetTabListSchema>;
+export const SheetsPreviewRequestSchema = z.object({
+  spreadsheetId: z.string(),
+  sheetName: z.union([z.string(), z.null()]).optional().default("Sheet1"),
+  headerRow: z.number().int().optional().default(1),
+});
+export type SheetsPreviewRequestSchemaType = z.infer<
+  typeof SheetsPreviewRequestSchema
+>;
+export const SheetsPreviewResponseSchema = z.object({
+  headers: z.array(z.string()),
+  rows: z.array(z.record(z.string())),
+  totalRows: z.number().int(),
+  rawRows: z.array(z.array(z.string())).optional().default([]),
+  suggestedMapping: z.record(z.string()).optional().default({}),
+});
+export type SheetsPreviewResponseSchemaType = z.infer<
+  typeof SheetsPreviewResponseSchema
+>;
+export const SheetsImportRequestSchema = z.object({
+  spreadsheetId: z.string(),
+  sheetName: z.union([z.string(), z.null()]).optional().default("Sheet1"),
+  rangeName: z.union([z.string(), z.null()]).optional().default("A:Z"),
+  headerRow: z.number().int().optional().default(1),
+  listName: z.string(),
+  listDescription: z.union([z.string(), z.null()]).optional(),
+  columnMapping: z.union([z.record(z.string()), z.null()]).optional(),
+});
+export type SheetsImportRequestSchemaType = z.infer<
+  typeof SheetsImportRequestSchema
+>;
+export const SheetsImportResponseSchema = z.object({
+  callListId: z.string(),
+  name: z.string(),
+  importedCount: z.number().int(),
+  skippedCount: z.number().int(),
+  message: z.string(),
+});
+export type SheetsImportResponseSchemaType = z.infer<
+  typeof SheetsImportResponseSchema
+>;
+export const SheetsSyncResponseSchema = z.object({
+  addedCount: z.number().int(),
+  updatedCount: z.number().int(),
+  removedCount: z.number().int(),
+  message: z.string(),
+});
+export type SheetsSyncResponseSchemaType = z.infer<
+  typeof SheetsSyncResponseSchema
+>;
 export const CallbackResponseSchema = z.object({
   callbackId: z.string(),
   contactId: z.string(),
   campaignId: z.union([z.string(), z.null()]).optional(),
-  assignedAgentId: z.union([z.string(), z.null()]).optional(),
+  assignedUserId: z.union([z.string(), z.null()]).optional(),
   scheduledAt: z.string().datetime({ offset: true }),
   priority: z.string(),
   notes: z.union([z.string(), z.null()]).optional(),
@@ -306,7 +440,7 @@ export type CallbackResponseSchemaType = z.infer<typeof CallbackResponseSchema>;
 export const CallbackCreateSchema = z.object({
   contactId: z.string(),
   campaignId: z.union([z.string(), z.null()]).optional(),
-  assignedAgentId: z.union([z.string(), z.null()]).optional(),
+  assignedUserId: z.union([z.string(), z.null()]).optional(),
   scheduledAt: z.string().datetime({ offset: true }),
   priority: z.string().optional().default("medium"),
   notes: z.union([z.string(), z.null()]).optional(),
@@ -314,7 +448,7 @@ export const CallbackCreateSchema = z.object({
 export type CallbackCreateSchemaType = z.infer<typeof CallbackCreateSchema>;
 export const CallbackUpdateSchema = z
   .object({
-    assignedAgentId: z.union([z.string(), z.null()]),
+    assignedUserId: z.union([z.string(), z.null()]),
     scheduledAt: z.union([z.string(), z.null()]),
     priority: z.union([z.string(), z.null()]),
     notes: z.union([z.string(), z.null()]),
@@ -419,15 +553,15 @@ export const DashboardOverviewSchema = z.object({
   answerRateToday: z.number(),
   avgCallDurationSeconds: z.number(),
   activeCampaigns: z.number().int(),
-  activeAgents: z.number().int(),
+  activeUsers: z.number().int(),
   totalCallbacksToday: z.number().int(),
   totalContacts: z.number().int(),
 });
 export type DashboardOverviewSchemaType = z.infer<
   typeof DashboardOverviewSchema
 >;
-export const AgentPerformanceSchema = z.object({
-  agentId: z.string(),
+export const UserPerformanceSchema = z.object({
+  userId: z.string(),
   displayName: z.string(),
   totalCalls: z.number().int(),
   totalAnswered: z.number().int(),
@@ -435,7 +569,7 @@ export const AgentPerformanceSchema = z.object({
   avgCallDurationSeconds: z.number(),
   totalTalkTimeSeconds: z.number().int(),
 });
-export type AgentPerformanceSchemaType = z.infer<typeof AgentPerformanceSchema>;
+export type UserPerformanceSchemaType = z.infer<typeof UserPerformanceSchema>;
 export const HourlyStatSchema = z.object({
   hour: z.number().int(),
   totalCalls: z.number().int(),
@@ -450,9 +584,17 @@ export type GoogleAuthUrlResponseSchemaType = z.infer<
 export const GoogleCallbackSchema = z.object({
   code: z.string(),
   state: z.union([z.string(), z.null()]).optional(),
-  integrationType: z.string(),
+  redirectUri: z.union([z.string(), z.null()]).optional(),
 });
 export type GoogleCallbackSchemaType = z.infer<typeof GoogleCallbackSchema>;
+export const GooglePickerConfigSchema = z.object({
+  accessToken: z.string(),
+  apiKey: z.string(),
+  appId: z.string(),
+});
+export type GooglePickerConfigSchemaType = z.infer<
+  typeof GooglePickerConfigSchema
+>;
 export const GoogleIntegrationStatusSchema = z.object({
   integrationId: z.string(),
   integrationType: z.string(),
@@ -462,55 +604,45 @@ export const GoogleIntegrationStatusSchema = z.object({
 export type GoogleIntegrationStatusSchemaType = z.infer<
   typeof GoogleIntegrationStatusSchema
 >;
-export const TwilioConfigResponseSchema = z.object({
-  configId: z.string(),
-  accountSid: z.string(),
-  twimlAppSid: z.union([z.string(), z.null()]).optional(),
-  phoneNumbers: z.union([z.array(z.string()), z.null()]).optional(),
-  defaultCallerId: z.union([z.string(), z.null()]).optional(),
-  recordingEnabled: z.boolean(),
+export const GoogleIntegrationListSchema = z.object({
+  integrations: z.array(GoogleIntegrationStatusSchema),
 });
-export type TwilioConfigResponseSchemaType = z.infer<
-  typeof TwilioConfigResponseSchema
+export type GoogleIntegrationListSchemaType = z.infer<
+  typeof GoogleIntegrationListSchema
 >;
-export const TwilioConfigSchema = z.object({
-  accountSid: z.string(),
-  authToken: z.string(),
-  twimlAppSid: z.union([z.string(), z.null()]).optional(),
-  phoneNumbers: z.union([z.array(z.string()), z.null()]).optional(),
+export const PhoneConfigResponseSchema = z.object({
+  eslConnected: z.boolean(),
+  sipGateway: z.string(),
+  registeredUsers: z.number().int(),
   defaultCallerId: z.union([z.string(), z.null()]).optional(),
-  recordingEnabled: z.boolean().optional().default(true),
 });
-export type TwilioConfigSchemaType = z.infer<typeof TwilioConfigSchema>;
-export const TwilioTestResponseSchema = z.object({
+export type PhoneConfigResponseSchemaType = z.infer<
+  typeof PhoneConfigResponseSchema
+>;
+export const EslTestResponseSchema = z.object({
   success: z.boolean(),
   message: z.string(),
-  accountName: z.union([z.string(), z.null()]).optional(),
+  freeswitchVersion: z.union([z.string(), z.null()]).optional(),
 });
-export type TwilioTestResponseSchemaType = z.infer<
-  typeof TwilioTestResponseSchema
->;
-export const Body_status_webhook_v2_dialer_webhooks_twilio_status_post = z
+export type EslTestResponseSchemaType = z.infer<typeof EslTestResponseSchema>;
+export const DialRequest = z
   .object({
-    CallSid: z.string().default(""),
-    CallStatus: z.string().default(""),
-    CallDuration: z.string().default("0"),
-    Timestamp: z.string().default(""),
+    phone_number: z.string(),
+    contact_id: z.string(),
+    caller_id: z.string(),
+    campaign_id: z.union([z.string(), z.null()]).optional(),
+    ring_timeout: z.number().int().gte(10).lte(120).optional().default(30),
+    record: z.boolean().optional().default(true),
   })
-  .partial()
   .passthrough();
-export type Body_status_webhook_v2_dialer_webhooks_twilio_status_postType =
-  z.infer<typeof Body_status_webhook_v2_dialer_webhooks_twilio_status_post>;
-export const Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post = z
+export type DialRequestType = z.infer<typeof DialRequest>;
+export const DialResponse = z
   .object({
-    CallSid: z.string().default(""),
-    RecordingSid: z.string().default(""),
-    RecordingUrl: z.string().default(""),
-    RecordingDuration: z.string().default("0"),
+    call_uuid: z.string(),
+    status: z.string(),
+    user_extension: z.string(),
+    contact_id: z.string(),
+    phone_number: z.string(),
   })
-  .partial()
   .passthrough();
-export type Body_recording_webhook_v2_dialer_webhooks_twilio_recording_postType =
-  z.infer<
-    typeof Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post
-  >;
+export type DialResponseType = z.infer<typeof DialResponse>;

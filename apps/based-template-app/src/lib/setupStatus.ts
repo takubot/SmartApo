@@ -4,19 +4,17 @@
 const SETUP_KEY = "dialer_setup_status";
 
 export interface SetupStepStatus {
-  twilioAccount: boolean;
-  twilioPhoneNumber: boolean;
-  twilioWebhook: boolean;
-  agentRegistered: boolean;
+  pbxConnected: boolean;
+  sipTrunkConfigured: boolean;
+  userRegistered: boolean;
   contactImported: boolean;
   campaignCreated: boolean;
 }
 
 const DEFAULT_STATUS: SetupStepStatus = {
-  twilioAccount: false,
-  twilioPhoneNumber: false,
-  twilioWebhook: false,
-  agentRegistered: false,
+  pbxConnected: false,
+  sipTrunkConfigured: false,
+  userRegistered: false,
   contactImported: false,
   campaignCreated: false,
 };

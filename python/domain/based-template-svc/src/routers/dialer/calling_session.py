@@ -19,7 +19,7 @@ class CallEntry:
 
     call_log_id: str
     contact_id: str
-    twilio_call_sid: str | None
+    call_uuid: str | None
     phone_number: str
     status: str = "dialing"
 
@@ -45,7 +45,7 @@ class CallingSession:
 
 _lock = threading.Lock()
 _sessions: dict[str, CallingSession] = {}
-_sid_to_session: dict[str, str] = {}  # twilio_call_sid -> session_id
+_sid_to_session: dict[str, str] = {}  # call_uuid -> session_id
 
 
 def create_session(
@@ -55,7 +55,7 @@ def create_session(
 ) -> CallingSession:
     """セッション作成。
 
-    calls: list of (call_log_id, contact_id, twilio_call_sid, phone_number)
+    calls: list of (call_log_id, contact_id, call_uuid, phone_number)
     """
     session_id = str(uuid.uuid4())
     entries: dict[str, CallEntry] = {}
@@ -63,7 +63,7 @@ def create_session(
         entries[call_log_id] = CallEntry(
             call_log_id=call_log_id,
             contact_id=contact_id,
-            twilio_call_sid=call_sid,
+            call_uuid=call_sid,
             phone_number=phone,
         )
     session = CallingSession(
@@ -75,8 +75,8 @@ def create_session(
     with _lock:
         _sessions[session_id] = session
         for entry in entries.values():
-            if entry.twilio_call_sid:
-                _sid_to_session[entry.twilio_call_sid] = session_id
+            if entry.call_uuid:
+                _sid_to_session[entry.call_uuid] = session_id
     return session
 
 
@@ -95,7 +95,7 @@ def get_session_by_call_sid(call_sid: str) -> tuple[CallingSession | None, str |
         if not session:
             return None, None
         for entry in session.calls.values():
-            if entry.twilio_call_sid == call_sid:
+            if entry.call_uuid == call_sid:
                 return session, entry.call_log_id
         return None, None
 
@@ -124,8 +124,8 @@ def get_sids_to_cancel(session_id: str) -> list[str]:
             if entry.call_log_id == session.connected_call_log_id:
                 continue
             if entry.status in ("dialing", "ringing"):
-                if entry.twilio_call_sid:
-                    result.append(entry.twilio_call_sid)
+                if entry.call_uuid:
+                    result.append(entry.call_uuid)
         return result
 
 
@@ -135,7 +135,7 @@ def mark_canceled(session_id: str, call_sids: list[str]) -> None:
         if not session:
             return
         for entry in session.calls.values():
-            if entry.twilio_call_sid in call_sids:
+            if entry.call_uuid in call_sids:
                 entry.status = "canceled"
 
 
@@ -144,5 +144,5 @@ def remove_session(session_id: str) -> None:
         session = _sessions.pop(session_id, None)
         if session:
             for entry in session.calls.values():
-                if entry.twilio_call_sid:
-                    _sid_to_session.pop(entry.twilio_call_sid, None)
+                if entry.call_uuid:
+                    _sid_to_session.pop(entry.call_uuid, None)

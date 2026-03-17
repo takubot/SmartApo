@@ -18,7 +18,7 @@ class ITelephonyService(ABC):
         record: bool = True,
         machine_detection: str = "Enable",
     ) -> dict[str, Any]:
-        """発信を開始しTwilio Call SID等を返す"""
+        """発信を開始し call_uuid 等を返す"""
         ...
 
     @abstractmethod

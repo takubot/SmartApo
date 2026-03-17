@@ -12,14 +12,14 @@ from sqlalchemy.orm import Session
 from ...auth.authentication.dependencies import get_current_user
 from ...database_utils.database import get_sync_session
 from ...models.tables.enum import (
-    AgentStatusEnum,
+    UserStatusEnum,
     CallStatusEnum,
     CampaignContactStatusEnum,
     CampaignStatusEnum,
 )
 from ...models.tables.model_defs import (
-    DialerAgentCampaignModel,
-    DialerAgentModel,
+    DialerUserCampaignModel,
+    DialerUserModel,
     DialerCallLogModel,
     DialerCampaignContactModel,
     DialerCampaignModel,
@@ -185,14 +185,14 @@ def campaign_stats(
     _, tenant_id = auth
     campaign = _get_campaign(campaign_id, tenant_id, db)
 
-    active_agents = db.execute(
+    active_users = db.execute(
         select(func.count())
-        .select_from(DialerAgentCampaignModel)
-        .join(DialerAgentModel)
+        .select_from(DialerUserCampaignModel)
+        .join(DialerUserModel)
         .where(
-            DialerAgentCampaignModel.campaign_id == campaign_id,
-            DialerAgentCampaignModel.is_active.is_(True),
-            DialerAgentModel.status == AgentStatusEnum.AVAILABLE,
+            DialerUserCampaignModel.campaign_id == campaign_id,
+            DialerUserCampaignModel.is_active.is_(True),
+            DialerUserModel.status == UserStatusEnum.AVAILABLE,
         )
     ).scalar() or 0
 
@@ -227,7 +227,7 @@ def campaign_stats(
         total_abandoned=campaign.total_abandoned,
         answer_rate=round(answer_rate, 2),
         abandon_rate=round(abandon_rate, 2),
-        active_agents=active_agents,
+        active_users=active_users,
         active_calls=active_calls,
         predictive_ratio=campaign.predictive_ratio,
     )
@@ -315,45 +315,45 @@ def remove_contact_from_campaign(
         campaign.total_contacts = max(0, campaign.total_contacts - 1)
 
 
-@router.post("/{campaign_id}/agents", response_model=MessageResponse, status_code=201)
-def assign_agents(
+@router.post("/{campaign_id}/users", response_model=MessageResponse, status_code=201)
+def assign_users(
     campaign_id: str,
-    agent_ids: list[str],
+    user_ids: list[str],
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """エージェントをキャンペーンに割当"""
+    """ユーザーをキャンペーンに割当"""
     _, tenant_id = auth
     _get_campaign(campaign_id, tenant_id, db)
     count = 0
-    for aid in agent_ids:
+    for uid in user_ids:
         existing = db.execute(
-            select(DialerAgentCampaignModel).where(
-                DialerAgentCampaignModel.campaign_id == campaign_id,
-                DialerAgentCampaignModel.agent_id == aid,
+            select(DialerUserCampaignModel).where(
+                DialerUserCampaignModel.campaign_id == campaign_id,
+                DialerUserCampaignModel.user_id == uid,
             )
         ).scalar_one_or_none()
         if not existing:
-            db.add(DialerAgentCampaignModel(campaign_id=campaign_id, agent_id=aid))
+            db.add(DialerUserCampaignModel(campaign_id=campaign_id, user_id=uid))
             count += 1
     db.flush()
-    return MessageResponse(message=f"{count}名のエージェントを割り当てました")
+    return MessageResponse(message=f"{count}名のユーザーを割り当てました")
 
 
-@router.delete("/{campaign_id}/agents/{agent_id}", status_code=204)
-def unassign_agent(
+@router.delete("/{campaign_id}/users/{user_id}", status_code=204)
+def unassign_user(
     campaign_id: str,
-    agent_id: str,
+    user_id: str,
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """エージェント割当解除"""
+    """ユーザー割当解除"""
     _, tenant_id = auth
     _get_campaign(campaign_id, tenant_id, db)
     assignment = db.execute(
-        select(DialerAgentCampaignModel).where(
-            DialerAgentCampaignModel.campaign_id == campaign_id,
-            DialerAgentCampaignModel.agent_id == agent_id,
+        select(DialerUserCampaignModel).where(
+            DialerUserCampaignModel.campaign_id == campaign_id,
+            DialerUserCampaignModel.user_id == user_id,
         )
     ).scalar_one_or_none()
     if assignment:

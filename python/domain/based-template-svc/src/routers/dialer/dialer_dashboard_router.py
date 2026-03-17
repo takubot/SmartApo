@@ -10,18 +10,18 @@ from sqlalchemy.orm import Session
 
 from ...auth.authentication.dependencies import get_current_user
 from ...database_utils.database import get_sync_session
-from ...models.tables.enum import AgentStatusEnum, CampaignStatusEnum
+from ...models.tables.enum import CampaignStatusEnum, UserStatusEnum
 from ...models.tables.model_defs import (
-    DialerAgentModel,
     DialerCallbackModel,
     DialerCallLogModel,
     DialerCampaignModel,
     DialerContactModel,
+    DialerUserModel,
 )
 from .schemas.dashboard_schemas import (
-    AgentPerformanceSchema,
     DashboardOverviewSchema,
     HourlyStatSchema,
+    UserPerformanceSchema,
 )
 
 router = APIRouter()
@@ -68,11 +68,11 @@ def dashboard_overview(
         )
     ).scalar() or 0
 
-    active_agents = db.execute(
+    active_users = db.execute(
         select(func.count()).where(
-            DialerAgentModel.tenant_id == tenant_id,
-            DialerAgentModel.status != AgentStatusEnum.OFFLINE,
-            DialerAgentModel.is_deleted.is_(False),
+            DialerUserModel.tenant_id == tenant_id,
+            DialerUserModel.status != UserStatusEnum.OFFLINE,
+            DialerUserModel.is_deleted.is_(False),
         )
     ).scalar() or 0
 
@@ -103,41 +103,41 @@ def dashboard_overview(
         answer_rate_today=round(answer_rate, 2),
         avg_call_duration_seconds=round(float(avg_duration), 1),
         active_campaigns=active_campaigns,
-        active_agents=active_agents,
+        active_users=active_users,
         total_callbacks_today=total_callbacks_today,
         total_contacts=total_contacts,
     )
 
 
-@router.get("/agents/performance", response_model=list[AgentPerformanceSchema])
-def agents_performance(
+@router.get("/users/performance", response_model=list[UserPerformanceSchema])
+def users_performance(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """エージェント実績"""
+    """ユーザー実績"""
     _, tenant_id = auth
     now = datetime.now(JST)
     start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    agents = db.execute(
-        select(DialerAgentModel).where(
-            DialerAgentModel.tenant_id == tenant_id,
-            DialerAgentModel.is_deleted.is_(False),
+    users = db.execute(
+        select(DialerUserModel).where(
+            DialerUserModel.tenant_id == tenant_id,
+            DialerUserModel.is_deleted.is_(False),
         )
     ).scalars().all()
 
     results = []
-    for agent in agents:
+    for user in users:
         total = db.execute(
             select(func.count()).where(
-                DialerCallLogModel.agent_id == agent.agent_id,
+                DialerCallLogModel.user_id == user.user_id,
                 DialerCallLogModel.initiated_at >= start_of_day,
             )
         ).scalar() or 0
 
         answered = db.execute(
             select(func.count()).where(
-                DialerCallLogModel.agent_id == agent.agent_id,
+                DialerCallLogModel.user_id == user.user_id,
                 DialerCallLogModel.answered_at.is_not(None),
                 DialerCallLogModel.initiated_at >= start_of_day,
             )
@@ -145,7 +145,7 @@ def agents_performance(
 
         avg_dur = db.execute(
             select(func.avg(DialerCallLogModel.duration_seconds)).where(
-                DialerCallLogModel.agent_id == agent.agent_id,
+                DialerCallLogModel.user_id == user.user_id,
                 DialerCallLogModel.duration_seconds > 0,
                 DialerCallLogModel.initiated_at >= start_of_day,
             )
@@ -153,14 +153,14 @@ def agents_performance(
 
         total_talk = db.execute(
             select(func.sum(DialerCallLogModel.duration_seconds)).where(
-                DialerCallLogModel.agent_id == agent.agent_id,
+                DialerCallLogModel.user_id == user.user_id,
                 DialerCallLogModel.initiated_at >= start_of_day,
             )
         ).scalar() or 0
 
-        results.append(AgentPerformanceSchema(
-            agent_id=agent.agent_id,
-            display_name=agent.display_name,
+        results.append(UserPerformanceSchema(
+            user_id=user.user_id,
+            display_name=user.display_name,
             total_calls=total,
             total_answered=answered,
             answer_rate=round(answered / total * 100 if total else 0, 2),

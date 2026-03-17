@@ -1,0 +1,63 @@
+<!--
+  FreeSWITCH External SIP Profile - ブラステル My 050 接続用
+  ブラステル SIPトランク経由で外線発信・着信を行う。
+
+  ポート構成:
+    - 5080/UDP,TCP: 外部 SIP (ブラステル向け)
+
+  手動設定が必要な箇所:
+    - username: ブラステルのSIPアカウントID (8桁数字)
+    - password: ブラステルのSIPパスワード (8桁英数字)
+    ※ https://www.brastel.com でログイン → SIPアカウント で確認
+-->
+<profile name="external">
+  <gateways>
+    <gateway name="brastel">
+      <!-- ブラステル SIP認証情報 (要手動設定) -->
+      <param name="username" value="BRASTEL_SIP_ID"/>
+      <param name="password" value="BRASTEL_SIP_PASSWORD"/>
+
+      <!-- ブラステル SIPサーバー -->
+      <param name="realm" value="softphone.spc.brastel.ne.jp"/>
+      <param name="proxy" value="softphone.spc.brastel.ne.jp"/>
+      <param name="register" value="true"/>
+      <param name="register-proxy" value="softphone.spc.brastel.ne.jp:5060"/>
+
+      <!-- 発信者番号: From ヘッダーに認証IDを含める (ブラステル要件) -->
+      <param name="caller-id-in-from" value="true"/>
+      <param name="from-domain" value="softphone.spc.brastel.ne.jp"/>
+
+      <!-- コーデック (ブラステル対応: PCMU > PCMA > GSM) -->
+      <param name="codec-prefs" value="PCMU,PCMA,GSM"/>
+
+      <!-- 登録間隔 -->
+      <param name="expire-seconds" value="3600"/>
+      <param name="retry-seconds" value="30"/>
+
+      <!-- トランスポート -->
+      <param name="register-transport" value="udp"/>
+
+      <!-- 着信コンテキスト -->
+      <param name="context" value="public"/>
+    </gateway>
+  </gateways>
+
+  <settings>
+    <param name="sip-port" value="5080"/>
+    <param name="sip-ip" value="$${local_ip_v4}"/>
+    <param name="rtp-ip" value="$${local_ip_v4}"/>
+    <param name="ext-rtp-ip" value="auto-nat"/>
+    <param name="ext-sip-ip" value="auto-nat"/>
+
+    <param name="context" value="public"/>
+    <param name="dialplan" value="XML"/>
+
+    <!-- コーデック -->
+    <param name="inbound-codec-string" value="PCMU,PCMA,GSM"/>
+    <param name="outbound-codec-string" value="PCMU,PCMA,GSM"/>
+
+    <!-- NAT (WSL2/ローカル環境用) -->
+    <param name="aggressive-nat-detection" value="true"/>
+    <param name="NDLB-force-rport" value="true"/>
+  </settings>
+</profile>

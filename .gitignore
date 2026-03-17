@@ -58,3 +58,12 @@ ngrok.yml
 
 # secret
 sample_secret.json
+
+# Claude Code local settings
+.claude/settings.local.json
+
+# GCS CORS config
+cors-config.json
+
+# Internal setup docs
+readGoogle.md

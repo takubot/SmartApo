@@ -7,10 +7,9 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ...auth.authentication.dependencies import get_current_user
-from ...common.env_config import get_settings
 from ...database_utils.database import get_sync_session
 from ...models.tables.enum import CallStatusEnum
-from ...models.tables.model_defs import DialerCallLogModel, DialerTwilioConfigModel
+from ...models.tables.model_defs import DialerCallLogModel, DialerUserModel
 from ...services.implementations.di import get_telephony_service
 from .schemas.call_log_schemas import CallLogResponseSchema
 from .schemas.common_schemas import MessageResponse
@@ -28,38 +27,36 @@ def initiate_call(
     db: Session = Depends(get_sync_session),
 ):
     """手動発信"""
-    user_id, tenant_id = auth
-    svc = get_telephony_service()
-    settings = get_settings()
-    base_url = settings.TWILIO_WEBHOOK_BASE_URL
+    firebase_uid, tenant_id = auth
 
-    # caller_id の解決: リクエスト指定 → Twilio設定の default_caller_id
     if not caller_id:
-        twilio_cfg = db.execute(
-            select(DialerTwilioConfigModel).where(
-                DialerTwilioConfigModel.tenant_id == tenant_id,
-                DialerTwilioConfigModel.is_deleted.is_(False),
-            )
-        ).scalar_one_or_none()
-        if twilio_cfg:
-            caller_id = twilio_cfg.default_caller_id
-        if not caller_id:
-            raise HTTPException(400, "発信者番号が設定されていません。Twilio設定でデフォルト発信者番号を登録してください。")
+        raise HTTPException(400, "発信者番号が指定されていません。")
 
+    svc = get_telephony_service()
     result = svc.initiate_call(
         to=phone_number,
         from_=caller_id,
-        voice_url=f"{base_url}/v2/dialer/webhooks/twilio/voice",
-        status_callback_url=f"{base_url}/v2/dialer/webhooks/twilio/status",
+        voice_url="",
+        status_callback_url="",
     )
+
+    # ログインユーザーを自動解決して通話ログに紐付け
+    user = db.execute(
+        select(DialerUserModel).where(
+            DialerUserModel.firebase_uid == firebase_uid,
+            DialerUserModel.tenant_id == tenant_id,
+            DialerUserModel.is_deleted.is_(False),
+        )
+    ).scalar_one_or_none()
 
     log = DialerCallLogModel(
         tenant_id=tenant_id,
         campaign_id=campaign_id,
         contact_id=contact_id,
+        user_id=user.user_id if user else None,
         phone_number_dialed=phone_number,
         caller_id_used=caller_id,
-        twilio_call_sid=result.get("call_sid"),
+        call_uuid=result.get("call_sid"),
         call_status=CallStatusEnum.DIALING,
     )
     db.add(log)
@@ -67,53 +64,53 @@ def initiate_call(
     return CallLogResponseSchema.model_validate(log)
 
 
-@router.post("/{call_sid}/hold", response_model=MessageResponse)
+@router.post("/{call_uuid}/hold", response_model=MessageResponse)
 def hold_call(
-    call_sid: str,
+    call_uuid: str,
     auth: tuple[str, str] = Depends(get_current_user),
 ):
     """保留"""
     svc = get_telephony_service()
-    svc.hold_call(call_sid)
+    svc.hold_call(call_uuid)
     return MessageResponse(message="保留にしました")
 
 
-@router.post("/{call_sid}/resume", response_model=MessageResponse)
+@router.post("/{call_uuid}/resume", response_model=MessageResponse)
 def resume_call(
-    call_sid: str,
+    call_uuid: str,
     auth: tuple[str, str] = Depends(get_current_user),
 ):
     """保留解除"""
     svc = get_telephony_service()
-    svc.resume_call(call_sid)
+    svc.resume_call(call_uuid)
     return MessageResponse(message="保留を解除しました")
 
 
-@router.post("/{call_sid}/transfer", response_model=MessageResponse)
+@router.post("/{call_uuid}/transfer", response_model=MessageResponse)
 def transfer_call(
-    call_sid: str,
+    call_uuid: str,
     target: str,
     auth: tuple[str, str] = Depends(get_current_user),
 ):
     """転送"""
     svc = get_telephony_service()
-    svc.transfer_call(call_sid, target)
+    svc.transfer_call(call_uuid, target)
     return MessageResponse(message=f"{target}に転送しました")
 
 
-@router.post("/{call_sid}/end", response_model=MessageResponse)
+@router.post("/{call_uuid}/end", response_model=MessageResponse)
 def end_call(
-    call_sid: str,
+    call_uuid: str,
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
     """通話終了"""
     svc = get_telephony_service()
-    svc.end_call(call_sid)
+    svc.end_call(call_uuid)
 
     log = db.execute(
         select(DialerCallLogModel).where(
-            DialerCallLogModel.twilio_call_sid == call_sid
+            DialerCallLogModel.call_uuid == call_uuid
         )
     ).scalar_one_or_none()
     if log:
@@ -121,9 +118,9 @@ def end_call(
     return MessageResponse(message="通話を終了しました")
 
 
-@router.post("/{call_sid}/disposition", response_model=MessageResponse)
+@router.post("/{call_uuid}/disposition", response_model=MessageResponse)
 def set_disposition(
-    call_sid: str,
+    call_uuid: str,
     disposition_id: str,
     notes: str | None = None,
     auth: tuple[str, str] = Depends(get_current_user),
@@ -132,7 +129,7 @@ def set_disposition(
     """処理結果登録"""
     log = db.execute(
         select(DialerCallLogModel).where(
-            DialerCallLogModel.twilio_call_sid == call_sid
+            DialerCallLogModel.call_uuid == call_uuid
         )
     ).scalar_one_or_none()
     if not log:

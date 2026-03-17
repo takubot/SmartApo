@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Tabs, Tab } from "@heroui/react";
 import {
-  Phone,
+  Server,
   Headphones,
   Users,
   Megaphone,
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/dialer";
 import SetupChecklist from "@/components/dialer/setup/SetupChecklist";
-import TwilioSetupGuide from "@/components/dialer/setup/TwilioSetupGuide";
+import FreeSwitchSetupGuide from "@/components/dialer/setup/FreeSwitchSetupGuide";
 import {
   getSetupStatus,
   updateSetupStatus,
@@ -23,7 +23,7 @@ import {
   type SetupStepStatus,
 } from "@/lib/setupStatus";
 
-type TabKey = "overview" | "twilio" | "agents" | "contacts" | "campaign";
+type TabKey = "overview" | "phone" | "users" | "contacts" | "campaign";
 
 export default function SetupPage() {
   const router = useRouter();
@@ -38,8 +38,8 @@ export default function SetupPage() {
     setStatus(newStatus);
   };
 
-  const handleAgentDone = () => {
-    const updated = updateSetupStatus({ agentRegistered: true });
+  const handleUserDone = () => {
+    const updated = updateSetupStatus({ userRegistered: true });
     setStatus(updated);
   };
 
@@ -100,16 +100,14 @@ export default function SetupPage() {
           )}
         </Tab>
 
-        {/* ==================== Twilio Tab ==================== */}
+        {/* ==================== Phone/PBX Tab ==================== */}
         <Tab
-          key="twilio"
+          key="phone"
           title={
             <div className="flex items-center gap-2">
-              <Phone size={16} />
-              <span>Twilio設定</span>
-              {status.twilioAccount &&
-              status.twilioPhoneNumber &&
-              status.twilioWebhook ? (
+              <Server size={16} />
+              <span>電話設定</span>
+              {status.pbxConnected && status.sipTrunkConfigured ? (
                 <span className="w-2 h-2 rounded-full bg-green-500" />
               ) : (
                 <span className="w-2 h-2 rounded-full bg-amber-400" />
@@ -117,20 +115,20 @@ export default function SetupPage() {
             </div>
           }
         >
-          <TwilioSetupGuide
+          <FreeSwitchSetupGuide
             status={status}
             onStatusChange={handleStatusChange}
           />
         </Tab>
 
-        {/* ==================== Agents Tab ==================== */}
+        {/* ==================== Users Tab ==================== */}
         <Tab
-          key="agents"
+          key="users"
           title={
             <div className="flex items-center gap-2">
               <Headphones size={16} />
-              <span>エージェント</span>
-              {status.agentRegistered ? (
+              <span>ユーザー</span>
+              {status.userRegistered ? (
                 <span className="w-2 h-2 rounded-full bg-green-500" />
               ) : (
                 <span className="w-2 h-2 rounded-full bg-gray-300" />
@@ -138,9 +136,9 @@ export default function SetupPage() {
             </div>
           }
         >
-          <AgentSetupSection
-            done={status.agentRegistered}
-            onDone={handleAgentDone}
+          <UserSetupSection
+            done={status.userRegistered}
+            onDone={handleUserDone}
           />
         </Tab>
 
@@ -195,8 +193,8 @@ export default function SetupPage() {
           onPress={() => {
             const tabs: TabKey[] = [
               "overview",
-              "twilio",
-              "agents",
+              "phone",
+              "users",
               "contacts",
               "campaign",
             ];
@@ -213,8 +211,8 @@ export default function SetupPage() {
           onPress={() => {
             const tabs: TabKey[] = [
               "overview",
-              "twilio",
-              "agents",
+              "phone",
+              "users",
               "contacts",
               "campaign",
             ];
@@ -232,9 +230,9 @@ export default function SetupPage() {
 }
 
 // ────────────────────────────────────────────
-// Agent Setup Section
+// User Setup Section
 // ────────────────────────────────────────────
-function AgentSetupSection({
+function UserSetupSection({
   done,
   onDone,
 }: {
@@ -257,24 +255,25 @@ function AgentSetupSection({
           </div>
           <div>
             <h3 className="text-base font-bold text-gray-800">
-              エージェントの登録
+              ユーザーの登録
             </h3>
             <p className="text-sm text-gray-500">
-              架電を行うエージェントを登録してください
+              ダイヤラーにログインすると自動でユーザーが登録されます
             </p>
           </div>
         </div>
 
         <div className="bg-white rounded-lg p-4 space-y-3">
-          <p className="text-sm text-gray-700 font-medium">必要な情報:</p>
+          <p className="text-sm text-gray-700 font-medium">
+            自動登録される情報:
+          </p>
           <ul className="text-sm text-gray-600 space-y-2">
             <li className="flex items-start gap-2">
               <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
                 1
               </span>
               <span>
-                <strong>表示名</strong> -
-                エージェントの名前（ステータスボードに表示）
+                <strong>表示名</strong> - Firebaseの表示名が自動設定されます
               </span>
             </li>
             <li className="flex items-start gap-2">
@@ -282,15 +281,7 @@ function AgentSetupSection({
                 2
               </span>
               <span>
-                <strong>内線番号</strong> - 内部での識別用番号（任意）
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 text-xs flex items-center justify-center flex-shrink-0 mt-0.5">
-                3
-              </span>
-              <span>
-                <strong>スキル</strong> - 対応可能な業務の種類（任意）
+                <strong>SIP内線番号</strong> - 1001番から自動採番されます
               </span>
             </li>
           </ul>
@@ -299,10 +290,10 @@ function AgentSetupSection({
         <div className="flex gap-3">
           <Button
             color="primary"
-            onPress={() => router.push("/agents")}
+            onPress={() => router.push("/users")}
             endContent={<ArrowRight size={16} />}
           >
-            エージェント管理ページへ
+            ユーザー一覧へ
           </Button>
           {!done && (
             <Button variant="light" className="text-gray-400" onPress={onDone}>
@@ -443,7 +434,7 @@ function CampaignSetupSection({
               キャンペーンの作成
             </h3>
             <p className="text-sm text-gray-500">
-              架電キャンペーンを作成して、コンタクトとエージェントを割り当てます
+              架電キャンペーンを作成して、コンタクトとユーザーを割り当てます
             </p>
           </div>
         </div>
@@ -491,7 +482,7 @@ function CampaignSetupSection({
                 5
               </span>
               <span>
-                <strong>エージェント割当</strong> - 参加するエージェントの選択
+                <strong>ユーザー割当</strong> - 参加するユーザーの選択
               </span>
             </li>
           </ul>
@@ -500,7 +491,7 @@ function CampaignSetupSection({
         <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
           <span className="text-amber-500 flex-shrink-0 mt-0.5 text-sm">i</span>
           <p className="text-xs text-amber-700">
-            キャンペーン作成前に、エージェントとコンタクトの登録を先に完了してください。
+            キャンペーン作成前に、ユーザーとコンタクトの登録を先に完了してください。
             キャンペーン作成時にそれらを割り当てる必要があります。
           </p>
         </div>

@@ -25,7 +25,7 @@ import { PageHeader, KpiCard } from "@/components/dialer";
 import {
   useDashboardOverview,
   useDashboardHourly,
-  useDashboardAgentPerformance,
+  useDashboardUserPerformance,
 } from "@/hooks/dialer/useDialerSwr";
 import SetupChecklist from "@/components/dialer/setup/SetupChecklist";
 import {
@@ -43,8 +43,8 @@ function formatSeconds(seconds: number): string {
 export default function DashboardPage() {
   const { data: overview, isLoading: loadingOverview } = useDashboardOverview();
   const { data: hourly, isLoading: loadingHourly } = useDashboardHourly();
-  const { data: agentPerf, isLoading: loadingAgents } =
-    useDashboardAgentPerformance();
+  const { data: userPerf, isLoading: loadingUsers } =
+    useDashboardUserPerformance();
 
   const [setupStatus, setSetupStatus] = useState<SetupStepStatus | null>(null);
   const [setupDismissed, setSetupDismissed] = useState(false);
@@ -88,8 +88,8 @@ export default function DashboardPage() {
               color="primary"
             />
             <KpiCard
-              title="稼働エージェント"
-              value={overview?.activeAgents ?? 0}
+              title="稼働ユーザー"
+              value={overview?.activeUsers ?? 0}
               icon={<Headphones size={20} />}
               color="success"
             />
@@ -161,41 +161,41 @@ export default function DashboardPage() {
               </CardBody>
             </Card>
 
-            {/* エージェントパフォーマンス */}
+            {/* ユーザーパフォーマンス */}
             <Card shadow="sm">
               <CardHeader className="pb-0">
                 <h3 className="text-sm font-semibold text-gray-700">
-                  エージェントパフォーマンス
+                  ユーザーパフォーマンス
                 </h3>
               </CardHeader>
               <CardBody>
-                {loadingAgents ? (
+                {loadingUsers ? (
                   <div className="flex justify-center py-8">
                     <Spinner />
                   </div>
                 ) : (
                   <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                    {(agentPerf?.agents ?? []).map((agent) => (
+                    {(userPerf?.users ?? []).map((user) => (
                       <div
-                        key={agent.agentId}
+                        key={user.userId}
                         className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                       >
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 text-xs font-bold">
-                            {agent.displayName.charAt(0)}
+                            {user.displayName.charAt(0)}
                           </div>
                           <div>
                             <p className="text-sm font-medium">
-                              {agent.displayName}
+                              {user.displayName}
                             </p>
                             <p className="text-xs text-gray-400">
-                              {agent.totalCalls}件 / 応答率{" "}
-                              {(agent.answerRate * 100).toFixed(0)}%
+                              {user.totalCalls}件 / 応答率{" "}
+                              {(user.answerRate * 100).toFixed(0)}%
                             </p>
                           </div>
                         </div>
                         <span className="text-xs text-gray-500">
-                          平均 {formatSeconds(agent.avgCallDurationSeconds)}
+                          平均 {formatSeconds(user.avgCallDurationSeconds)}
                         </span>
                       </div>
                     ))}

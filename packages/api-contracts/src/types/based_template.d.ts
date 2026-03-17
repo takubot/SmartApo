@@ -272,7 +272,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/campaigns/{campaign_id}/agents": {
+  "/v2/dialer/campaigns/{campaign_id}/users": {
     parameters: {
       query?: never;
       header?: never;
@@ -282,17 +282,17 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Assign Agents
-     * @description エージェントをキャンペーンに割当
+     * Assign Users
+     * @description ユーザーをキャンペーンに割当
      */
-    post: operations["assign_agents_v2_dialer_campaigns__campaign_id__agents_post"];
+    post: operations["assign_users_v2_dialer_campaigns__campaign_id__users_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/campaigns/{campaign_id}/agents/{agent_id}": {
+  "/v2/dialer/campaigns/{campaign_id}/users/{user_id}": {
     parameters: {
       query?: never;
       header?: never;
@@ -303,16 +303,16 @@ export interface paths {
     put?: never;
     post?: never;
     /**
-     * Unassign Agent
-     * @description エージェント割当解除
+     * Unassign User
+     * @description ユーザー割当解除
      */
-    delete: operations["unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete"];
+    delete: operations["unassign_user_v2_dialer_campaigns__campaign_id__users__user_id__delete"];
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/agents": {
+  "/v2/dialer/users/me": {
     parameters: {
       query?: never;
       header?: never;
@@ -320,23 +320,66 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * List Agents
-     * @description エージェント一覧
+     * Get Or Create My User
+     * @description ログインユーザーの情報を取得（なければ自動作成）
+     *
+     *     フロントエンドはログイン後にこのエンドポイントを呼ぶだけで
+     *     ユーザー登録が完了する。内線番号も自動採番される。
      */
-    get: operations["list_agents_v2_dialer_agents_get"];
+    get: operations["get_or_create_my_user_v2_dialer_users_me_get"];
     put?: never;
-    /**
-     * Create Agent
-     * @description エージェント登録
-     */
-    post: operations["create_agent_v2_dialer_agents_post"];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/agents/status-board": {
+  "/v2/dialer/users/me/status": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    /**
+     * Update My Status
+     * @description 自分のステータスを変更
+     */
+    put: operations["update_my_status_v2_dialer_users_me_status_put"];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/users": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Users
+     * @description ユーザー一覧
+     */
+    get: operations["list_users_v2_dialer_users_get"];
+    put?: never;
+    /**
+     * Create User
+     * @description ユーザー登録（Identity Platform + DB）
+     */
+    post: operations["create_user_v2_dialer_users_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/users/status-board": {
     parameters: {
       query?: never;
       header?: never;
@@ -347,7 +390,7 @@ export interface paths {
      * Status Board
      * @description リアルタイムステータスボード
      */
-    get: operations["status_board_v2_dialer_agents_status_board_get"];
+    get: operations["status_board_v2_dialer_users_status_board_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -356,7 +399,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/agents/available": {
+  "/v2/dialer/users/available": {
     parameters: {
       query?: never;
       header?: never;
@@ -364,10 +407,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Available Agents
-     * @description 利用可能なエージェント一覧
+     * Available Users
+     * @description 利用可能なユーザー一覧
      */
-    get: operations["available_agents_v2_dialer_agents_available_get"];
+    get: operations["available_users_v2_dialer_users_available_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -376,7 +419,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/agents/{agent_id}": {
+  "/v2/dialer/users/{user_id}": {
     parameters: {
       query?: never;
       header?: never;
@@ -384,23 +427,27 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get Agent
-     * @description エージェント詳細
+     * Get User
+     * @description ユーザー詳細
      */
-    get: operations["get_agent_v2_dialer_agents__agent_id__get"];
+    get: operations["get_user_v2_dialer_users__user_id__get"];
     /**
-     * Update Agent
-     * @description エージェント更新
+     * Update User
+     * @description ユーザー更新
      */
-    put: operations["update_agent_v2_dialer_agents__agent_id__put"];
+    put: operations["update_user_v2_dialer_users__user_id__put"];
     post?: never;
-    delete?: never;
+    /**
+     * Delete User
+     * @description ユーザー論理削除
+     */
+    delete: operations["delete_user_v2_dialer_users__user_id__delete"];
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/agents/{agent_id}/status": {
+  "/v2/dialer/users/{user_id}/status": {
     parameters: {
       query?: never;
       header?: never;
@@ -409,10 +456,10 @@ export interface paths {
     };
     get?: never;
     /**
-     * Update Agent Status
+     * Update User Status
      * @description ステータス変更
      */
-    put: operations["update_agent_status_v2_dialer_agents__agent_id__status_put"];
+    put: operations["update_user_status_v2_dialer_users__user_id__status_put"];
     post?: never;
     delete?: never;
     options?: never;
@@ -440,7 +487,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/calls/{call_sid}/hold": {
+  "/v2/dialer/calls/{call_uuid}/hold": {
     parameters: {
       query?: never;
       header?: never;
@@ -453,14 +500,14 @@ export interface paths {
      * Hold Call
      * @description 保留
      */
-    post: operations["hold_call_v2_dialer_calls__call_sid__hold_post"];
+    post: operations["hold_call_v2_dialer_calls__call_uuid__hold_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/calls/{call_sid}/resume": {
+  "/v2/dialer/calls/{call_uuid}/resume": {
     parameters: {
       query?: never;
       header?: never;
@@ -473,14 +520,14 @@ export interface paths {
      * Resume Call
      * @description 保留解除
      */
-    post: operations["resume_call_v2_dialer_calls__call_sid__resume_post"];
+    post: operations["resume_call_v2_dialer_calls__call_uuid__resume_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/calls/{call_sid}/transfer": {
+  "/v2/dialer/calls/{call_uuid}/transfer": {
     parameters: {
       query?: never;
       header?: never;
@@ -493,14 +540,14 @@ export interface paths {
      * Transfer Call
      * @description 転送
      */
-    post: operations["transfer_call_v2_dialer_calls__call_sid__transfer_post"];
+    post: operations["transfer_call_v2_dialer_calls__call_uuid__transfer_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/calls/{call_sid}/end": {
+  "/v2/dialer/calls/{call_uuid}/end": {
     parameters: {
       query?: never;
       header?: never;
@@ -513,14 +560,14 @@ export interface paths {
      * End Call
      * @description 通話終了
      */
-    post: operations["end_call_v2_dialer_calls__call_sid__end_post"];
+    post: operations["end_call_v2_dialer_calls__call_uuid__end_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/calls/{call_sid}/disposition": {
+  "/v2/dialer/calls/{call_uuid}/disposition": {
     parameters: {
       query?: never;
       header?: never;
@@ -533,7 +580,7 @@ export interface paths {
      * Set Disposition
      * @description 処理結果登録
      */
-    post: operations["set_disposition_v2_dialer_calls__call_sid__disposition_post"];
+    post: operations["set_disposition_v2_dialer_calls__call_uuid__disposition_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -664,7 +711,11 @@ export interface paths {
       path?: never;
       cookie?: never;
     };
-    get?: never;
+    /**
+     * List Call List Contacts
+     * @description コールリスト内コンタクト一覧
+     */
+    get: operations["list_call_list_contacts_v2_dialer_call_lists__call_list_id__contacts_get"];
     put?: never;
     /** Add Contacts */
     post: operations["add_contacts_v2_dialer_call_lists__call_list_id__contacts_post"];
@@ -686,6 +737,206 @@ export interface paths {
     post?: never;
     /** Remove Contact */
     delete: operations["remove_contact_v2_dialer_call_lists__call_list_id__contacts__contact_id__delete"];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/start-calling": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Start Calling
+     * @description コールリストの架電を開始（プレディクティブコール）
+     */
+    post: operations["start_calling_v2_dialer_call_lists__call_list_id__start_calling_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/calling-session/{session_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Get Calling Session Status
+     * @description セッション状態取得（ポーリング用）
+     */
+    get: operations["get_calling_session_status_v2_dialer_call_lists__call_list_id__calling_session__session_id__get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/calling-session/{session_id}/result": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Submit Call Result
+     * @description 架電結果登録（テレアポ状況・メモ保存）
+     */
+    post: operations["submit_call_result_v2_dialer_call_lists__call_list_id__calling_session__session_id__result_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/calling-session/{session_id}/end-call": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * End Session Call
+     * @description 接続中の通話を終了
+     */
+    post: operations["end_session_call_v2_dialer_call_lists__call_list_id__calling_session__session_id__end_call_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/calling-session/{session_id}/cancel": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cancel Calling Session
+     * @description セッション全通話キャンセル
+     */
+    post: operations["cancel_calling_session_v2_dialer_call_lists__call_list_id__calling_session__session_id__cancel_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/sheets/spreadsheets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Spreadsheets
+     * @description Googleドライブからスプレッドシート一覧を取得
+     */
+    get: operations["list_spreadsheets_v2_dialer_call_lists_sheets_spreadsheets_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/sheets/spreadsheets/{spreadsheet_id}/tabs": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * List Sheet Tabs
+     * @description スプレッドシート内のシートタブ一覧を取得
+     */
+    get: operations["list_sheet_tabs_v2_dialer_call_lists_sheets_spreadsheets__spreadsheet_id__tabs_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/sheets/preview": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Preview Sheet
+     * @description スプレッドシートのプレビュー取得（ヘッダー＋最初の5行 + 生データ）
+     */
+    post: operations["preview_sheet_v2_dialer_call_lists_sheets_preview_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/sheets/import": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Import From Sheets
+     * @description Google Sheetsとコールリストを連携（メタデータのみ保存、連絡先は同期で取得）
+     */
+    post: operations["import_from_sheets_v2_dialer_call_lists_sheets_import_post"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v2/dialer/call-lists/{call_list_id}/sheets/sync": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Sync From Sheets
+     * @description Google Sheetsからコールリストを再同期
+     */
+    post: operations["sync_from_sheets_v2_dialer_call_lists__call_list_id__sheets_sync_post"];
+    delete?: never;
     options?: never;
     head?: never;
     patch?: never;
@@ -938,7 +1189,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/dashboard/agents/performance": {
+  "/v2/dialer/dashboard/users/performance": {
     parameters: {
       query?: never;
       header?: never;
@@ -946,10 +1197,10 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Agents Performance
-     * @description エージェント実績
+     * Users Performance
+     * @description ユーザー実績
      */
-    get: operations["agents_performance_v2_dialer_dashboard_agents_performance_get"];
+    get: operations["users_performance_v2_dialer_dashboard_users_performance_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -978,7 +1229,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/google/auth-url/{integration_type}": {
+  "/v2/dialer/google/auth-url": {
     parameters: {
       query?: never;
       header?: never;
@@ -987,9 +1238,9 @@ export interface paths {
     };
     /**
      * Get Auth Url
-     * @description OAuth認証URL取得
+     * @description OAuth認証URL取得（全スコープ統合）
      */
-    get: operations["get_auth_url_v2_dialer_google_auth_url__integration_type__get"];
+    get: operations["get_auth_url_v2_dialer_google_auth_url_get"];
     put?: never;
     post?: never;
     delete?: never;
@@ -1018,6 +1269,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v2/dialer/google/picker-config": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Picker Config
+     * @description Google Picker API用の設定を返す（トークンリフレッシュ込み）
+     */
+    get: operations["picker_config_v2_dialer_google_picker_config_get"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v2/dialer/google/status": {
     parameters: {
       query?: never;
@@ -1032,26 +1303,6 @@ export interface paths {
     get: operations["integration_status_v2_dialer_google_status_get"];
     put?: never;
     post?: never;
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/v2/dialer/google/sync/{integration_type}": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Manual Sync
-     * @description 手動同期実行
-     */
-    post: operations["manual_sync_v2_dialer_google_sync__integration_type__post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1078,7 +1329,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/settings/twilio": {
+  "/v2/dialer/settings/phone": {
     parameters: {
       query?: never;
       header?: never;
@@ -1086,15 +1337,11 @@ export interface paths {
       cookie?: never;
     };
     /**
-     * Get Twilio Config
-     * @description Twilio設定取得
+     * Get Phone Config
+     * @description 電話設定 (FreeSWITCH) の状態取得
      */
-    get: operations["get_twilio_config_v2_dialer_settings_twilio_get"];
-    /**
-     * Update Twilio Config
-     * @description Twilio設定更新
-     */
-    put: operations["update_twilio_config_v2_dialer_settings_twilio_put"];
+    get: operations["get_phone_config_v2_dialer_settings_phone_get"];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -1102,7 +1349,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/settings/twilio/test": {
+  "/v2/dialer/settings/phone/test": {
     parameters: {
       query?: never;
       header?: never;
@@ -1112,17 +1359,17 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Test Twilio
-     * @description Twilio接続テスト
+     * Test Esl Connection
+     * @description FreeSWITCH ESL 接続テスト
      */
-    post: operations["test_twilio_v2_dialer_settings_twilio_test_post"];
+    post: operations["test_esl_connection_v2_dialer_settings_phone_test_post"];
     delete?: never;
     options?: never;
     head?: never;
     patch?: never;
     trace?: never;
   };
-  "/v2/dialer/webhooks/twilio/voice": {
+  "/v2/dialer/dial": {
     parameters: {
       query?: never;
       header?: never;
@@ -1132,70 +1379,15 @@ export interface paths {
     get?: never;
     put?: never;
     /**
-     * Voice Webhook
-     * @description 着信/発信時のTwiML応答
+     * Dial And Bridge
+     * @description プログレッシブダイヤラー: 外線発信 → オペレーターにブリッジ
+     *
+     *     1. 認証済みユーザーの情報からSIP内線番号を取得
+     *     2. FreeSWITCH ESL で外線発信 (sofia/gateway)
+     *     3. 顧客応答時にオペレーターの SIP内線 (user/xxxx) へ自動ブリッジ
+     *     4. 通話ログをDBに記録
      */
-    post: operations["voice_webhook_v2_dialer_webhooks_twilio_voice_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/v2/dialer/webhooks/twilio/status": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Status Webhook
-     * @description 通話ステータスコールバック
-     */
-    post: operations["status_webhook_v2_dialer_webhooks_twilio_status_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/v2/dialer/webhooks/twilio/recording": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Recording Webhook
-     * @description 録音完了コールバック
-     */
-    post: operations["recording_webhook_v2_dialer_webhooks_twilio_recording_post"];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
-  "/v2/dialer/webhooks/twilio/fallback": {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    /**
-     * Fallback Webhook
-     * @description エラーフォールバック
-     */
-    post: operations["fallback_webhook_v2_dialer_webhooks_twilio_fallback_post"];
+    post: operations["dial_and_bridge_v2_dialer_dial_post"];
     delete?: never;
     options?: never;
     head?: never;
@@ -1264,89 +1456,6 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
-    /** AgentCreateSchema */
-    AgentCreateSchema: {
-      /** Displayname */
-      displayName: string;
-      /** Userid */
-      userId: string;
-      /** Extension */
-      extension?: string | null;
-      /** Skills */
-      skills?: string[] | null;
-      /**
-       * Maxconcurrentcalls
-       * @default 1
-       */
-      maxConcurrentCalls: number;
-    };
-    /**
-     * AgentPerformanceSchema
-     * @description エージェント実績
-     */
-    AgentPerformanceSchema: {
-      /** Agentid */
-      agentId: string;
-      /** Displayname */
-      displayName: string;
-      /** Totalcalls */
-      totalCalls: number;
-      /** Totalanswered */
-      totalAnswered: number;
-      /** Answerrate */
-      answerRate: number;
-      /** Avgcalldurationseconds */
-      avgCallDurationSeconds: number;
-      /** Totaltalktimeseconds */
-      totalTalkTimeSeconds: number;
-    };
-    /** AgentResponseSchema */
-    AgentResponseSchema: {
-      /** Agentid */
-      agentId: string;
-      /** Userid */
-      userId: string;
-      /** Displayname */
-      displayName: string;
-      /** Extension */
-      extension?: string | null;
-      /** Status */
-      status: string;
-      /** Statuschangedat */
-      statusChangedAt?: string | null;
-      /** Currentcallid */
-      currentCallId?: string | null;
-      /** Skills */
-      skills?: string[] | null;
-      /** Maxconcurrentcalls */
-      maxConcurrentCalls: number;
-      /**
-       * Createdat
-       * Format: date-time
-       */
-      createdAt: string;
-      /**
-       * Updatedat
-       * Format: date-time
-       */
-      updatedAt: string;
-    };
-    /** AgentStatusUpdateSchema */
-    AgentStatusUpdateSchema: {
-      /** Status */
-      status: string;
-    };
-    /** AgentUpdateSchema */
-    AgentUpdateSchema: {
-      /** Displayname */
-      displayName?: string | null;
-      /** Extension */
-      extension?: string | null;
-      /** Skills */
-      skills?: string[] | null;
-      /** Maxconcurrentcalls */
-      maxConcurrentCalls?: number | null;
-    };
     /** Body_import_csv_v2_dialer_contacts_import_csv_post */
     Body_import_csv_v2_dialer_contacts_import_csv_post: {
       /**
@@ -1354,52 +1463,6 @@ export interface components {
        * Format: binary
        */
       file: string;
-    };
-    /** Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post */
-    Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post: {
-      /**
-       * Callsid
-       * @default
-       */
-      CallSid: string;
-      /**
-       * Recordingsid
-       * @default
-       */
-      RecordingSid: string;
-      /**
-       * Recordingurl
-       * @default
-       */
-      RecordingUrl: string;
-      /**
-       * Recordingduration
-       * @default 0
-       */
-      RecordingDuration: string;
-    };
-    /** Body_status_webhook_v2_dialer_webhooks_twilio_status_post */
-    Body_status_webhook_v2_dialer_webhooks_twilio_status_post: {
-      /**
-       * Callsid
-       * @default
-       */
-      CallSid: string;
-      /**
-       * Callstatus
-       * @default
-       */
-      CallStatus: string;
-      /**
-       * Callduration
-       * @default 0
-       */
-      CallDuration: string;
-      /**
-       * Timestamp
-       * @default
-       */
-      Timestamp: string;
     };
     /**
      * BulkOperationResult
@@ -1440,6 +1503,21 @@ export interface components {
       contactCount: number;
       /** Source */
       source?: string | null;
+      /** Spreadsheetid */
+      spreadsheetId?: string | null;
+      /** Sheetname */
+      sheetName?: string | null;
+      /** Sheetrange */
+      sheetRange?: string | null;
+      /** Columnmapping */
+      columnMapping?: string | null;
+      /**
+       * Headerrow
+       * @default 1
+       */
+      headerRow: number;
+      /** Lastsheetsyncedat */
+      lastSheetSyncedAt?: string | null;
       /**
        * Createdat
        * Format: date-time
@@ -1466,12 +1544,12 @@ export interface components {
       campaignId?: string | null;
       /** Contactid */
       contactId: string;
-      /** Agentid */
-      agentId?: string | null;
+      /** Userid */
+      userId?: string | null;
       /** Dispositionid */
       dispositionId?: string | null;
-      /** Twiliocallsid */
-      twilioCallSid?: string | null;
+      /** Calluuid */
+      callUuid?: string | null;
       /** Phonenumberdialed */
       phoneNumberDialed: string;
       /** Calleridused */
@@ -1514,14 +1592,28 @@ export interface components {
        */
       createdAt: string;
     };
+    /**
+     * CallResultRequestSchema
+     * @description 架電結果登録リクエスト
+     */
+    CallResultRequestSchema: {
+      /** Telestatus */
+      teleStatus: string;
+      /** Telenote */
+      teleNote?: string | null;
+      /** Notes */
+      notes?: string | null;
+      /** Dispositionid */
+      dispositionId?: string | null;
+    };
     /** CallbackCreateSchema */
     CallbackCreateSchema: {
       /** Contactid */
       contactId: string;
       /** Campaignid */
       campaignId?: string | null;
-      /** Assignedagentid */
-      assignedAgentId?: string | null;
+      /** Assigneduserid */
+      assignedUserId?: string | null;
       /**
        * Scheduledat
        * Format: date-time
@@ -1543,8 +1635,8 @@ export interface components {
       contactId: string;
       /** Campaignid */
       campaignId?: string | null;
-      /** Assignedagentid */
-      assignedAgentId?: string | null;
+      /** Assigneduserid */
+      assignedUserId?: string | null;
       /**
        * Scheduledat
        * Format: date-time
@@ -1568,14 +1660,78 @@ export interface components {
     };
     /** CallbackUpdateSchema */
     CallbackUpdateSchema: {
-      /** Assignedagentid */
-      assignedAgentId?: string | null;
+      /** Assigneduserid */
+      assignedUserId?: string | null;
       /** Scheduledat */
       scheduledAt?: string | null;
       /** Priority */
       priority?: string | null;
       /** Notes */
       notes?: string | null;
+    };
+    /**
+     * CallingSessionCallSchema
+     * @description セッション内の個別通話
+     */
+    CallingSessionCallSchema: {
+      /** Calllogid */
+      callLogId: string;
+      /** Contactid */
+      contactId: string;
+      /** Status */
+      status: string;
+      /** Phonenumber */
+      phoneNumber: string;
+      /**
+       * Contactname
+       * @default
+       */
+      contactName: string;
+      /** Companyname */
+      companyName?: string | null;
+    };
+    /**
+     * CallingSessionContactSchema
+     * @description 接続されたコンタクトのプロフィール
+     */
+    CallingSessionContactSchema: {
+      /** Contactid */
+      contactId: string;
+      /** Lastname */
+      lastName: string;
+      /** Firstname */
+      firstName: string;
+      /** Phoneprimary */
+      phonePrimary: string;
+      /** Phonesecondary */
+      phoneSecondary?: string | null;
+      /** Phonemobile */
+      phoneMobile?: string | null;
+      /** Email */
+      email?: string | null;
+      /** Companyname */
+      companyName?: string | null;
+      /** Department */
+      department?: string | null;
+      /** Position */
+      position?: string | null;
+    };
+    /**
+     * CallingSessionStatusSchema
+     * @description セッションポーリングレスポンス
+     */
+    CallingSessionStatusSchema: {
+      /** Sessionid */
+      sessionId: string;
+      /** Calls */
+      calls: components["schemas"]["CallingSessionCallSchema"][];
+      /** Connectedcalllogid */
+      connectedCallLogId?: string | null;
+      connectedContact?:
+        | components["schemas"]["CallingSessionContactSchema"]
+        | null;
+      /** Iscomplete */
+      isComplete: boolean;
     };
     /**
      * CampaignContactAddSchema
@@ -1765,8 +1921,8 @@ export interface components {
       answerRate: number;
       /** Abandonrate */
       abandonRate: number;
-      /** Activeagents */
-      activeAgents: number;
+      /** Activeusers */
+      activeUsers: number;
       /** Activecalls */
       activeCalls: number;
       /** Predictiveratio */
@@ -1986,12 +2142,75 @@ export interface components {
       avgCallDurationSeconds: number;
       /** Activecampaigns */
       activeCampaigns: number;
-      /** Activeagents */
-      activeAgents: number;
+      /** Activeusers */
+      activeUsers: number;
       /** Totalcallbackstoday */
       totalCallbacksToday: number;
       /** Totalcontacts */
       totalContacts: number;
+    };
+    /**
+     * DialRequest
+     * @description 発信リクエスト
+     */
+    DialRequest: {
+      /**
+       * Phone Number
+       * @description 発信先電話番号
+       */
+      phone_number: string;
+      /**
+       * Contact Id
+       * @description 連絡先ID
+       */
+      contact_id: string;
+      /**
+       * Caller Id
+       * @description 発信者番号 (E.164)
+       */
+      caller_id: string;
+      /**
+       * Campaign Id
+       * @description キャンペーンID
+       */
+      campaign_id?: string | null;
+      /**
+       * Ring Timeout
+       * @description 呼出タイムアウト (秒)
+       * @default 30
+       */
+      ring_timeout: number;
+      /**
+       * Record
+       * @description 録音を有効にする
+       * @default true
+       */
+      record: boolean;
+    };
+    /**
+     * DialResponse
+     * @description 発信レスポンス
+     */
+    DialResponse: {
+      /**
+       * Call Uuid
+       * @description FreeSWITCH通話UUID
+       */
+      call_uuid: string;
+      /**
+       * Status
+       * @description 通話ステータス
+       */
+      status: string;
+      /**
+       * User Extension
+       * @description ブリッジ先オペレーター内線
+       */
+      user_extension: string;
+      /** Contact Id */
+      contact_id: string;
+      /** Phone Number */
+      phone_number: string;
     };
     /** DispositionCreateSchema */
     DispositionCreateSchema: {
@@ -2095,6 +2314,18 @@ export interface components {
        */
       createdAt: string;
     };
+    /**
+     * EslTestResponseSchema
+     * @description ESL接続テストレスポンス
+     */
+    EslTestResponseSchema: {
+      /** Success */
+      success: boolean;
+      /** Message */
+      message: string;
+      /** Freeswitchversion */
+      freeswitchVersion?: string | null;
+    };
     /** GoogleAuthUrlResponseSchema */
     GoogleAuthUrlResponseSchema: {
       /** Authurl */
@@ -2106,8 +2337,13 @@ export interface components {
       code: string;
       /** State */
       state?: string | null;
-      /** Integrationtype */
-      integrationType: string;
+      /** Redirecturi */
+      redirectUri?: string | null;
+    };
+    /** GoogleIntegrationListSchema */
+    GoogleIntegrationListSchema: {
+      /** Integrations */
+      integrations: components["schemas"]["GoogleIntegrationStatusSchema"][];
     };
     /** GoogleIntegrationStatusSchema */
     GoogleIntegrationStatusSchema: {
@@ -2119,6 +2355,15 @@ export interface components {
       status: string;
       /** Lastsyncedat */
       lastSyncedAt?: string | null;
+    };
+    /** GooglePickerConfigSchema */
+    GooglePickerConfigSchema: {
+      /** Accesstoken */
+      accessToken: string;
+      /** Apikey */
+      apiKey: string;
+      /** Appid */
+      appId: string;
     };
     /** HTTPValidationError */
     HTTPValidationError: {
@@ -2162,6 +2407,20 @@ export interface components {
       pageSize: number;
       /** Totalpages */
       totalPages: number;
+    };
+    /**
+     * PhoneConfigResponseSchema
+     * @description 電話設定レスポンス
+     */
+    PhoneConfigResponseSchema: {
+      /** Eslconnected */
+      eslConnected: boolean;
+      /** Sipgateway */
+      sipGateway: string;
+      /** Registeredusers */
+      registeredUsers: number;
+      /** Defaultcallerid */
+      defaultCallerId?: string | null;
     };
     /** ScriptCreateSchema */
     ScriptCreateSchema: {
@@ -2207,47 +2466,260 @@ export interface components {
       /** Isdefault */
       isDefault?: boolean | null;
     };
-    /** TwilioConfigResponseSchema */
-    TwilioConfigResponseSchema: {
-      /** Configid */
-      configId: string;
-      /** Accountsid */
-      accountSid: string;
-      /** Twimlappsid */
-      twimlAppSid?: string | null;
-      /** Phonenumbers */
-      phoneNumbers?: string[] | null;
-      /** Defaultcallerid */
-      defaultCallerId?: string | null;
-      /** Recordingenabled */
-      recordingEnabled: boolean;
+    /**
+     * SheetTabListSchema
+     * @description シートタブ一覧
+     */
+    SheetTabListSchema: {
+      /** Items */
+      items: components["schemas"]["SheetTabSchema"][];
     };
-    /** TwilioConfigSchema */
-    TwilioConfigSchema: {
-      /** Accountsid */
-      accountSid: string;
-      /** Authtoken */
-      authToken: string;
-      /** Twimlappsid */
-      twimlAppSid?: string | null;
-      /** Phonenumbers */
-      phoneNumbers?: string[] | null;
-      /** Defaultcallerid */
-      defaultCallerId?: string | null;
+    /**
+     * SheetTabSchema
+     * @description シートタブ
+     */
+    SheetTabSchema: {
+      /** Sheetid */
+      sheetId: number;
+      /** Title */
+      title: string;
+    };
+    /**
+     * SheetsImportRequestSchema
+     * @description Google Sheetsからのインポートリクエスト
+     */
+    SheetsImportRequestSchema: {
+      /** Spreadsheetid */
+      spreadsheetId: string;
       /**
-       * Recordingenabled
-       * @default true
+       * Sheetname
+       * @default Sheet1
        */
-      recordingEnabled: boolean;
+      sheetName: string | null;
+      /**
+       * Rangename
+       * @default A:Z
+       */
+      rangeName: string | null;
+      /**
+       * Headerrow
+       * @default 1
+       */
+      headerRow: number;
+      /** Listname */
+      listName: string;
+      /** Listdescription */
+      listDescription?: string | null;
+      /** Columnmapping */
+      columnMapping?: {
+        [key: string]: string;
+      } | null;
     };
-    /** TwilioTestResponseSchema */
-    TwilioTestResponseSchema: {
-      /** Success */
-      success: boolean;
+    /**
+     * SheetsImportResponseSchema
+     * @description Google Sheetsインポート結果
+     */
+    SheetsImportResponseSchema: {
+      /** Calllistid */
+      callListId: string;
+      /** Name */
+      name: string;
+      /** Importedcount */
+      importedCount: number;
+      /** Skippedcount */
+      skippedCount: number;
       /** Message */
       message: string;
-      /** Accountname */
-      accountName?: string | null;
+    };
+    /**
+     * SheetsPreviewRequestSchema
+     * @description Google Sheetsプレビューリクエスト
+     */
+    SheetsPreviewRequestSchema: {
+      /** Spreadsheetid */
+      spreadsheetId: string;
+      /**
+       * Sheetname
+       * @default Sheet1
+       */
+      sheetName: string | null;
+      /**
+       * Headerrow
+       * @default 1
+       */
+      headerRow: number;
+    };
+    /**
+     * SheetsPreviewResponseSchema
+     * @description Google Sheetsプレビュー結果
+     */
+    SheetsPreviewResponseSchema: {
+      /** Headers */
+      headers: string[];
+      /** Rows */
+      rows: {
+        [key: string]: string;
+      }[];
+      /** Totalrows */
+      totalRows: number;
+      /**
+       * Rawrows
+       * @default []
+       */
+      rawRows: string[][];
+      /**
+       * Suggestedmapping
+       * @default {}
+       */
+      suggestedMapping: {
+        [key: string]: string;
+      };
+    };
+    /**
+     * SheetsSyncResponseSchema
+     * @description Google Sheets再同期結果
+     */
+    SheetsSyncResponseSchema: {
+      /** Addedcount */
+      addedCount: number;
+      /** Updatedcount */
+      updatedCount: number;
+      /** Removedcount */
+      removedCount: number;
+      /** Message */
+      message: string;
+    };
+    /**
+     * SpreadsheetItemSchema
+     * @description スプレッドシート一覧アイテム
+     */
+    SpreadsheetItemSchema: {
+      /** Spreadsheetid */
+      spreadsheetId: string;
+      /** Name */
+      name: string;
+      /** Modifiedtime */
+      modifiedTime?: string | null;
+    };
+    /**
+     * SpreadsheetListSchema
+     * @description スプレッドシート一覧
+     */
+    SpreadsheetListSchema: {
+      /** Items */
+      items: components["schemas"]["SpreadsheetItemSchema"][];
+    };
+    /**
+     * StartCallingRequestSchema
+     * @description 架電開始リクエスト
+     */
+    StartCallingRequestSchema: {
+      /** Callerid */
+      callerId?: string | null;
+      /**
+       * Maxconcurrentcalls
+       * @default 1
+       */
+      maxConcurrentCalls: number;
+      /** Contactids */
+      contactIds?: string[] | null;
+    };
+    /**
+     * StartCallingResponseSchema
+     * @description 架電開始レスポンス
+     */
+    StartCallingResponseSchema: {
+      /** Initiatedcount */
+      initiatedCount: number;
+      /** Message */
+      message: string;
+      /** Sessionid */
+      sessionId?: string | null;
+    };
+    /** UserCreateSchema */
+    UserCreateSchema: {
+      /** Email */
+      email: string;
+      /** Password */
+      password: string;
+      /** Displayname */
+      displayName: string;
+      /** Extension */
+      extension?: string | null;
+      /** Skills */
+      skills?: string[] | null;
+      /**
+       * Maxconcurrentcalls
+       * @default 1
+       */
+      maxConcurrentCalls: number;
+    };
+    /**
+     * UserPerformanceSchema
+     * @description ユーザー実績
+     */
+    UserPerformanceSchema: {
+      /** Userid */
+      userId: string;
+      /** Displayname */
+      displayName: string;
+      /** Totalcalls */
+      totalCalls: number;
+      /** Totalanswered */
+      totalAnswered: number;
+      /** Answerrate */
+      answerRate: number;
+      /** Avgcalldurationseconds */
+      avgCallDurationSeconds: number;
+      /** Totaltalktimeseconds */
+      totalTalkTimeSeconds: number;
+    };
+    /** UserResponseSchema */
+    UserResponseSchema: {
+      /** Userid */
+      userId: string;
+      /** Firebaseuid */
+      firebaseUid: string;
+      /** Displayname */
+      displayName: string;
+      /** Extension */
+      extension?: string | null;
+      /** Status */
+      status: string;
+      /** Statuschangedat */
+      statusChangedAt?: string | null;
+      /** Currentcallid */
+      currentCallId?: string | null;
+      /** Skills */
+      skills?: string[] | null;
+      /** Maxconcurrentcalls */
+      maxConcurrentCalls: number;
+      /**
+       * Createdat
+       * Format: date-time
+       */
+      createdAt: string;
+      /**
+       * Updatedat
+       * Format: date-time
+       */
+      updatedAt: string;
+    };
+    /** UserStatusUpdateSchema */
+    UserStatusUpdateSchema: {
+      /** Status */
+      status: string;
+    };
+    /** UserUpdateSchema */
+    UserUpdateSchema: {
+      /** Displayname */
+      displayName?: string | null;
+      /** Extension */
+      extension?: string | null;
+      /** Skills */
+      skills?: string[] | null;
+      /** Maxconcurrentcalls */
+      maxConcurrentCalls?: number | null;
     };
     /** ValidationError */
     ValidationError: {
@@ -2276,7 +2748,7 @@ export interface operations {
         search?: string | null;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2307,7 +2779,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2342,7 +2814,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         contact_id: string;
@@ -2375,7 +2847,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         contact_id: string;
@@ -2412,7 +2884,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         contact_id: string;
@@ -2443,7 +2915,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2481,7 +2953,7 @@ export interface operations {
         page_size?: number;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2520,7 +2992,7 @@ export interface operations {
         status?: string | null;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2551,7 +3023,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -2586,7 +3058,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2619,7 +3091,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2656,7 +3128,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2687,7 +3159,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2720,7 +3192,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2753,7 +3225,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2786,7 +3258,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2822,7 +3294,7 @@ export interface operations {
         page_size?: number;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2855,7 +3327,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2892,7 +3364,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2920,11 +3392,11 @@ export interface operations {
       };
     };
   };
-  assign_agents_v2_dialer_campaigns__campaign_id__agents_post: {
+  assign_users_v2_dialer_campaigns__campaign_id__users_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
@@ -2957,15 +3429,15 @@ export interface operations {
       };
     };
   };
-  unassign_agent_v2_dialer_campaigns__campaign_id__agents__agent_id__delete: {
+  unassign_user_v2_dialer_campaigns__campaign_id__users__user_id__delete: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         campaign_id: string;
-        agent_id: string;
+        user_id: string;
       };
       cookie?: never;
     };
@@ -2989,11 +3461,14 @@ export interface operations {
       };
     };
   };
-  list_agents_v2_dialer_agents_get: {
+  get_or_create_my_user_v2_dialer_users_me_get: {
     parameters: {
-      query?: never;
+      query?: {
+        /** @description 表示名（初回自動作成時に使用） */
+        display_name?: string | null;
+      };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3006,7 +3481,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"][];
+          "application/json": components["schemas"]["UserResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -3020,18 +3495,84 @@ export interface operations {
       };
     };
   };
-  create_agent_v2_dialer_agents_post: {
+  update_my_status_v2_dialer_users_me_status_put: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AgentCreateSchema"];
+        "application/json": components["schemas"]["UserStatusUpdateSchema"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_users_v2_dialer_users_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["UserResponseSchema"][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  create_user_v2_dialer_users_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["UserCreateSchema"];
       };
     };
     responses: {
@@ -3041,7 +3582,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"];
+          "application/json": components["schemas"]["UserResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -3055,11 +3596,11 @@ export interface operations {
       };
     };
   };
-  status_board_v2_dialer_agents_status_board_get: {
+  status_board_v2_dialer_users_status_board_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3072,7 +3613,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"][];
+          "application/json": components["schemas"]["UserResponseSchema"][];
         };
       };
       /** @description Validation Error */
@@ -3086,11 +3627,11 @@ export interface operations {
       };
     };
   };
-  available_agents_v2_dialer_agents_available_get: {
+  available_users_v2_dialer_users_available_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3103,7 +3644,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"][];
+          "application/json": components["schemas"]["UserResponseSchema"][];
         };
       };
       /** @description Validation Error */
@@ -3117,14 +3658,14 @@ export interface operations {
       };
     };
   };
-  get_agent_v2_dialer_agents__agent_id__get: {
+  get_user_v2_dialer_users__user_id__get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        agent_id: string;
+        user_id: string;
       };
       cookie?: never;
     };
@@ -3136,7 +3677,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"];
+          "application/json": components["schemas"]["UserResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -3150,20 +3691,20 @@ export interface operations {
       };
     };
   };
-  update_agent_v2_dialer_agents__agent_id__put: {
+  update_user_v2_dialer_users__user_id__put: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        agent_id: string;
+        user_id: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AgentUpdateSchema"];
+        "application/json": components["schemas"]["UserUpdateSchema"];
       };
     };
     responses: {
@@ -3173,7 +3714,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"];
+          "application/json": components["schemas"]["UserResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -3187,20 +3728,51 @@ export interface operations {
       };
     };
   };
-  update_agent_status_v2_dialer_agents__agent_id__status_put: {
+  delete_user_v2_dialer_users__user_id__delete: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        agent_id: string;
+        user_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  update_user_status_v2_dialer_users__user_id__status_put: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        user_id: string;
       };
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["AgentStatusUpdateSchema"];
+        "application/json": components["schemas"]["UserStatusUpdateSchema"];
       };
     };
     responses: {
@@ -3210,7 +3782,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentResponseSchema"];
+          "application/json": components["schemas"]["UserResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -3229,11 +3801,11 @@ export interface operations {
       query: {
         contact_id: string;
         phone_number: string;
-        caller_id: string;
+        caller_id?: string | null;
         campaign_id?: string | null;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3260,14 +3832,14 @@ export interface operations {
       };
     };
   };
-  hold_call_v2_dialer_calls__call_sid__hold_post: {
+  hold_call_v2_dialer_calls__call_uuid__hold_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        call_sid: string;
+        call_uuid: string;
       };
       cookie?: never;
     };
@@ -3293,14 +3865,14 @@ export interface operations {
       };
     };
   };
-  resume_call_v2_dialer_calls__call_sid__resume_post: {
+  resume_call_v2_dialer_calls__call_uuid__resume_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        call_sid: string;
+        call_uuid: string;
       };
       cookie?: never;
     };
@@ -3326,16 +3898,16 @@ export interface operations {
       };
     };
   };
-  transfer_call_v2_dialer_calls__call_sid__transfer_post: {
+  transfer_call_v2_dialer_calls__call_uuid__transfer_post: {
     parameters: {
       query: {
         target: string;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        call_sid: string;
+        call_uuid: string;
       };
       cookie?: never;
     };
@@ -3361,14 +3933,14 @@ export interface operations {
       };
     };
   };
-  end_call_v2_dialer_calls__call_sid__end_post: {
+  end_call_v2_dialer_calls__call_uuid__end_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        call_sid: string;
+        call_uuid: string;
       };
       cookie?: never;
     };
@@ -3394,17 +3966,17 @@ export interface operations {
       };
     };
   };
-  set_disposition_v2_dialer_calls__call_sid__disposition_post: {
+  set_disposition_v2_dialer_calls__call_uuid__disposition_post: {
     parameters: {
       query: {
         disposition_id: string;
         notes?: string | null;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
-        call_sid: string;
+        call_uuid: string;
       };
       cookie?: never;
     };
@@ -3434,7 +4006,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3467,11 +4039,11 @@ export interface operations {
         page?: number;
         page_size?: number;
         campaign_id?: string | null;
-        agent_id?: string | null;
+        user_id?: string | null;
         status?: string | null;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3502,7 +4074,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_log_id: string;
@@ -3535,7 +4107,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_log_id: string;
@@ -3566,9 +4138,12 @@ export interface operations {
   };
   list_call_lists_v2_dialer_call_lists_get: {
     parameters: {
-      query?: never;
+      query?: {
+        page?: number;
+        page_size?: number;
+      };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3581,7 +4156,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["CallListResponseSchema"][];
+          "application/json": components["schemas"]["PaginatedResponse"];
         };
       };
       /** @description Validation Error */
@@ -3599,7 +4174,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3634,7 +4209,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_list_id: string;
@@ -3667,7 +4242,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_list_id: string;
@@ -3704,7 +4279,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_list_id: string;
@@ -3731,11 +4306,47 @@ export interface operations {
       };
     };
   };
+  list_call_list_contacts_v2_dialer_call_lists__call_list_id__contacts_get: {
+    parameters: {
+      query?: {
+        page?: number;
+        page_size?: number;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["PaginatedResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   add_contacts_v2_dialer_call_lists__call_list_id__contacts_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_list_id: string;
@@ -3772,7 +4383,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         call_list_id: string;
@@ -3800,11 +4411,358 @@ export interface operations {
       };
     };
   };
+  start_calling_v2_dialer_call_lists__call_list_id__start_calling_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["StartCallingRequestSchema"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["StartCallingResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  get_calling_session_status_v2_dialer_call_lists__call_list_id__calling_session__session_id__get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+        session_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["CallingSessionStatusSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  submit_call_result_v2_dialer_call_lists__call_list_id__calling_session__session_id__result_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+        session_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["CallResultRequestSchema"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  end_session_call_v2_dialer_call_lists__call_list_id__calling_session__session_id__end_call_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+        session_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  cancel_calling_session_v2_dialer_call_lists__call_list_id__calling_session__session_id__cancel_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+        session_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["MessageResponse"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_spreadsheets_v2_dialer_call_lists_sheets_spreadsheets_get: {
+    parameters: {
+      query?: {
+        /** @description ファイル名検索 */
+        search?: string;
+      };
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SpreadsheetListSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  list_sheet_tabs_v2_dialer_call_lists_sheets_spreadsheets__spreadsheet_id__tabs_get: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        spreadsheet_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SheetTabListSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  preview_sheet_v2_dialer_call_lists_sheets_preview_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SheetsPreviewRequestSchema"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SheetsPreviewResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  import_from_sheets_v2_dialer_call_lists_sheets_import_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["SheetsImportRequestSchema"];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SheetsImportResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  sync_from_sheets_v2_dialer_call_lists__call_list_id__sheets_sync_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
+      };
+      path: {
+        call_list_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["SheetsSyncResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
   list_callbacks_v2_dialer_callbacks_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3835,7 +4793,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -3870,7 +4828,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         callback_id: string;
@@ -3907,7 +4865,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         callback_id: string;
@@ -3938,7 +4896,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         callback_id: string;
@@ -3971,7 +4929,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4002,7 +4960,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4033,7 +4991,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4068,7 +5026,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         disposition_id: string;
@@ -4105,7 +5063,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         disposition_id: string;
@@ -4136,7 +5094,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4167,7 +5125,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4202,7 +5160,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4237,7 +5195,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         dnc_id: string;
@@ -4268,7 +5226,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         phone_number: string;
@@ -4301,7 +5259,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4332,7 +5290,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4367,7 +5325,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         script_id: string;
@@ -4400,7 +5358,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         script_id: string;
@@ -4437,7 +5395,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         script_id: string;
@@ -4468,7 +5426,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4495,11 +5453,11 @@ export interface operations {
       };
     };
   };
-  agents_performance_v2_dialer_dashboard_agents_performance_get: {
+  users_performance_v2_dialer_dashboard_users_performance_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4512,7 +5470,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["AgentPerformanceSchema"][];
+          "application/json": components["schemas"]["UserPerformanceSchema"][];
         };
       };
       /** @description Validation Error */
@@ -4530,7 +5488,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4557,17 +5515,15 @@ export interface operations {
       };
     };
   };
-  get_auth_url_v2_dialer_google_auth_url__integration_type__get: {
+  get_auth_url_v2_dialer_google_auth_url_get: {
     parameters: {
       query: {
         redirect_uri: string;
       };
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
-      path: {
-        integration_type: string;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;
@@ -4596,7 +5552,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4627,11 +5583,11 @@ export interface operations {
       };
     };
   };
-  integration_status_v2_dialer_google_status_get: {
+  picker_config_v2_dialer_google_picker_config_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4644,7 +5600,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["GoogleIntegrationStatusSchema"][];
+          "application/json": components["schemas"]["GooglePickerConfigSchema"];
         };
       };
       /** @description Validation Error */
@@ -4658,15 +5614,13 @@ export interface operations {
       };
     };
   };
-  manual_sync_v2_dialer_google_sync__integration_type__post: {
+  integration_status_v2_dialer_google_status_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
-      path: {
-        integration_type: string;
-      };
+      path?: never;
       cookie?: never;
     };
     requestBody?: never;
@@ -4677,7 +5631,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["MessageResponse"];
+          "application/json": components["schemas"]["GoogleIntegrationListSchema"];
         };
       };
       /** @description Validation Error */
@@ -4695,7 +5649,7 @@ export interface operations {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path: {
         integration_id: string;
@@ -4722,11 +5676,11 @@ export interface operations {
       };
     };
   };
-  get_twilio_config_v2_dialer_settings_twilio_get: {
+  get_phone_config_v2_dialer_settings_phone_get: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
@@ -4739,9 +5693,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          "application/json":
-            | components["schemas"]["TwilioConfigResponseSchema"]
-            | null;
+          "application/json": components["schemas"]["PhoneConfigResponseSchema"];
         };
       };
       /** @description Validation Error */
@@ -4755,28 +5707,59 @@ export interface operations {
       };
     };
   };
-  update_twilio_config_v2_dialer_settings_twilio_put: {
+  test_esl_connection_v2_dialer_settings_phone_test_post: {
     parameters: {
       query?: never;
       header?: {
-        authorization?: string;
+        authorization?: string | null;
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["EslTestResponseSchema"];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["HTTPValidationError"];
+        };
+      };
+    };
+  };
+  dial_and_bridge_v2_dialer_dial_post: {
+    parameters: {
+      query?: never;
+      header?: {
+        authorization?: string | null;
       };
       path?: never;
       cookie?: never;
     };
     requestBody: {
       content: {
-        "application/json": components["schemas"]["TwilioConfigSchema"];
+        "application/json": components["schemas"]["DialRequest"];
       };
     };
     responses: {
       /** @description Successful Response */
-      200: {
+      201: {
         headers: {
           [name: string]: unknown;
         };
         content: {
-          "application/json": components["schemas"]["TwilioConfigResponseSchema"];
+          "application/json": components["schemas"]["DialResponse"];
         };
       };
       /** @description Validation Error */
@@ -4786,143 +5769,6 @@ export interface operations {
         };
         content: {
           "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  test_twilio_v2_dialer_settings_twilio_test_post: {
-    parameters: {
-      query?: never;
-      header?: {
-        authorization?: string;
-      };
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["TwilioTestResponseSchema"];
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  voice_webhook_v2_dialer_webhooks_twilio_voice_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-    };
-  };
-  status_webhook_v2_dialer_webhooks_twilio_status_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_status_webhook_v2_dialer_webhooks_twilio_status_post"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  recording_webhook_v2_dialer_webhooks_twilio_recording_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: {
-      content: {
-        "application/x-www-form-urlencoded": components["schemas"]["Body_recording_webhook_v2_dialer_webhooks_twilio_recording_post"];
-      };
-    };
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
-        };
-      };
-      /** @description Validation Error */
-      422: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": components["schemas"]["HTTPValidationError"];
-        };
-      };
-    };
-  };
-  fallback_webhook_v2_dialer_webhooks_twilio_fallback_post: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    requestBody?: never;
-    responses: {
-      /** @description Successful Response */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          "application/json": unknown;
         };
       };
     };

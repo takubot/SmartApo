@@ -253,8 +253,7 @@ export default function PredictiveCallPanel({
   };
 
   const isConnected = !!session?.connectedCallLogId;
-  const allFailed =
-    session?.isComplete && !session.connectedCallLogId;
+  const allFailed = session?.isComplete && !session.connectedCallLogId;
 
   return (
     <Modal
@@ -285,12 +284,11 @@ export default function PredictiveCallPanel({
         <ModalBody className="gap-4">
           {/* ── 通話ステータス一覧 ── */}
           <div>
-            <p className="text-xs font-semibold text-gray-500 mb-2">
-              架電状況
-            </p>
+            <p className="text-xs font-semibold text-gray-500 mb-2">架電状況</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {session?.calls.map((call) => {
-                const info = CALL_STATUS_MAP[call.status] ?? CALL_STATUS_MAP.dialing;
+                const info =
+                  CALL_STATUS_MAP[call.status] ?? CALL_STATUS_MAP.dialing;
                 const isThisConnected =
                   call.callLogId === session.connectedCallLogId;
                 return (
@@ -334,9 +332,7 @@ export default function PredictiveCallPanel({
           {!isConnected && !allFailed && (
             <div className="flex flex-col items-center py-6 gap-3">
               <Spinner size="lg" color="primary" />
-              <p className="text-sm text-gray-600">
-                応答を待っています...
-              </p>
+              <p className="text-sm text-gray-600">応答を待っています...</p>
             </div>
           )}
 

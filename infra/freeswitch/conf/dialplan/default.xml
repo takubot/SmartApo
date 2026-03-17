@@ -1,0 +1,80 @@
+<!--
+  FreeSWITCH Default Dialplan - 内部コンテキスト
+  WebRTC (SIP.js) エージェント間の内線通話と、
+  FastAPI ESL からの originate (&bridge) を処理する。
+-->
+<context name="default">
+
+  <!--
+    内線呼び出し: 1000-1099
+    WebRTC エージェント同士の内線通話
+  -->
+  <extension name="local-extensions">
+    <condition field="destination_number" expression="^(10[0-9]{2})$">
+      <action application="set" data="ringback=${us-ring}"/>
+      <action application="set" data="call_timeout=30"/>
+      <!-- SRTP を自動ネゴシエーション (WebRTC ↔ 内線) -->
+      <action application="set" data="rtp_secure_media=true"/>
+      <action application="bridge" data="user/$1@${domain_name}"/>
+    </condition>
+  </extension>
+
+  <!--
+    外線発信: 0 + 国内番号
+    FastAPI ESL からの originate で使用。
+    ブラステル gateway 経由で外線発信。
+    ブラステルは国内番号形式 (0XXXXXXXXX) で発信。
+  -->
+  <extension name="outbound-domestic">
+    <condition field="destination_number" expression="^(0\d{9,10})$">
+      <action application="set" data="effective_caller_id_number=${caller_id_number}"/>
+      <action application="set" data="effective_caller_id_name=SmartApo"/>
+      <action application="set" data="RECORD_STEREO=true"/>
+      <action application="bridge" data="sofia/gateway/brastel/$1"/>
+    </condition>
+  </extension>
+
+  <!--
+    外線発信: E.164 (国番号付き、+なし)
+    81XXXXXXXXX 形式 → 0XXXXXXXXX に変換してブラステルへ発信
+  -->
+  <extension name="outbound-e164">
+    <condition field="destination_number" expression="^81(\d{9,10})$">
+      <action application="set" data="effective_caller_id_number=${caller_id_number}"/>
+      <action application="set" data="effective_caller_id_name=SmartApo"/>
+      <action application="bridge" data="sofia/gateway/brastel/0$1"/>
+    </condition>
+  </extension>
+
+  <!--
+    パーク (保留待機)
+    FastAPI ESL の originate ... &park() で使用。
+    顧客応答後、ESL から uuid_bridge でエージェントに接続する。
+  -->
+  <extension name="park">
+    <condition field="destination_number" expression="^park$">
+      <action application="set" data="fifo_music=$${hold_music}"/>
+      <action application="park"/>
+    </condition>
+  </extension>
+
+  <!--
+    保留音楽
+  -->
+  <extension name="hold-music">
+    <condition field="destination_number" expression="^9999$">
+      <action application="answer"/>
+      <action application="playback" data="local_stream://moh"/>
+    </condition>
+  </extension>
+
+  <!--
+    録音ディレクトリ
+  -->
+  <extension name="recording-dir-setup">
+    <condition field="destination_number" expression=".*" break="never">
+      <action application="set" data="recording_dir=/var/lib/freeswitch/recordings"/>
+    </condition>
+  </extension>
+
+</context>

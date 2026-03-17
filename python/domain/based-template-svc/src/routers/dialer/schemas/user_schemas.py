@@ -1,4 +1,4 @@
-"""エージェントスキーマ"""
+"""ユーザースキーマ"""
 
 from __future__ import annotations
 
@@ -8,28 +8,29 @@ from typing import Optional
 from ....common.schemas.base_schema import BaseSchema
 
 
-class AgentCreateSchema(BaseSchema):
+class UserCreateSchema(BaseSchema):
+    email: str
+    password: str
     display_name: str
-    user_id: str
     extension: Optional[str] = None
     skills: Optional[list[str]] = None
     max_concurrent_calls: int = 1
 
 
-class AgentUpdateSchema(BaseSchema):
+class UserUpdateSchema(BaseSchema):
     display_name: Optional[str] = None
     extension: Optional[str] = None
     skills: Optional[list[str]] = None
     max_concurrent_calls: Optional[int] = None
 
 
-class AgentStatusUpdateSchema(BaseSchema):
+class UserStatusUpdateSchema(BaseSchema):
     status: str
 
 
-class AgentResponseSchema(BaseSchema):
-    agent_id: str
+class UserResponseSchema(BaseSchema):
     user_id: str
+    firebase_uid: str
     display_name: str
     extension: Optional[str] = None
     status: str

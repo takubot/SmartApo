@@ -15,15 +15,15 @@ class DashboardOverviewSchema(BaseSchema):
     answer_rate_today: float
     avg_call_duration_seconds: float
     active_campaigns: int
-    active_agents: int
+    active_users: int
     total_callbacks_today: int
     total_contacts: int
 
 
-class AgentPerformanceSchema(BaseSchema):
-    """エージェント実績"""
+class UserPerformanceSchema(BaseSchema):
+    """ユーザー実績"""
 
-    agent_id: str
+    user_id: str
     display_name: str
     total_calls: int
     total_answered: int

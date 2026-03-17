@@ -25,7 +25,6 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from .declarative_base import Base, DeleteMixin, TimestampMixin
 from .enum import (
-    AgentStatusEnum,
     CallbackPriorityEnum,
     CallStatusEnum,
     CampaignContactStatusEnum,
@@ -35,6 +34,7 @@ from .enum import (
     GoogleIntegrationTypeEnum,
     GoogleSyncStatusEnum,
     TeleStatusEnum,
+    UserStatusEnum,
 )
 
 
@@ -448,16 +448,15 @@ class DialerCampaignModel(Base, TimestampMixin, DeleteMixin):
     total_abandoned: Mapped[int] = mapped_column(
         Integer, nullable=False, default=0, comment="放棄数"
     )
-    # Twilio
     caller_id: Mapped[Optional[str]] = mapped_column(
-        String(20), nullable=True, comment="発信者番号 (Twilio)"
+        String(20), nullable=True, comment="発信者番号"
     )
 
     # Relationships
     campaign_contacts: Mapped[list[DialerCampaignContactModel]] = relationship(
         back_populates="campaign"
     )
-    agent_assignments: Mapped[list[DialerAgentCampaignModel]] = relationship(
+    user_assignments: Mapped[list[DialerUserCampaignModel]] = relationship(
         back_populates="campaign"
     )
     call_logs: Mapped[list[DialerCallLogModel]] = relationship(
@@ -544,22 +543,22 @@ class DialerCampaignContactModel(Base, TimestampMixin):
 
 
 # ════════════════════════════════════════════════════════════════
-# エージェント (Agents)
+# ユーザー (Users)
 # ════════════════════════════════════════════════════════════════
 
 
-class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
-    """エージェント"""
+class DialerUserModel(Base, TimestampMixin, DeleteMixin):
+    """ダイヤラーユーザー"""
 
-    __tablename__ = "dialer_agents"
+    __tablename__ = "dialer_users"
 
-    agent_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=_uuid, comment="エージェントID"
+    user_id: Mapped[str] = mapped_column(
+        String(36), primary_key=True, default=_uuid, comment="ユーザーID"
     )
     tenant_id: Mapped[str] = mapped_column(
         String(36), nullable=False, index=True, comment="テナントID"
     )
-    user_id: Mapped[str] = mapped_column(
+    firebase_uid: Mapped[str] = mapped_column(
         String(36), nullable=False, comment="Firebase User ID"
     )
     display_name: Mapped[str] = mapped_column(
@@ -568,10 +567,10 @@ class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
     extension: Mapped[Optional[str]] = mapped_column(
         String(10), nullable=True, comment="内線番号"
     )
-    status: Mapped[AgentStatusEnum] = mapped_column(
-        Enum(AgentStatusEnum),
+    status: Mapped[UserStatusEnum] = mapped_column(
+        Enum(UserStatusEnum),
         nullable=False,
-        default=AgentStatusEnum.OFFLINE,
+        default=UserStatusEnum.OFFLINE,
         comment="現在のステータス",
     )
     status_changed_at: Mapped[Optional[datetime]] = mapped_column(
@@ -588,41 +587,41 @@ class DialerAgentModel(Base, TimestampMixin, DeleteMixin):
     )
 
     # Relationships
-    campaign_assignments: Mapped[list[DialerAgentCampaignModel]] = relationship(
-        back_populates="agent"
+    campaign_assignments: Mapped[list[DialerUserCampaignModel]] = relationship(
+        back_populates="user"
     )
     call_logs: Mapped[list[DialerCallLogModel]] = relationship(
-        back_populates="agent"
+        back_populates="user"
     )
 
     __table_args__ = (
         Index(
-            "ix_dialer_agents_tenant_user",
+            "ix_dialer_users_tenant_firebase",
             "tenant_id",
-            "user_id",
+            "firebase_uid",
             unique=True,
         ),
-        Index("ix_dialer_agents_tenant_status", "tenant_id", "status"),
-        {"comment": "エージェントテーブル"},
+        Index("ix_dialer_users_tenant_status", "tenant_id", "status"),
+        {"comment": "ユーザーテーブル"},
     )
 
 
 # ════════════════════════════════════════════════════════════════
-# エージェント-キャンペーン (M2M)
+# ユーザー-キャンペーン (M2M)
 # ════════════════════════════════════════════════════════════════
 
 
-class DialerAgentCampaignModel(Base, TimestampMixin):
-    """エージェント-キャンペーン 割当"""
+class DialerUserCampaignModel(Base, TimestampMixin):
+    """ユーザー-キャンペーン 割当"""
 
-    __tablename__ = "dialer_agent_campaigns"
+    __tablename__ = "dialer_user_campaigns"
 
     id: Mapped[str] = mapped_column(
         String(36), primary_key=True, default=_uuid
     )
-    agent_id: Mapped[str] = mapped_column(
+    user_id: Mapped[str] = mapped_column(
         String(36),
-        ForeignKey("dialer_agents.agent_id"),
+        ForeignKey("dialer_users.user_id"),
         nullable=False,
     )
     campaign_id: Mapped[str] = mapped_column(
@@ -635,21 +634,21 @@ class DialerAgentCampaignModel(Base, TimestampMixin):
     )
 
     # Relationships
-    agent: Mapped[DialerAgentModel] = relationship(
+    user: Mapped[DialerUserModel] = relationship(
         back_populates="campaign_assignments"
     )
     campaign: Mapped[DialerCampaignModel] = relationship(
-        back_populates="agent_assignments"
+        back_populates="user_assignments"
     )
 
     __table_args__ = (
         Index(
-            "ix_agent_campaign_unique",
-            "agent_id",
+            "ix_user_campaign_unique",
+            "user_id",
             "campaign_id",
             unique=True,
         ),
-        {"comment": "エージェント-キャンペーン割当テーブル"},
+        {"comment": "ユーザー-キャンペーン割当テーブル"},
     )
 
 
@@ -679,9 +678,9 @@ class DialerCallLogModel(Base, TimestampMixin):
         ForeignKey("dialer_contacts.contact_id"),
         nullable=False,
     )
-    agent_id: Mapped[Optional[str]] = mapped_column(
+    user_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("dialer_agents.agent_id"),
+        ForeignKey("dialer_users.user_id"),
         nullable=True,
     )
     disposition_id: Mapped[Optional[str]] = mapped_column(
@@ -689,12 +688,12 @@ class DialerCallLogModel(Base, TimestampMixin):
         ForeignKey("dialer_dispositions.disposition_id"),
         nullable=True,
     )
-    # Twilio
-    twilio_call_sid: Mapped[Optional[str]] = mapped_column(
-        String(64), nullable=True, index=True, comment="Twilio Call SID"
+    # 通話識別子 (FreeSWITCH Channel UUID)
+    call_uuid: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, index=True, comment="通話UUID (FreeSWITCH Channel UUID)"
     )
-    twilio_parent_call_sid: Mapped[Optional[str]] = mapped_column(
-        String(64), nullable=True, comment="転送元Call SID"
+    parent_call_uuid: Mapped[Optional[str]] = mapped_column(
+        String(64), nullable=True, comment="転送元通話UUID"
     )
     # 通話詳細
     phone_number_dialed: Mapped[str] = mapped_column(
@@ -736,7 +735,7 @@ class DialerCallLogModel(Base, TimestampMixin):
         Integer, nullable=False, default=0, comment="録音時間 (秒)"
     )
     recording_sid: Mapped[Optional[str]] = mapped_column(
-        String(64), nullable=True, comment="Twilio Recording SID"
+        String(64), nullable=True, comment="録音識別子"
     )
     # メモ
     notes: Mapped[Optional[str]] = mapped_column(
@@ -756,7 +755,7 @@ class DialerCallLogModel(Base, TimestampMixin):
     contact: Mapped[DialerContactModel] = relationship(
         back_populates="call_logs"
     )
-    agent: Mapped[Optional[DialerAgentModel]] = relationship(
+    user: Mapped[Optional[DialerUserModel]] = relationship(
         back_populates="call_logs"
     )
 
@@ -764,7 +763,7 @@ class DialerCallLogModel(Base, TimestampMixin):
         Index("ix_dialer_call_logs_tenant_date", "tenant_id", "initiated_at"),
         Index("ix_dialer_call_logs_campaign", "campaign_id"),
         Index("ix_dialer_call_logs_contact", "contact_id"),
-        Index("ix_dialer_call_logs_agent", "agent_id"),
+        Index("ix_dialer_call_logs_user", "user_id"),
         {"comment": "通話記録テーブル"},
     )
 
@@ -835,11 +834,11 @@ class DialerCallbackModel(Base, TimestampMixin, DeleteMixin):
         ForeignKey("dialer_campaigns.campaign_id"),
         nullable=True,
     )
-    assigned_agent_id: Mapped[Optional[str]] = mapped_column(
+    assigned_user_id: Mapped[Optional[str]] = mapped_column(
         String(36),
-        ForeignKey("dialer_agents.agent_id"),
+        ForeignKey("dialer_users.user_id"),
         nullable=True,
-        comment="担当エージェントID",
+        comment="担当ユーザーID",
     )
     scheduled_at: Mapped[datetime] = mapped_column(
         DateTime, nullable=False, comment="予定日時 (JST)"
@@ -870,8 +869,8 @@ class DialerCallbackModel(Base, TimestampMixin, DeleteMixin):
             "scheduled_at",
         ),
         Index(
-            "ix_dialer_callbacks_agent",
-            "assigned_agent_id",
+            "ix_dialer_callbacks_user",
+            "assigned_user_id",
             "is_completed",
         ),
         {"comment": "コールバック予定テーブル"},
@@ -936,45 +935,3 @@ class DialerGoogleIntegrationModel(Base, TimestampMixin, DeleteMixin):
     )
 
 
-# ════════════════════════════════════════════════════════════════
-# Twilio設定
-# ════════════════════════════════════════════════════════════════
-
-
-class DialerTwilioConfigModel(Base, TimestampMixin, DeleteMixin):
-    """Twilio設定（テナントごと）"""
-
-    __tablename__ = "dialer_twilio_config"
-
-    config_id: Mapped[str] = mapped_column(
-        String(36), primary_key=True, default=_uuid, comment="設定ID"
-    )
-    tenant_id: Mapped[str] = mapped_column(
-        String(36), nullable=False, unique=True, comment="テナントID"
-    )
-    account_sid: Mapped[str] = mapped_column(
-        String(64), nullable=False, comment="Twilio Account SID"
-    )
-    auth_token: Mapped[str] = mapped_column(
-        Text, nullable=False, comment="Twilio Auth Token (暗号化)"
-    )
-    twiml_app_sid: Mapped[Optional[str]] = mapped_column(
-        String(64), nullable=True, comment="TwiML App SID"
-    )
-    phone_numbers: Mapped[Optional[str]] = mapped_column(
-        Text, nullable=True, comment="利用可能な発信番号一覧 (JSON配列)"
-    )
-    default_caller_id: Mapped[Optional[str]] = mapped_column(
-        String(20), nullable=True, comment="デフォルト発信者番号"
-    )
-    webhook_url: Mapped[Optional[str]] = mapped_column(
-        String(500), nullable=True, comment="Webhook受信URL"
-    )
-    status_callback_url: Mapped[Optional[str]] = mapped_column(
-        String(500), nullable=True, comment="ステータスコールバックURL"
-    )
-    recording_enabled: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=True, comment="録音有効フラグ"
-    )
-
-    __table_args__ = ({"comment": "Twilio設定テーブル"},)

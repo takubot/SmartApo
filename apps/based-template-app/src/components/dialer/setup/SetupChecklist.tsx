@@ -4,11 +4,9 @@
 import { Card, CardBody, CardHeader, Button, Progress } from "@heroui/react";
 import {
   CheckCircle2,
-  Circle,
   ChevronRight,
+  Server,
   Phone,
-  PhoneCall,
-  Globe,
   Headphones,
   Users,
   Megaphone,
@@ -33,39 +31,29 @@ interface SetupStep {
 
 const SETUP_STEPS: SetupStep[] = [
   {
-    key: "twilioAccount",
-    title: "Twilioアカウントを接続",
-    description:
-      "Account SIDとAuth Tokenを設定して、Twilioとの接続を確立します",
+    key: "pbxConnected",
+    title: "FreeSWITCH PBXの接続確認",
+    description: "FreeSWITCH ESL接続が正常に動作しているか確認します",
+    icon: <Server size={20} />,
+    actionLabel: "電話設定へ",
+    href: "/settings/phone",
+  },
+  {
+    key: "sipTrunkConfigured",
+    title: "SIPトランクの設定",
+    description: "外線発信用のSIPプロバイダゲートウェイを設定します",
     icon: <Phone size={20} />,
-    actionLabel: "Twilio設定へ",
-    href: "/settings/twilio",
+    actionLabel: "SIP設定を確認",
+    href: "/settings/phone",
   },
   {
-    key: "twilioPhoneNumber",
-    title: "発信用電話番号を登録",
+    key: "userRegistered",
+    title: "ユーザーを登録",
     description:
-      "Twilioで購入した電話番号をデフォルト発信者番号として設定します",
-    icon: <PhoneCall size={20} />,
-    actionLabel: "番号を設定",
-    href: "/settings/twilio",
-  },
-  {
-    key: "twilioWebhook",
-    title: "TwilioコンソールでWebhookを設定",
-    description:
-      "TwilioコンソールにWebhook URLを設定します（URLは環境変数から自動取得）",
-    icon: <Globe size={20} />,
-    actionLabel: "Webhookを設定",
-    href: "/settings/twilio",
-  },
-  {
-    key: "agentRegistered",
-    title: "エージェントを登録",
-    description: "架電を行うエージェントを少なくとも1名登録します",
+      "ダイヤラーにログインするとユーザーとSIP内線番号が自動登録されます",
     icon: <Headphones size={20} />,
-    actionLabel: "エージェント登録",
-    href: "/agents",
+    actionLabel: "ユーザー一覧",
+    href: "/users",
   },
   {
     key: "contactImported",

@@ -45,11 +45,11 @@ class CallStatusEnum(str, enum.Enum):
     CANCELED = "canceled"
 
 
-# ── エージェント ──────────────────────────────────────────────────
+# ── ユーザー ──────────────────────────────────────────────────────
 
 
-class AgentStatusEnum(str, enum.Enum):
-    """エージェントの状態"""
+class UserStatusEnum(str, enum.Enum):
+    """ユーザーの状態"""
 
     OFFLINE = "offline"
     AVAILABLE = "available"

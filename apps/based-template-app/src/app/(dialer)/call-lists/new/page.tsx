@@ -160,8 +160,12 @@ function getAxiosDetail(err: unknown): string | undefined {
     typeof (err as Record<string, unknown>).response === "object" &&
     (err as Record<string, Record<string, unknown>>).response !== null
   ) {
-    return ((err as Record<string, Record<string, unknown>>).response
-      .data as Record<string, string>)?.detail;
+    return (
+      (err as Record<string, Record<string, unknown>>).response.data as Record<
+        string,
+        string
+      >
+    )?.detail;
   }
   return undefined;
 }
@@ -196,7 +200,9 @@ export default function NewCallListPage() {
   const [previewing, setPreviewing] = useState(false);
 
   // カラムマッピング
-  const [columnMapping, setColumnMapping] = useState<Record<string, string>>({});
+  const [columnMapping, setColumnMapping] = useState<Record<string, string>>(
+    {},
+  );
 
   // インポート
   const [listName, setListName] = useState("");
@@ -250,7 +256,10 @@ export default function NewCallListPage() {
       })
       .catch(() => {
         if (!cancelled)
-          addToast({ title: "シート情報の取得に失敗しました", color: "danger" });
+          addToast({
+            title: "シート情報の取得に失敗しました",
+            color: "danger",
+          });
       })
       .finally(() => {
         if (!cancelled) setLoadingTabs(false);
@@ -411,10 +420,7 @@ export default function NewCallListPage() {
                 <div className="flex items-center justify-between p-3 rounded-lg bg-green-50 border border-green-200">
                   <div className="flex items-center gap-3">
                     <div className="w-9 h-9 rounded-lg bg-green-100 flex items-center justify-center">
-                      <FileSpreadsheet
-                        size={18}
-                        className="text-green-700"
-                      />
+                      <FileSpreadsheet size={18} className="text-green-700" />
                     </div>
                     <p className="text-sm font-medium text-green-800">
                       {selectedSpreadsheet.name}
@@ -435,9 +441,7 @@ export default function NewCallListPage() {
                   variant="flat"
                   className="w-full h-20"
                   startContent={
-                    !openingPicker ? (
-                      <FileSpreadsheet size={20} />
-                    ) : undefined
+                    !openingPicker ? <FileSpreadsheet size={20} /> : undefined
                   }
                   isLoading={openingPicker}
                   onPress={handleOpenPicker}
@@ -484,9 +488,7 @@ export default function NewCallListPage() {
             <Card shadow="sm">
               <CardHeader>
                 <div>
-                  <h3 className="text-sm font-semibold">
-                    3. カラムマッピング
-                  </h3>
+                  <h3 className="text-sm font-semibold">3. カラムマッピング</h3>
                   <p className="text-xs text-default-400 mt-0.5">
                     スプレッドシートの列をコンタクト項目に割り当て
                   </p>
@@ -503,8 +505,7 @@ export default function NewCallListPage() {
                 )}
                 <div className="space-y-2">
                   {preview.headers.map((header) => {
-                    const sampleVal =
-                      preview.rows[0]?.[header] || "";
+                    const sampleVal = preview.rows[0]?.[header] || "";
                     const mappedField = columnMapping[header] || "";
                     return (
                       <div
@@ -530,22 +531,20 @@ export default function NewCallListPage() {
                         <Select
                           size="sm"
                           className="w-48 shrink-0"
-                          selectedKeys={
-                            mappedField ? [mappedField] : []
-                          }
+                          selectedKeys={mappedField ? [mappedField] : []}
                           onSelectionChange={(keys) => {
-                            const val =
-                              (Array.from(keys)[0] as string) ?? "";
+                            const val = (Array.from(keys)[0] as string) ?? "";
                             handleMappingChange(header, val);
                           }}
                           placeholder="スキップ"
                           aria-label={`${header} のマッピング`}
                           classNames={{
-                            trigger: mappedField === "phone_primary"
-                              ? "border-primary bg-primary-50"
-                              : mappedField
-                                ? "border-success bg-success-50"
-                                : "",
+                            trigger:
+                              mappedField === "phone_primary"
+                                ? "border-primary bg-primary-50"
+                                : mappedField
+                                  ? "border-success bg-success-50"
+                                  : "",
                           }}
                         >
                           {CONTACT_FIELD_OPTIONS.filter(
@@ -554,8 +553,7 @@ export default function NewCallListPage() {
                             const isUsed =
                               Object.values(columnMapping).includes(
                                 opt.value,
-                              ) &&
-                              columnMapping[header] !== opt.value;
+                              ) && columnMapping[header] !== opt.value;
                             return (
                               <SelectItem
                                 key={opt.value}
@@ -575,11 +573,8 @@ export default function NewCallListPage() {
                 <div className="mt-3 pt-3 border-t border-default-200">
                   <div className="flex items-center justify-between text-xs text-default-500">
                     <span>
-                      {
-                        Object.values(columnMapping).filter((v) => v)
-                          .length
-                      }
-                      /{preview.headers.length} 列をマッピング済み
+                      {Object.values(columnMapping).filter((v) => v).length}/
+                      {preview.headers.length} 列をマッピング済み
                     </span>
                     {isPhoneMapped && (
                       <Chip color="success" size="sm" variant="flat">
@@ -611,18 +606,12 @@ export default function NewCallListPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-default-500">マッピング列</span>
                     <span className="font-medium">
-                      {
-                        Object.values(columnMapping).filter((v) => v)
-                          .length
-                      }
-                      列
+                      {Object.values(columnMapping).filter((v) => v).length}列
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-default-500">データ行数</span>
-                    <span className="font-medium">
-                      {preview.totalRows}行
-                    </span>
+                    <span className="font-medium">{preview.totalRows}行</span>
                   </div>
                 </div>
 
@@ -725,9 +714,7 @@ export default function NewCallListPage() {
                         <span className="inline-block w-3 h-3 rounded-sm bg-primary-50 ring-1 ring-primary/40 mr-1 align-middle" />
                         = ヘッダー行（{headerRow}行目）
                       </p>
-                      <p>
-                        {headerRow + 1}行目以降がデータとして読み込まれます
-                      </p>
+                      <p>{headerRow + 1}行目以降がデータとして読み込まれます</p>
                       {previewing && (
                         <p className="text-primary">読み込み中...</p>
                       )}

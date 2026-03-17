@@ -1,0 +1,34 @@
+# FreeSWITCH ローカル開発用 docker-compose
+#
+# 起動方法:
+#   1. SignalWire PAT を取得 (無料): https://id.signalwire.com/personal_access_tokens
+#   2. .env ファイルを作成:
+#      echo "SIGNALWIRE_TOKEN=あなたのトークン" > infra/freeswitch/.env
+#   3. 起動:
+#      cd infra/freeswitch && docker compose up -d
+#
+# ESL接続確認:
+#   docker exec -it freeswitch fs_cli -x "status"
+
+services:
+  freeswitch:
+    build:
+      context: .
+      args:
+        SIGNALWIRE_TOKEN: ${SIGNALWIRE_TOKEN}
+    container_name: freeswitch
+    network_mode: host
+    volumes:
+      # カスタム設定ファイルを上書きマウント
+      - ./conf/autoload_configs/event_socket.conf.xml:/etc/freeswitch/autoload_configs/event_socket.conf.xml:ro
+      - ./conf/sip_profiles/internal.xml:/etc/freeswitch/sip_profiles/internal.xml:ro
+      - ./conf/sip_profiles/external.xml:/etc/freeswitch/sip_profiles/external.xml:ro
+      - ./conf/dialplan/default.xml:/etc/freeswitch/dialplan/default.xml:ro
+      - ./conf/dialplan/public.xml:/etc/freeswitch/dialplan/public.xml:ro
+      - ./conf/directory/default/agent_template.xml:/etc/freeswitch/directory/default/agent_template.xml:ro
+      # 録音データの永続化
+      - freeswitch-recordings:/var/lib/freeswitch/recordings
+    restart: unless-stopped
+
+volumes:
+  freeswitch-recordings:

@@ -203,9 +203,7 @@ export default function GoogleSettingsPage() {
         <Card shadow="sm">
           <CardBody className="p-6">
             <p className="text-sm font-semibold text-gray-700 mb-3">
-              {isConnected
-                ? "利用可能な機能"
-                : "接続すると利用できる機能"}
+              {isConnected ? "利用可能な機能" : "接続すると利用できる機能"}
             </p>
             <div className="space-y-3">
               {FEATURES.map((feature) => {

@@ -22,7 +22,7 @@ def list_call_logs(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
     campaign_id: str | None = Query(None),
-    agent_id: str | None = Query(None),
+    user_id: str | None = Query(None),
     status: str | None = Query(None),
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
@@ -34,8 +34,8 @@ def list_call_logs(
     )
     if campaign_id:
         q = q.where(DialerCallLogModel.campaign_id == campaign_id)
-    if agent_id:
-        q = q.where(DialerCallLogModel.agent_id == agent_id)
+    if user_id:
+        q = q.where(DialerCallLogModel.user_id == user_id)
     if status:
         q = q.where(DialerCallLogModel.call_status == status)
 

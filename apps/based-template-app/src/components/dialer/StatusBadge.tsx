@@ -24,7 +24,7 @@ const CALL_STATUS_COLORS: ColorMap = {
   canceled: "default",
 };
 
-const AGENT_STATUS_COLORS: ColorMap = {
+const USER_STATUS_COLORS: ColorMap = {
   offline: "default",
   available: "success",
   on_call: "primary",
@@ -58,7 +58,7 @@ const STATUS_LABELS: Record<string, string> = {
   skipped: "スキップ",
 };
 
-type StatusCategory = "campaign" | "call" | "agent";
+type StatusCategory = "campaign" | "call" | "user";
 
 interface StatusBadgeProps {
   status: string;
@@ -74,8 +74,8 @@ export default function StatusBadge({
   const colorMap =
     category === "call"
       ? CALL_STATUS_COLORS
-      : category === "agent"
-        ? AGENT_STATUS_COLORS
+      : category === "user"
+        ? USER_STATUS_COLORS
         : CAMPAIGN_STATUS_COLORS;
 
   return (

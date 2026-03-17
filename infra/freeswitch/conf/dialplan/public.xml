@@ -1,0 +1,26 @@
+<!--
+  FreeSWITCH Public Dialplan - 外部着信コンテキスト
+  SIPプロバイダからの着信を処理する。
+  着信番号に基づいてオペレーターキュー or IVR へルーティング。
+-->
+<context name="public">
+
+  <!--
+    SIPプロバイダからの着信
+    → default コンテキストの内線 1001 へ転送
+    本番では FIFO キューや IVR に変更可能。
+  -->
+  <extension name="inbound-from-provider">
+    <condition field="destination_number" expression="^(.*)$">
+      <!-- アンチスパム: 着信回数制限 (1分あたり5回まで) -->
+      <action application="limit" data="hash inbound ${caller_id_number} 5/60 !CALL_REJECTED"/>
+
+      <action application="log" data="INFO 外線着信: from=${caller_id_number} to=$1"/>
+      <action application="set" data="domain_name=$${domain}"/>
+
+      <!-- default コンテキストへ転送 -->
+      <action application="transfer" data="1001 XML default"/>
+    </condition>
+  </extension>
+
+</context>

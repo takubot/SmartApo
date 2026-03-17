@@ -3,7 +3,6 @@ from .declarative_base import Base, DeleteMixin, TimestampMixin
 
 # enum.py からインポート
 from .enum import (
-    AgentStatusEnum,
     CallbackPriorityEnum,
     CallStatusEnum,
     CampaignContactStatusEnum,
@@ -12,12 +11,11 @@ from .enum import (
     DispositionTypeEnum,
     GoogleIntegrationTypeEnum,
     GoogleSyncStatusEnum,
+    UserStatusEnum,
 )
 
 # model_defs.py からインポート
 from .model_defs import (
-    DialerAgentCampaignModel,
-    DialerAgentModel,
     DialerCallbackModel,
     DialerCallListContactModel,
     DialerCallListModel,
@@ -29,7 +27,8 @@ from .model_defs import (
     DialerDispositionModel,
     DialerDncModel,
     DialerGoogleIntegrationModel,
-    DialerTwilioConfigModel,
+    DialerUserCampaignModel,
+    DialerUserModel,
 )
 
 
@@ -49,7 +48,7 @@ __all__ = [
     # Enums
     "CampaignStatusEnum",
     "CallStatusEnum",
-    "AgentStatusEnum",
+    "UserStatusEnum",
     "ContactStatusEnum",
     "CampaignContactStatusEnum",
     "DispositionTypeEnum",
@@ -64,13 +63,12 @@ __all__ = [
     "DialerCallScriptModel",
     "DialerCampaignModel",
     "DialerCampaignContactModel",
-    "DialerAgentModel",
-    "DialerAgentCampaignModel",
+    "DialerUserModel",
+    "DialerUserCampaignModel",
     "DialerCallLogModel",
     "DialerDncModel",
     "DialerCallbackModel",
     "DialerGoogleIntegrationModel",
-    "DialerTwilioConfigModel",
     # Functions
     "load_all_table_definitions",
 ]

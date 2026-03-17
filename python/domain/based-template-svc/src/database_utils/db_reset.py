@@ -16,6 +16,7 @@ sys.path.insert(0, str(project_root))
 
 from logging import getLogger
 
+import sqlalchemy
 from sqlalchemy.exc import SQLAlchemyError
 
 try:
@@ -35,9 +36,17 @@ logger = getLogger(__name__)
 
 
 def drop_all_tables() -> None:
-    """全テーブルを削除"""
+    """全テーブルを削除（旧テーブルの FK 制約も考慮）"""
     try:
-        Base.metadata.drop_all(bind=sync_engine)
+        with sync_engine.connect() as conn:
+            conn.execute(sqlalchemy.text("SET FOREIGN_KEY_CHECKS = 0"))
+            # 現在のメタデータに含まれるテーブルを削除
+            Base.metadata.drop_all(bind=conn)
+            # メタデータに含まれない旧テーブルも削除
+            conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS dialer_agent_campaigns"))
+            conn.execute(sqlalchemy.text("DROP TABLE IF EXISTS dialer_agents"))
+            conn.execute(sqlalchemy.text("SET FOREIGN_KEY_CHECKS = 1"))
+            conn.commit()
         logger.info("All tables dropped successfully")
         print("[OK] All tables dropped successfully!")
     except SQLAlchemyError as e:

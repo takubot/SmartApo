@@ -214,11 +214,13 @@ class Settings(BaseSettings):
     GOOGLE_CALENDAR_SERVICE_ACCOUNT_INFO: str = Field(default="", alias="GOOGLE_CALENDAR_SERVICE_ACCOUNT_INFO")
 
     # ---------------------------------------------------------------------
-    # Twilio
+    # FreeSWITCH ESL
     # ---------------------------------------------------------------------
-    TWILIO_ACCOUNT_SID: str = Field(default="", alias="TWILIO_ACCOUNT_SID")
-    TWILIO_AUTH_TOKEN: str = Field(default="", alias="TWILIO_AUTH_TOKEN")
-    TWILIO_WEBHOOK_BASE_URL: str = Field(default="", alias="TWILIO_WEBHOOK_BASE_URL")
+    FREESWITCH_ESL_HOST: str = Field(default="", alias="FREESWITCH_ESL_HOST")
+    FREESWITCH_ESL_PORT: int = Field(default=8021, alias="FREESWITCH_ESL_PORT")
+    FREESWITCH_ESL_PASSWORD: str = Field(default="", alias="FREESWITCH_ESL_PASSWORD")
+    FREESWITCH_SIP_GATEWAY: str = Field(default="", alias="FREESWITCH_SIP_GATEWAY")
+    FREESWITCH_WSS_URL: str = Field(default="", alias="FREESWITCH_WSS_URL")
 
     # ---------------------------------------------------------------------
     # Gmail / SMTP

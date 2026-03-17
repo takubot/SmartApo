@@ -1,0 +1,67 @@
+<!--
+  FreeSWITCH Internal SIP Profile - WebRTC (WSS) 対応
+  オペレーターのブラウザ (SIP.js) からの WebRTC 接続を受け付ける。
+
+  ポート構成:
+    - 5060/UDP,TCP: 標準 SIP (内部通信用)
+    - 7443/WSS: WebRTC SIP over WebSocket (TLS)
+-->
+<profile name="internal">
+  <settings>
+    <!-- SIP/UDP,TCP リスンポート -->
+    <param name="sip-port" value="5060"/>
+    <param name="sip-ip" value="$${local_ip_v4}"/>
+
+    <!-- WebSocket (WSS) 有効化 -->
+    <param name="ws-binding" value=":5066"/>
+    <param name="wss-binding" value=":7443"/>
+
+    <!-- TLS 設定 (WSS に必須) -->
+    <param name="tls" value="true"/>
+    <param name="tls-bind-params" value="transport=tls"/>
+    <param name="tls-sip-port" value="5061"/>
+    <param name="tls-cert-dir" value="/etc/freeswitch/tls/"/>
+    <!-- Let's Encrypt等で取得した証明書を配置:
+         /etc/freeswitch/tls/wss.pem   (cert + chain)
+         /etc/freeswitch/tls/wss.key   (private key)
+         agent.pem = cat wss.pem wss.key > agent.pem
+    -->
+
+    <!-- コーデック (WebRTC 向け) -->
+    <param name="inbound-codec-string" value="OPUS,PCMU,PCMA"/>
+    <param name="outbound-codec-string" value="OPUS,PCMU,PCMA"/>
+    <param name="inbound-codec-prefs" value="OPUS,PCMU,PCMA"/>
+    <param name="outbound-codec-prefs" value="OPUS,PCMU,PCMA"/>
+
+    <!-- WebRTC メディア設定 -->
+    <param name="apply-candidate-acl" value="rfc1918.auto"/>
+    <param name="apply-proxy-acl" value="rfc1918.auto"/>
+    <param name="local-network-acl" value="localnet.auto"/>
+
+    <!-- DTLS-SRTP (WebRTC 必須) -->
+    <param name="rtp-ip" value="$${local_ip_v4}"/>
+    <param name="ext-rtp-ip" value="auto-nat"/>
+    <param name="ext-sip-ip" value="auto-nat"/>
+
+    <!-- SIP 認証 -->
+    <param name="challenge-realm" value="auto_from"/>
+
+    <!-- レジスト設定 -->
+    <param name="accept-blind-reg" value="false"/>
+    <param name="accept-blind-auth" value="false"/>
+
+    <!-- NAT 対策 -->
+    <param name="aggressive-nat-detection" value="true"/>
+    <param name="NDLB-received-in-nat-reg-contact" value="true"/>
+    <param name="NDLB-force-rport" value="true"/>
+
+    <!-- コンテキスト -->
+    <param name="context" value="default"/>
+    <param name="dialplan" value="XML"/>
+
+    <!-- その他 -->
+    <param name="nonce-ttl" value="60"/>
+    <param name="manage-presence" value="false"/>
+    <param name="inbound-reg-force-matching-username" value="true"/>
+  </settings>
+</profile>

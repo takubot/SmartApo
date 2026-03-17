@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Spinner } from "@heroui/react";
 import { DialerSidebar } from "@/components/dialer";
 import { useAuth } from "../providers";
+import { useCurrentUser } from "@/hooks/dialer/useDialerSwr";
 
 export default function DialerLayout({
   children,
@@ -14,6 +15,9 @@ export default function DialerLayout({
 }) {
   const router = useRouter();
   const { user, loading } = useAuth();
+
+  // ログインユーザーを自動作成・取得
+  useCurrentUser(user?.displayName);
 
   useEffect(() => {
     if (!loading && !user) {

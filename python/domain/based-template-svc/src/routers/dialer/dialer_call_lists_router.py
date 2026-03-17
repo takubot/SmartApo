@@ -32,7 +32,6 @@ from ...models.tables.model_defs import (
     DialerCallLogModel,
     DialerContactModel,
     DialerGoogleIntegrationModel,
-    DialerTwilioConfigModel,
 )
 from ...services.implementations.di import get_sheets_service, get_telephony_service
 from .calling_session import (
@@ -528,22 +527,10 @@ def start_calling(
     _get_call_list(call_list_id, tenant_id, db)
 
     svc = get_telephony_service()
-    settings = get_settings()
-    base_url = settings.TWILIO_WEBHOOK_BASE_URL
 
-    # caller_id の解決: リクエスト指定 → Twilio設定の default_caller_id
     caller_id = body.caller_id
     if not caller_id:
-        twilio_cfg = db.execute(
-            select(DialerTwilioConfigModel).where(
-                DialerTwilioConfigModel.tenant_id == tenant_id,
-                DialerTwilioConfigModel.is_deleted.is_(False),
-            )
-        ).scalar_one_or_none()
-        if twilio_cfg:
-            caller_id = twilio_cfg.default_caller_id
-        if not caller_id:
-            raise HTTPException(400, "発信者番号が設定されていません。Twilio設定でデフォルト発信者番号を登録してください。")
+        raise HTTPException(400, "発信者番号が指定されていません。")
 
     # 架電対象のコンタクトを取得
     q = (
@@ -582,15 +569,15 @@ def start_calling(
             result = svc.initiate_call(
                 to=contact.phone_primary,
                 from_=caller_id,
-                voice_url=f"{base_url}/v2/dialer/webhooks/twilio/voice",
-                status_callback_url=f"{base_url}/v2/dialer/webhooks/twilio/status",
+                voice_url="",
+                status_callback_url="",
             )
             log = DialerCallLogModel(
                 tenant_id=tenant_id,
                 contact_id=contact.contact_id,
                 phone_number_dialed=contact.phone_primary,
                 caller_id_used=caller_id,
-                twilio_call_sid=result.get("call_sid"),
+                call_uuid=result.get("call_sid"),
                 call_status=CallStatusEnum.DIALING,
             )
             db.add(log)
@@ -794,12 +781,12 @@ def end_session_call(
         raise HTTPException(400, "接続中の通話がありません")
 
     connected = session.calls[session.connected_call_log_id]
-    if connected.twilio_call_sid and connected.status in ("in_progress", "ringing"):
+    if connected.call_uuid and connected.status in ("in_progress", "ringing"):
         svc = get_telephony_service()
         try:
-            svc.end_call(connected.twilio_call_sid)
+            svc.end_call(connected.call_uuid)
         except Exception:
-            logger.exception("Failed to end call %s", connected.twilio_call_sid)
+            logger.exception("Failed to end call %s", connected.call_uuid)
 
     return MessageResponse(message="通話を終了しました")
 
@@ -822,11 +809,11 @@ def cancel_calling_session(
     svc = get_telephony_service()
     for entry in session.calls.values():
         if entry.status in ("dialing", "ringing", "in_progress"):
-            if entry.twilio_call_sid:
+            if entry.call_uuid:
                 try:
-                    svc.end_call(entry.twilio_call_sid)
+                    svc.end_call(entry.call_uuid)
                 except Exception:
-                    logger.exception("Failed to cancel call %s", entry.twilio_call_sid)
+                    logger.exception("Failed to cancel call %s", entry.call_uuid)
 
     remove_session(session_id)
     return MessageResponse(message="全通話をキャンセルしました")

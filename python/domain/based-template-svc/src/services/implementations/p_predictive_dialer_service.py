@@ -10,13 +10,13 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ...models.tables.enum import (
-    AgentStatusEnum,
+    UserStatusEnum,
     CallStatusEnum,
     CampaignContactStatusEnum,
 )
 from ...models.tables.model_defs import (
-    DialerAgentCampaignModel,
-    DialerAgentModel,
+    DialerUserCampaignModel,
+    DialerUserModel,
     DialerCallLogModel,
     DialerCampaignContactModel,
     DialerCampaignModel,
@@ -141,10 +141,10 @@ class PPredictiveDialerService(IPredictiveDialerService):
     # ── 発信判定 ─────────────────────────────────────────────
 
     def should_dial_next(
-        self, campaign_id: str, available_agents: int, db: Session
+        self, campaign_id: str, available_users: int, db: Session
     ) -> bool:
         """次の発信を行うべきか判定する"""
-        if available_agents <= 0:
+        if available_users <= 0:
             return False
 
         campaign = db.get(DialerCampaignModel, campaign_id)
@@ -170,7 +170,7 @@ class PPredictiveDialerService(IPredictiveDialerService):
 
         # 予測比率に基づく発信判定
         ratio = self.calculate_optimal_ratio(campaign_id, db)
-        target_calls = int(available_agents * float(ratio))
+        target_calls = int(available_users * float(ratio))
         return active_calls < target_calls
 
     # ── メトリクス更新 ───────────────────────────────────────

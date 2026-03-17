@@ -23,7 +23,7 @@ class IPredictiveDialerService(ABC):
 
     @abstractmethod
     def should_dial_next(
-        self, campaign_id: str, available_agents: int, db: Session
+        self, campaign_id: str, available_users: int, db: Session
     ) -> bool:
         """次の発信を実行すべきか判定する"""
         ...

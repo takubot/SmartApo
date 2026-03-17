@@ -12,9 +12,9 @@ class CallLogResponseSchema(BaseSchema):
     call_log_id: str
     campaign_id: Optional[str] = None
     contact_id: str
-    agent_id: Optional[str] = None
+    user_id: Optional[str] = None
     disposition_id: Optional[str] = None
-    twilio_call_sid: Optional[str] = None
+    call_uuid: Optional[str] = None
     phone_number_dialed: str
     caller_id_used: Optional[str] = None
     call_status: str

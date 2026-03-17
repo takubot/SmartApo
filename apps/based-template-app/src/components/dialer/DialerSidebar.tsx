@@ -76,7 +76,7 @@ const NAV_GROUPS: NavGroup[] = [
     title: "架電管理",
     items: [
       { label: "コールリスト", href: "/call-lists", icon: ListChecks },
-      { label: "エージェント", href: "/agents", icon: Headphones },
+      { label: "ユーザー", href: "/users", icon: Headphones },
     ],
   },
   {
@@ -96,7 +96,7 @@ const NAV_GROUPS: NavGroup[] = [
         href: "/settings/dispositions",
         icon: ClipboardList,
       },
-      { label: "Twilio設定", href: "/settings/twilio", icon: Settings },
+      { label: "電話設定", href: "/settings/phone", icon: Settings },
     ],
   },
   {

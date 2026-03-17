@@ -23,7 +23,8 @@ const columns: Column<CallListRow>[] = [
   {
     key: "source",
     label: "ソース",
-    render: (item) => SOURCE_LABELS[item.source ?? "manual"] ?? item.source ?? "手動",
+    render: (item) =>
+      SOURCE_LABELS[item.source ?? "manual"] ?? item.source ?? "手動",
   },
   {
     key: "createdAt",

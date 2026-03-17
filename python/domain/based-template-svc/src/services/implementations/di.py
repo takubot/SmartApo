@@ -32,9 +32,9 @@ def get_calendar_service(provider: CalendarProviderEnum = CalendarProviderEnum.G
 
 
 def get_telephony_service():
-    from ...services.implementations.p_twilio_service import PTwilioService
+    from ...services.implementations.p_freeswitch_service import PFreeSwitchService
 
-    return PTwilioService()
+    return PFreeSwitchService()
 
 
 def get_contact_sync_service():

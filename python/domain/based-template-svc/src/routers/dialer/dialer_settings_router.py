@@ -1,98 +1,57 @@
-"""設定ルーター"""
+"""電話設定ルーター (FreeSWITCH ESL)"""
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
 from ...auth.authentication.dependencies import get_current_user
-from ...database_utils.database import get_sync_session
-from ...models.tables.model_defs import DialerTwilioConfigModel
-from .schemas.settings_schemas import (
-    TwilioConfigResponseSchema,
-    TwilioConfigSchema,
-    TwilioTestResponseSchema,
-)
+from ...common.env_config import get_settings
+from ...services.implementations.p_freeswitch_service import PFreeSwitchService
+from .schemas.settings_schemas import EslTestResponseSchema, PhoneConfigResponseSchema
 
 router = APIRouter()
 
 
-@router.get("/twilio", response_model=TwilioConfigResponseSchema | None)
-def get_twilio_config(
+@router.get("/phone", response_model=PhoneConfigResponseSchema)
+def get_phone_config(
     auth: tuple[str, str] = Depends(get_current_user),
-    db: Session = Depends(get_sync_session),
 ):
-    """Twilio設定取得"""
-    _, tenant_id = auth
-    config = db.execute(
-        select(DialerTwilioConfigModel).where(
-            DialerTwilioConfigModel.tenant_id == tenant_id,
-            DialerTwilioConfigModel.is_deleted.is_(False),
-        )
-    ).scalar_one_or_none()
-    if not config:
-        return None
-    return TwilioConfigResponseSchema.model_validate(config)
+    """電話設定 (FreeSWITCH) の状態取得"""
+    settings = get_settings()
+    svc = PFreeSwitchService()
 
-
-@router.put("/twilio", response_model=TwilioConfigResponseSchema)
-def update_twilio_config(
-    body: TwilioConfigSchema,
-    auth: tuple[str, str] = Depends(get_current_user),
-    db: Session = Depends(get_sync_session),
-):
-    """Twilio設定更新"""
-    _, tenant_id = auth
-    config = db.execute(
-        select(DialerTwilioConfigModel).where(
-            DialerTwilioConfigModel.tenant_id == tenant_id,
-            DialerTwilioConfigModel.is_deleted.is_(False),
-        )
-    ).scalar_one_or_none()
-
-    if config:
-        for key, val in body.model_dump(exclude_none=True).items():
-            setattr(config, key, val)
-    else:
-        config = DialerTwilioConfigModel(
-            tenant_id=tenant_id,
-            **body.model_dump(exclude_none=True),
-        )
-        db.add(config)
-
-    db.flush()
-    return TwilioConfigResponseSchema.model_validate(config)
-
-
-@router.post("/twilio/test", response_model=TwilioTestResponseSchema)
-def test_twilio(
-    auth: tuple[str, str] = Depends(get_current_user),
-    db: Session = Depends(get_sync_session),
-):
-    """Twilio接続テスト"""
-    _, tenant_id = auth
-    config = db.execute(
-        select(DialerTwilioConfigModel).where(
-            DialerTwilioConfigModel.tenant_id == tenant_id,
-            DialerTwilioConfigModel.is_deleted.is_(False),
-        )
-    ).scalar_one_or_none()
-    if not config:
-        raise HTTPException(404, "Twilio設定がありません")
-
+    esl_connected = False
+    registered_users = 0
     try:
-        from twilio.rest import Client
+        esl_connected = svc.esl.connected
+        users = svc.get_registered_users()
+        registered_users = len(users)
+    except Exception:
+        pass
 
-        client = Client(config.account_sid, config.auth_token)
-        account = client.api.accounts(config.account_sid).fetch()
-        return TwilioTestResponseSchema(
+    return PhoneConfigResponseSchema(
+        esl_connected=esl_connected,
+        sip_gateway=settings.FREESWITCH_SIP_GATEWAY,
+        registered_users=registered_users,
+        default_caller_id=None,
+    )
+
+
+@router.post("/phone/test", response_model=EslTestResponseSchema)
+def test_esl_connection(
+    auth: tuple[str, str] = Depends(get_current_user),
+):
+    """FreeSWITCH ESL 接続テスト"""
+    try:
+        svc = PFreeSwitchService()
+        result = svc.esl.api("version")
+        return EslTestResponseSchema(
             success=True,
-            message="接続成功",
-            account_name=account.friendly_name,
+            message="FreeSWITCH接続成功",
+            freeswitch_version=result.strip(),
         )
     except Exception as e:
-        return TwilioTestResponseSchema(
+        return EslTestResponseSchema(
             success=False,
             message=f"接続失敗: {e}",
         )

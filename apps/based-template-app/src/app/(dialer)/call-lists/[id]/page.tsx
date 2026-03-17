@@ -35,11 +35,7 @@ import {
 } from "lucide-react";
 import { PageHeader } from "@/components/dialer";
 import PredictiveCallPanel from "@/components/dialer/PredictiveCallPanel";
-import {
-  useCallList,
-  useCallListContacts,
-  useTwilioConfig,
-} from "@/hooks/dialer/useDialerSwr";
+import { useCallList, useCallListContacts } from "@/hooks/dialer/useDialerSwr";
 import apiClient from "@/lib/apiClient";
 
 // OpenAPI生成後に不要になる一時的な型拡張
@@ -76,7 +72,10 @@ const SOURCE_LABELS: Record<string, string> = {
 
 const TELE_STATUS_MAP: Record<
   string,
-  { label: string; color: "default" | "success" | "warning" | "danger" | "primary" }
+  {
+    label: string;
+    color: "default" | "success" | "warning" | "danger" | "primary";
+  }
 > = {
   none: { label: "未架電", color: "default" },
   not_reached: { label: "不通", color: "default" },
@@ -106,9 +105,6 @@ export default function CallListDetailPage({
     mutate: mutateContacts,
   } = useCallListContacts(id, contactPage, 50);
 
-  // Twilio設定
-  const { data: twilioConfig } = useTwilioConfig();
-
   // 架電制御
   const [callerId, setCallerId] = useState("");
   const [maxConcurrent, setMaxConcurrent] = useState(1);
@@ -124,13 +120,6 @@ export default function CallListDetailPage({
   const [syncing, setSyncing] = useState(false);
   const [syncResult, setSyncResult] = useState<string | null>(null);
   const autoSyncTriggered = useRef(false);
-
-  // Twilio設定からデフォルト発信者番号
-  useEffect(() => {
-    if (twilioConfig?.defaultCallerId && !callerId) {
-      setCallerId(twilioConfig.defaultCallerId);
-    }
-  }, [twilioConfig, callerId]);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -228,7 +217,9 @@ export default function CallListDetailPage({
 
   const contacts: CallListContact[] = contactsData?.items ?? [];
   const selectedCount =
-    selectedKeys === "all" ? contacts.length : (selectedKeys as Set<string>).size;
+    selectedKeys === "all"
+      ? contacts.length
+      : (selectedKeys as Set<string>).size;
 
   return (
     <div>
@@ -332,7 +323,10 @@ export default function CallListDetailPage({
           </Card>
 
           {/* 架電設定 */}
-          <Card shadow="sm" className="border-2 border-primary-100 lg:col-span-2">
+          <Card
+            shadow="sm"
+            className="border-2 border-primary-100 lg:col-span-2"
+          >
             <CardHeader>
               <div className="flex items-center gap-2">
                 <Phone size={16} className="text-primary-600" />
@@ -351,7 +345,8 @@ export default function CallListDetailPage({
                 />
                 <div className="sm:max-w-[200px] w-full">
                   <p className="text-xs text-gray-600 mb-1">
-                    同時架電数: <span className="font-semibold">{maxConcurrent}</span>
+                    同時架電数:{" "}
+                    <span className="font-semibold">{maxConcurrent}</span>
                   </p>
                   <Slider
                     aria-label="同時架電数"
@@ -365,7 +360,10 @@ export default function CallListDetailPage({
                     size="sm"
                   />
                 </div>
-                <Divider orientation="vertical" className="hidden sm:block h-10" />
+                <Divider
+                  orientation="vertical"
+                  className="hidden sm:block h-10"
+                />
                 <div className="flex gap-2 flex-wrap">
                   {selectedCount > 0 && (
                     <Button
@@ -482,11 +480,7 @@ export default function CallListDetailPage({
                           <TableCell>{c.phonePrimary}</TableCell>
                           <TableCell>{c.companyName || "-"}</TableCell>
                           <TableCell>
-                            <Chip
-                              size="sm"
-                              variant="flat"
-                              color={status.color}
-                            >
+                            <Chip size="sm" variant="flat" color={status.color}>
                               {status.label}
                             </Chip>
                           </TableCell>
@@ -499,9 +493,7 @@ export default function CallListDetailPage({
                                 variant="light"
                                 color="primary"
                                 isLoading={calling}
-                                onPress={() =>
-                                  handleCallSingle(c.contactId)
-                                }
+                                onPress={() => handleCallSingle(c.contactId)}
                               >
                                 <Phone size={14} />
                               </Button>
@@ -542,8 +534,12 @@ function extractErrorMessage(err: unknown): string | undefined {
     typeof (err as Record<string, unknown>).response === "object" &&
     (err as Record<string, Record<string, unknown>>).response !== null
   ) {
-    return ((err as Record<string, Record<string, unknown>>).response
-      .data as Record<string, string>)?.detail;
+    return (
+      (err as Record<string, Record<string, unknown>>).response.data as Record<
+        string,
+        string
+      >
+    )?.detail;
   }
   return undefined;
 }

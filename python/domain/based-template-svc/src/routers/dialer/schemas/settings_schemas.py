@@ -7,25 +7,18 @@ from typing import Optional
 from ....common.schemas.base_schema import BaseSchema
 
 
-class TwilioConfigSchema(BaseSchema):
-    account_sid: str
-    auth_token: str
-    twiml_app_sid: Optional[str] = None
-    phone_numbers: Optional[list[str]] = None
+class PhoneConfigResponseSchema(BaseSchema):
+    """電話設定レスポンス"""
+
+    esl_connected: bool
+    sip_gateway: str
+    registered_users: int
     default_caller_id: Optional[str] = None
-    recording_enabled: bool = True
 
 
-class TwilioConfigResponseSchema(BaseSchema):
-    config_id: str
-    account_sid: str
-    twiml_app_sid: Optional[str] = None
-    phone_numbers: Optional[list[str]] = None
-    default_caller_id: Optional[str] = None
-    recording_enabled: bool
+class EslTestResponseSchema(BaseSchema):
+    """ESL接続テストレスポンス"""
 
-
-class TwilioTestResponseSchema(BaseSchema):
     success: bool
     message: str
-    account_name: Optional[str] = None
+    freeswitch_version: Optional[str] = None
