@@ -15,7 +15,7 @@ from sqlalchemy import select
 
 from ...database_utils.database import SyncSessionLocal
 from ...models.tables.enum import CallStatusEnum
-from ...models.tables.model_defs import DialerCallLogModel
+from ...models.tables.model_defs import DialerCallLogModel, DialerCampaignModel
 from ...routers.dialer.calling_session import (
     get_session_by_call_sid,
     get_sids_to_cancel,
@@ -119,12 +119,30 @@ def _update_call_status(
             ).scalar_one_or_none()
 
             if log:
+                # 放棄判定: 顧客が応答済み(answered_at有)だがキャンセルされた場合
+                # → プレディクティブコールで他の通話が先に接続され、この通話が切断された
+                is_abandoned = (
+                    ended
+                    and log.answered_at is not None
+                    and status == CallStatusEnum.CANCELED
+                )
+                if is_abandoned:
+                    log.is_abandoned = True
+                    logger.info("放棄通話検出: uuid=%s", call_uuid)
+
                 log.call_status = status
                 if answered:
                     log.answered_at = now
                 if ended:
                     log.ended_at = now
                     log.duration_seconds = duration
+
+                # キャンペーンメトリクス更新
+                if ended and log.campaign_id:
+                    _update_campaign_metrics(
+                        log.campaign_id, status, is_abandoned, db
+                    )
+
                 db.commit()
                 logger.info(
                     "通話ステータス更新: uuid=%s status=%s", call_uuid, status.value
@@ -154,6 +172,24 @@ def _update_call_status(
                     mark_canceled(session.session_id, sids_to_cancel)
     except Exception:
         logger.exception("セッション連携失敗: uuid=%s", call_uuid)
+
+
+def _update_campaign_metrics(
+    campaign_id: str,
+    status: CallStatusEnum,
+    is_abandoned: bool,
+    db: "Session",
+) -> None:
+    """キャンペーンの集計値を更新する"""
+    campaign = db.get(DialerCampaignModel, campaign_id)
+    if not campaign:
+        return
+
+    campaign.total_calls = campaign.total_calls + 1
+    if status == CallStatusEnum.COMPLETED and is_abandoned is False:
+        campaign.total_answered = campaign.total_answered + 1
+    if is_abandoned:
+        campaign.total_abandoned = campaign.total_abandoned + 1
 
 
 def _update_recording(call_uuid: str, rec_path: str, duration: int) -> None:

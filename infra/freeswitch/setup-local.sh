@@ -126,20 +126,46 @@ fi
 echo ""
 echo "[5/5] 設定ファイルを配置中..."
 
+INFRA_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+ENV_FILE="$INFRA_DIR/.env"
+
 # デフォルト設定をコピー（初回のみ）
 if [ ! -d "$CONF_DIR" ]; then
     sudo mkdir -p "$CONF_DIR"
     sudo cp -a "$PREFIX/conf/"* "$CONF_DIR/"
 fi
 
-# カスタム設定を上書き
-sudo cp "$SCRIPT_DIR/conf/autoload_configs/event_socket.conf.xml" "$CONF_DIR/autoload_configs/event_socket.conf.xml"
+# infra/.env を読み込んで環境変数に設定
+if [ -f "$ENV_FILE" ]; then
+    echo "  infra/.env を読み込み中..."
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+else
+    echo "  WARNING: $ENV_FILE が見つかりません。デフォルト値を使用します。"
+fi
+
+# デフォルト値
+: "${FREESWITCH_ESL_PASSWORD:=ClueCon}"
+: "${AGENT_SIP_PASSWORD:=agent1001pass}"
+: "${BRASTEL_SIP_ID:=BRASTEL_SIP_ID}"
+: "${BRASTEL_SIP_PASSWORD:=BRASTEL_SIP_PASSWORD}"
+
+export FREESWITCH_ESL_PASSWORD AGENT_SIP_PASSWORD BRASTEL_SIP_ID BRASTEL_SIP_PASSWORD
+
+ENVSUBST_VARS='${BRASTEL_SIP_ID} ${BRASTEL_SIP_PASSWORD} ${FREESWITCH_ESL_PASSWORD} ${AGENT_SIP_PASSWORD}'
+
+# envsubst で環境変数を注入してから配置
+envsubst "$ENVSUBST_VARS" < "$SCRIPT_DIR/conf/autoload_configs/event_socket.conf.xml" | sudo tee "$CONF_DIR/autoload_configs/event_socket.conf.xml" > /dev/null
+envsubst "$ENVSUBST_VARS" < "$SCRIPT_DIR/conf/sip_profiles/external.xml" | sudo tee "$CONF_DIR/sip_profiles/external.xml" > /dev/null
+sudo mkdir -p "$CONF_DIR/directory/default"
+envsubst "$ENVSUBST_VARS" < "$SCRIPT_DIR/conf/directory/default/agent_template.xml" | sudo tee "$CONF_DIR/directory/default/agent_template.xml" > /dev/null
+
+# envsubst 不要のファイルはそのままコピー
 sudo cp "$SCRIPT_DIR/conf/sip_profiles/internal.xml" "$CONF_DIR/sip_profiles/internal.xml"
-sudo cp "$SCRIPT_DIR/conf/sip_profiles/external.xml" "$CONF_DIR/sip_profiles/external.xml"
 sudo cp "$SCRIPT_DIR/conf/dialplan/default.xml" "$CONF_DIR/dialplan/default.xml"
 sudo cp "$SCRIPT_DIR/conf/dialplan/public.xml" "$CONF_DIR/dialplan/public.xml"
-sudo mkdir -p "$CONF_DIR/directory/default"
-sudo cp "$SCRIPT_DIR/conf/directory/default/agent_template.xml" "$CONF_DIR/directory/default/agent_template.xml"
 
 # 録音ディレクトリ
 sudo mkdir -p /var/lib/freeswitch/recordings
@@ -149,17 +175,15 @@ echo "========================================"
 echo " セットアップ完了!"
 echo "========================================"
 echo ""
-echo "起動:   sudo $PREFIX/bin/freeswitch -nonat -nc -conf $CONF_DIR"
+echo "  Brastel SIP ID: $BRASTEL_SIP_ID"
+echo "  ESL Password:   $FREESWITCH_ESL_PASSWORD"
+echo "  Agent Password:  $AGENT_SIP_PASSWORD"
+echo ""
+echo "起動:   sudo $PREFIX/bin/freeswitch -nonat -nc"
 echo "停止:   sudo $PREFIX/bin/freeswitch -stop"
 echo "CLI:    $PREFIX/bin/fs_cli"
 echo "状態:   $PREFIX/bin/fs_cli -x 'status'"
-echo ""
-echo "バックエンドの .env に以下を追加:"
-echo "  FREESWITCH_ESL_HOST=127.0.0.1"
-echo "  FREESWITCH_ESL_PORT=8021"
-echo "  FREESWITCH_ESL_PASSWORD=ClueCon"
-echo "  FREESWITCH_SIP_GATEWAY=brastel"
-echo "  FREESWITCH_WSS_URL=ws://localhost:5066"
+echo "SIP確認: $PREFIX/bin/fs_cli -x 'sofia status'"
 
 
 

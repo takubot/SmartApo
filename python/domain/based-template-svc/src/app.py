@@ -141,6 +141,7 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
 
     # FreeSWITCH ESLイベントハンドラ起動（環境変数が設定されている場合のみ）
     _esl_started = False
+    _dial_loop_started = False
     if settings.FREESWITCH_ESL_HOST:
         try:
             from .services.implementations.freeswitch_event_handler import (
@@ -157,6 +158,19 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
             logger.info("FreeSWITCH ESL event handler started.")
         except Exception:
             logger.warning("FreeSWITCH ESL event handler起動失敗", exc_info=True)
+
+        # プレディクティブダイヤルループ起動
+        try:
+            from .services.implementations.predictive_dial_loop import (
+                start_dial_loop,
+                stop_dial_loop,
+            )
+
+            start_dial_loop()
+            _dial_loop_started = True
+            logger.info("Predictive dial loop started.")
+        except Exception:
+            logger.warning("プレディクティブダイヤルループ起動失敗", exc_info=True)
     else:
         logger.info("FREESWITCH_ESL_HOST が未設定のためESLイベントハンドラをスキップ")
 
@@ -164,6 +178,11 @@ async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
         yield
     finally:
         # Shutdown
+        if _dial_loop_started:
+            try:
+                stop_dial_loop()
+            except Exception:
+                pass
         if _esl_started:
             try:
                 stop_event_handler()

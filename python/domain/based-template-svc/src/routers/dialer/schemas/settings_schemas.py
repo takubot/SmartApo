@@ -16,6 +16,16 @@ class PhoneConfigResponseSchema(BaseSchema):
     default_caller_id: Optional[str] = None
 
 
+class SipConfigResponseSchema(BaseSchema):
+    """SIP設定レスポンス (フロントエンドSoftphone用)"""
+
+    wss_url: str
+    extension: str
+    password: str
+    domain: str
+    auto_answer: bool = True
+
+
 class EslTestResponseSchema(BaseSchema):
     """ESL接続テストレスポンス"""
 

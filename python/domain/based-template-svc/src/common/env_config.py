@@ -221,6 +221,7 @@ class Settings(BaseSettings):
     FREESWITCH_ESL_PASSWORD: str = Field(default="", alias="FREESWITCH_ESL_PASSWORD")
     FREESWITCH_SIP_GATEWAY: str = Field(default="", alias="FREESWITCH_SIP_GATEWAY")
     FREESWITCH_WSS_URL: str = Field(default="", alias="FREESWITCH_WSS_URL")
+    AGENT_SIP_PASSWORD: str = Field(default="agent1001pass", alias="AGENT_SIP_PASSWORD")
 
     # ---------------------------------------------------------------------
     # Gmail / SMTP

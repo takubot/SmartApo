@@ -138,13 +138,41 @@ def start_campaign(
     auth: tuple[str, str] = Depends(get_current_user),
     db: Session = Depends(get_sync_session),
 ):
-    """キャンペーン開始"""
+    """キャンペーン開始
+
+    キャンペーンをACTIVEにすると、バックグラウンドの自動ダイヤルループが
+    このキャンペーンを検出し、プレディクティブ発信を自動的に開始する。
+    """
     _, tenant_id = auth
     campaign = _get_campaign(campaign_id, tenant_id, db)
     if campaign.status not in (CampaignStatusEnum.DRAFT, CampaignStatusEnum.PAUSED):
         raise HTTPException(400, "開始できないステータスです")
+
+    # 発信者番号の必須チェック
+    if not campaign.caller_id:
+        raise HTTPException(400, "発信者番号(caller_id)が設定されていません")
+
+    # コンタクトの存在チェック
+    contact_count = db.execute(
+        select(func.count()).where(
+            DialerCampaignContactModel.campaign_id == campaign_id,
+        )
+    ).scalar() or 0
+    if contact_count == 0:
+        raise HTTPException(400, "キャンペーンにコンタクトが登録されていません")
+
+    # ユーザー割当チェック
+    user_count = db.execute(
+        select(func.count()).where(
+            DialerUserCampaignModel.campaign_id == campaign_id,
+            DialerUserCampaignModel.is_active.is_(True),
+        )
+    ).scalar() or 0
+    if user_count == 0:
+        raise HTTPException(400, "キャンペーンにユーザーが割り当てられていません")
+
     campaign.status = CampaignStatusEnum.ACTIVE
-    return MessageResponse(message="キャンペーンを開始しました")
+    return MessageResponse(message="キャンペーンを開始しました。自動発信が開始されます。")
 
 
 @router.post("/{campaign_id}/pause", response_model=MessageResponse)
@@ -218,6 +246,14 @@ def campaign_stats(
         else 0.0
     )
 
+    # リアルタイムの予測比率を計算
+    from ...services.implementations.p_predictive_dialer_service import (
+        PPredictiveDialerService,
+    )
+
+    dialer_svc = PPredictiveDialerService()
+    current_ratio = dialer_svc.calculate_optimal_ratio(campaign_id, db)
+
     return CampaignStatsSchema(
         campaign_id=campaign.campaign_id,
         total_contacts=campaign.total_contacts,
@@ -229,7 +265,7 @@ def campaign_stats(
         abandon_rate=round(abandon_rate, 2),
         active_users=active_users,
         active_calls=active_calls,
-        predictive_ratio=campaign.predictive_ratio,
+        predictive_ratio=current_ratio,
     )
 
 

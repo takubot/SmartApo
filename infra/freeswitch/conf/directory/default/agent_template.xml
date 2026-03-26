@@ -7,7 +7,7 @@
 
   SIP.js 側の設定:
     extension: "1001"
-    password: "agent1001pass"
+    password: infra/.env の AGENT_SIP_PASSWORD
     domain: FreeSWITCHのホスト名 or IP
 -->
 <include>
@@ -15,7 +15,7 @@
   <!-- エージェント 1001 -->
   <user id="1001">
     <params>
-      <param name="password" value="agent1001pass"/>
+      <param name="password" value="${AGENT_SIP_PASSWORD}"/>
       <!-- WebRTC 必須パラメータ -->
       <param name="vm-password" value="1001"/>
     </params>
@@ -37,7 +37,7 @@
   <!-- エージェント 1002 -->
   <user id="1002">
     <params>
-      <param name="password" value="agent1002pass"/>
+      <param name="password" value="${AGENT_SIP_PASSWORD}"/>
       <param name="vm-password" value="1002"/>
     </params>
     <variables>
@@ -56,7 +56,7 @@
   <!-- エージェント 1003 -->
   <user id="1003">
     <params>
-      <param name="password" value="agent1003pass"/>
+      <param name="password" value="${AGENT_SIP_PASSWORD}"/>
       <param name="vm-password" value="1003"/>
     </params>
     <variables>
@@ -75,7 +75,7 @@
   <!-- エージェント 1004 -->
   <user id="1004">
     <params>
-      <param name="password" value="agent1004pass"/>
+      <param name="password" value="${AGENT_SIP_PASSWORD}"/>
       <param name="vm-password" value="1004"/>
     </params>
     <variables>
@@ -94,7 +94,7 @@
   <!-- エージェント 1005 -->
   <user id="1005">
     <params>
-      <param name="password" value="agent1005pass"/>
+      <param name="password" value="${AGENT_SIP_PASSWORD}"/>
       <param name="vm-password" value="1005"/>
     </params>
     <variables>

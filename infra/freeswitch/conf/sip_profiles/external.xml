@@ -5,17 +5,18 @@
   ポート構成:
     - 5080/UDP,TCP: 外部 SIP (ブラステル向け)
 
-  手動設定が必要な箇所:
-    - username: ブラステルのSIPアカウントID (8桁数字)
-    - password: ブラステルのSIPパスワード (8桁英数字)
-    ※ https://www.brastel.com でログイン → SIPアカウント で確認
+  認証情報は infra/.env で管理:
+    - BRASTEL_SIP_ID: SIPアカウントID (8桁数字)
+    - BRASTEL_SIP_PASSWORD: SIPパスワード (8桁英数字)
+    ※ https://www.brastel.com → ログイン → SIPアカウント で確認
+    ※ Docker起動時に entrypoint.sh が envsubst で置換する
 -->
 <profile name="external">
   <gateways>
     <gateway name="brastel">
-      <!-- ブラステル SIP認証情報 (要手動設定) -->
-      <param name="username" value="BRASTEL_SIP_ID"/>
-      <param name="password" value="BRASTEL_SIP_PASSWORD"/>
+      <!-- ブラステル SIP認証情報 (infra/.env から注入) -->
+      <param name="username" value="${BRASTEL_SIP_ID}"/>
+      <param name="password" value="${BRASTEL_SIP_PASSWORD}"/>
 
       <!-- ブラステル SIPサーバー -->
       <param name="realm" value="softphone.spc.brastel.ne.jp"/>

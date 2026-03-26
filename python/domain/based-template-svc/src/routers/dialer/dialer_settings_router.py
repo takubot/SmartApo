@@ -2,12 +2,22 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from urllib.parse import urlparse
+
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from ...auth.authentication.dependencies import get_current_user
 from ...common.env_config import get_settings
+from ...database_utils.database import get_sync_session
+from ...models.tables.model_defs import DialerUserModel
 from ...services.implementations.p_freeswitch_service import PFreeSwitchService
-from .schemas.settings_schemas import EslTestResponseSchema, PhoneConfigResponseSchema
+from .schemas.settings_schemas import (
+    EslTestResponseSchema,
+    PhoneConfigResponseSchema,
+    SipConfigResponseSchema,
+)
 
 router = APIRouter()
 
@@ -34,6 +44,46 @@ def get_phone_config(
         sip_gateway=settings.FREESWITCH_SIP_GATEWAY,
         registered_users=registered_users,
         default_caller_id=None,
+    )
+
+
+@router.get("/sip-config", response_model=SipConfigResponseSchema)
+def get_sip_config(
+    auth: tuple[str, str] = Depends(get_current_user),
+    db: Session = Depends(get_sync_session),
+):
+    """現在のユーザーのSIP設定を返す (Softphone初期化用)"""
+    firebase_uid, tenant_id = auth
+    settings = get_settings()
+
+    user = db.execute(
+        select(DialerUserModel).where(
+            DialerUserModel.firebase_uid == firebase_uid,
+            DialerUserModel.tenant_id == tenant_id,
+            DialerUserModel.is_deleted.is_(False),
+        )
+    ).scalar_one_or_none()
+
+    if not user or not user.extension:
+        raise HTTPException(400, "内線番号が割り当てられていません")
+
+    wss_url = settings.FREESWITCH_WSS_URL
+    if not wss_url:
+        raise HTTPException(503, "FreeSWITCH WSS URLが設定されていません")
+
+    # SIPドメイン: WSS URLのホスト部分を使用
+    parsed = urlparse(wss_url)
+    domain = parsed.hostname or "localhost"
+
+    # パスワード: FreeSWITCH directory と一致 (infra/.env AGENT_SIP_PASSWORD)
+    password = settings.AGENT_SIP_PASSWORD
+
+    return SipConfigResponseSchema(
+        wss_url=wss_url,
+        extension=user.extension,
+        password=password,
+        domain=domain,
+        auto_answer=True,
     )
 
 

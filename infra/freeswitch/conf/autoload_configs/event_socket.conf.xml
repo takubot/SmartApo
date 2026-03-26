@@ -15,8 +15,8 @@
     <param name="listen-ip" value="0.0.0.0"/>
     <param name="listen-port" value="8021"/>
 
-    <!-- ESL 認証パスワード (env: FREESWITCH_ESL_PASSWORD と一致させる) -->
-    <param name="password" value="ClueCon"/>
+    <!-- ESL 認証パスワード (infra/.env FREESWITCH_ESL_PASSWORD から注入) -->
+    <param name="password" value="${FREESWITCH_ESL_PASSWORD}"/>
 
     <!-- ACL (アクセス制御リスト) -->
     <!-- <param name="apply-inbound-acl" value="loopback.auto"/> -->

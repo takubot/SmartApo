@@ -317,6 +317,18 @@ export function usePhoneConfig() {
   }>("/settings/phone");
 }
 
+export interface SipConfigData {
+  wssUrl: string;
+  extension: string;
+  password: string;
+  domain: string;
+  autoAnswer: boolean;
+}
+
+export function useSipConfig() {
+  return useDialerDetail<SipConfigData>("/settings/sip-config");
+}
+
 export function useGoogleIntegrations() {
   return useDialerDetail<{
     integrations: GoogleIntegrationStatusSchemaType[];
